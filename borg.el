@@ -192,7 +192,7 @@ drones that take longer to be build."
   "Build the drone named DRONE."
   (interactive (list (completing-read "Build drone: " (borg-drones) nil t)))
   (let ((default-directory (borg-repository drone))
-        (build (borg-get-all drone "compile")))
+        (build (borg-get-all drone "build-step")))
     (if  build
         (dolist (cmd build)
           (message "  Running '%s'..." cmd)
