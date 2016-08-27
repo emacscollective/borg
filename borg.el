@@ -170,6 +170,11 @@ drones that take longer to be build."
   (unless noninteractive
     (error "borg-batch-rebuild is to be used only with --batch"))
   (let ((drones (borg-drones)))
+    (when (member "org" drones)
+      ;; `org-loaddefs.el' has to exist when compiling a library
+      ;; which depends on `org', else we get warnings about that
+      ;; not being so, and other more confusing warnings too.
+      (setq drones (cons "org" (delete "org" drones))))
     (dolist (drone drones)
       (unless (and quick (borg-get-all drone "build-step"))
         (dolist (d (borg-load-path drone))
