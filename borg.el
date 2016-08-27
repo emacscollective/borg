@@ -187,11 +187,15 @@ drones that take longer to be build."
       (if (and quick (borg-get-all drone "build-step"))
           (message "Skipping...")
         (borg-build drone))))
-  (message "\n--- [init.el] ---\n")
   (borg-silencio "\\`%s\\.\\.\\.\\(done\\)?" ; silence use-package
     (let ((default-directory borg-user-emacs-directory))
+      (message "\n--- [init.el] ---\n")
       (load-file "init.el")
-      (byte-recompile-file (expand-file-name "init.el") t 0))))
+      (byte-recompile-file (expand-file-name "init.el") t 0)
+      (let ((f (concat (user-real-login-name) ".el")))
+        (when (file-exists-p f)
+          (message "\n--- [%s] ---\n" f)
+          (byte-recompile-file (expand-file-name f) t 0))))))
 
 (defun borg-build (drone)
   "Build the drone named DRONE."
