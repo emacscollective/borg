@@ -179,13 +179,21 @@ Magit status buffer of the ~~/.emacs.d~ repository.
 
 - Function: borg-batch-rebuild &optional quick
 
-  This function rebuilds all assimilated drones.  It is not intended
-  for interactive use, but used to implement the ~make~ targets
-  described in the following section.
+  This function rebuilds all assimilated drones in alphabetic order,
+  except for Org which is rebuild first.  It also rebuilds ~init.el~ and
+  ~USER-REAL-LOGIN-NAME.el~.
+
+  This function is not intended for interactive use, but used to
+  implement the ~make~ targets described in the following section.
 
   When optional QUICK is non-nil, then do not build drones for which
   ~gitmodule.DRONE.build~ is set, assuming those are the drones that
-  take longer to be build."
+  take longer to be build.
+
+- Function: borg-batch-rebuild-init
+
+  This function rebuilds ~init.el~ and ~USER-REAL-LOGIN-NAME.el~.  It is
+  not intended for interactive use.
 
 * Updating drones
 

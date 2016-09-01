@@ -162,6 +162,10 @@ is `true', then the drone named DRONE is skipped."
 (defun borg-batch-rebuild (&optional quick)
   "Rebuild all assimilated drones.
 
+Drones are rebuild in alphabetic order, except that that Org
+is compiled first.  `init.el' and `USER-REAL-LOGIN-NAME.el'
+are also rebuile.
+
 This function is to be used only with `--batch'.
 
 When optional QUICK is non-nil, then do not build drones for
@@ -187,6 +191,14 @@ drones that take longer to be build."
       (if (and quick (borg-get-all drone "build-step"))
           (message "Skipping...")
         (borg-build drone))))
+  (borg-batch-rebuild-init))
+
+(defun borg-batch-rebuild-init ()
+  "Rebuild `init.el' and `USER-REAL-LOGIN-NAME.el'.
+
+This function is to be used only with `--batch'."
+  (unless noninteractive
+    (error "borg-batch-recompile-init is to be used only with --batch"))
   (borg-silencio "\\`%s\\.\\.\\.\\(done\\)?" ; silence use-package
     (let ((default-directory borg-user-emacs-directory))
       (message "\n--- [init.el] ---\n")
