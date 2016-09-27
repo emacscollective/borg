@@ -162,9 +162,8 @@ is `true', then the drone named DRONE is skipped."
 (defun borg-batch-rebuild (&optional quick)
   "Rebuild all assimilated drones.
 
-Drones are rebuild in alphabetic order, except that that Org
-is compiled first.  `init.el' and `USER-REAL-LOGIN-NAME.el'
-are also rebuile.
+Drones are rebuild in alphabetic order, except that Org is build
+first.  `init.el' and `USER-REAL-LOGIN-NAME.el' are also rebuild.
 
 This function is to be used only with `--batch'.
 
