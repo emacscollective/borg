@@ -232,8 +232,8 @@ This function is to be used only with `--batch'."
              (generate-new-buffer (format "*Build %s*" drone))
              (expand-file-name invocation-name invocation-directory)
              "--batch" "-Q"
-             "-L" (borg-repository "drone")
-             "--eval" "(require 'drone)"
+             "-L" (borg-repository "borg")
+             "--eval" "(require 'borg)"
              "--eval" "(borg-initialize)"
              "--eval" (format "(borg-build %S)" drone))))))))
 
