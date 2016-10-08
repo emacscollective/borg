@@ -3,7 +3,7 @@
 ;; Copyright (C) 2016  Jonas Bernoulli
 
 ;; Author: Jonas Bernoulli <jonas@bernoul.li>
-;; Homepage: http://gitlab.com/tarsius/borg
+;; Homepage: https://gitlab.com/tarsius/borg
 ;; Keywords: tools
 
 ;; This file contains code from GNU Emacs, which is
