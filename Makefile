@@ -79,9 +79,9 @@ html-dir: $(PKG).texi
 	@texi2pdf --clean $< > /dev/null
 
 publish: html html-dir
-	@aws s3 cp $(PKG).html "s3://emacsair.me/manual/"
-	@aws s3 cp $(PKG).pdf "s3://emacsair.me/manual/"
-	@aws s3 sync $(PKG) "s3://emacsair.me/manual/$(PKG)/"
+	@aws s3 cp $(PKG).html "s3://emacsmirror.net/manual/"
+	@aws s3 cp $(PKG).pdf "s3://emacsmirror.net/manual/"
+	@aws s3 sync $(PKG) "s3://emacsmirror.net/manual/$(PKG)/"
 
 CLEAN = $(ELCS) $(PKG)-autoloads.el $(PKG).info dir
 
