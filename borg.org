@@ -335,10 +335,10 @@ variables you can tell Borg how to build such packages.
   S-expression.  This variable can be specified multiple times.
 
   #+BEGIN_SRC undefined
-  [submodule "mu4e"]
-          build-step = make -C mu4e > /dev/null
-          build-step = "(borg-update-autoloads \"mu4e\" (list (expand-file-name \"mu4e\")))"
-          ...
+    [submodule "mu4e"]
+            build-step = make -C mu4e > /dev/null
+            build-step = "(borg-update-autoloads \"mu4e\" (list (expand-file-name \"mu4e\")))"
+            ...
   #+END_SRC
 
   If this variable is set, then all default steps are skipped.
@@ -367,10 +367,10 @@ variables you can tell Borg how to build such packages.
   locaction.
 
   #+BEGIN_SRC undefined
-  [submodule "org"]
-          load-path = lisp
-          load-path = contrib/lisp
-          ...
+    [submodule "org"]
+            load-path = lisp
+            load-path = contrib/lisp
+            ...
   #+END_SRC
 
 - Variable: submodule.DRONE.no-compile PATH
