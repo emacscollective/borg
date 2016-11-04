@@ -68,26 +68,27 @@ dir: $(PKG).info
 
 %.html: %.texi
 	@printf "Generating $@\n"
-	@$(MAKEINFO) --html --no-split $(MAKEINFO_HMTL_ARGS) $<
+	@$(MAKEINFO) --html --no-split $(MANUAL_HTML_ARGS) $<
 
 html-dir: $(PKG).texi
 	@printf "Generating $(PKG)/*.html\n"
-	@$(MAKEINFO) --html $(MAKEINFO_HTML_ARGS) $<
+	@$(MAKEINFO) --html $(MANUAL_HTML_ARGS) $<
 
 %.pdf: %.texi
 	@printf "Generating $@\n"
 	@texi2pdf --clean $< > /dev/null
 
-publish: html html-dir
+publish: html html-dir pdf
 	@aws s3 cp $(PKG).html "s3://emacsmirror.net/manual/"
 	@aws s3 cp $(PKG).pdf "s3://emacsmirror.net/manual/"
 	@aws s3 sync $(PKG) "s3://emacsmirror.net/manual/$(PKG)/"
 
-CLEAN = $(ELCS) $(PKG)-autoloads.el $(PKG).info dir
+CLEAN  = $(ELCS) $(PKG)-autoloads.el $(PKG).info dir
+CLEAN += $(PKG) $(PKG).html $(PKG).pdf
 
 clean:
 	@printf "Cleaning...\n"
-	@rm -f $(CLEAN)
+	@rm -rf $(CLEAN)
 
 clean-texi:
 	@printf "Cleaning...\n"
@@ -95,7 +96,7 @@ clean-texi:
 
 clean-all:
 	@printf "Cleaning...\n"
-	@rm -f $(CLEAN) $(PKG).texi
+	@rm -rf $(CLEAN) $(PKG).texi
 
 define LOADDEFS_TMPL
 ;;; $(PKG)-autoloads.el --- automatically extracted autoloads
