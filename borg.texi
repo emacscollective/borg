@@ -443,6 +443,31 @@ locaction.
 @end example
 @end defvar
 
+@defvar submodule.DRONE.no-compile PATH
+
+This variable instructs @code{borg-byte-compile} to not compile the library
+at PATH.  PATH has to be relative to the top-level of the repository
+of the drone named DRONE.  This variable can be specified multiple
+times.
+
+Sometimes a drone comes with an optional library which adds support
+for some other third-party package, which you don't want to use.
+For example @code{emacsql} comes with a PostgreSQL back-end, which is
+implemented in the library @code{emacsql-pg.el}, which requires the @code{pg}
+package.  The standard Borg collective @code{emacs.g} assimilates @code{emacsql},
+for the sake of the @code{epkg} drone, which only requires the SqLite
+back-end.  To avoid an error about @code{pg} not being available, @code{emacs.g}
+instructs Borg to not compile @code{emacsql-pg.el}.  (Of course if you want
+to use the PostgreSQL back-end and assimilate @code{pg}, then you should
+undo that.)
+
+@example
+[submodule "emacsql"]
+	no-byte-compile = emacsql-pg.el
+	...
+@end example
+@end defvar
+
 @defvar submodule.DRONE.info-path PATH
 
 This variable instructs @code{borg-initialize} to add PATH

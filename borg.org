@@ -16,7 +16,7 @@
 :COPYING:    t
 :END:
 
-#+BEGIN_TEXINFO
+#+BEGIN_EXPORT texinfo
 @ifnottex
 The Borg assimilate Emacs packages as Git submodules.
 @end ifnottex
@@ -34,7 +34,7 @@ but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 General Public License for more details.
 @end quotation
-#+END_TEXINFO
+#+END_EXPORT
 
 * Introduction
 
@@ -371,7 +371,7 @@ variables you can tell Borg how to build such packages.
           load-path = lisp
           load-path = contrib/lisp
           ...
-  #+END_SRC undefined
+  #+END_SRC
 
 - Variable: submodule.DRONE.no-compile PATH
 
