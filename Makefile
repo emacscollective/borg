@@ -31,6 +31,7 @@ help:
 	$(info make html         - generate html manual file)
 	$(info make html-dir     - generate html manual directory)
 	$(info make pdf          - generate pdf manual)
+	$(info make preview      - preview html manual)
 	$(info make publish      - publish html manual)
 	$(info make clean        - remove most generated files)
 	$(info make clean-texi   - remove (tracked) texi manual)
@@ -78,10 +79,21 @@ html-dir: $(PKG).texi
 	@printf "Generating $@\n"
 	@texi2pdf --clean $< > /dev/null
 
+DOMAIN         ?= emacsmirror.net
+PUBLISH_BUCKET ?= s3://$(DOMAIN)
+PREVIEW_BUCKET ?= s3://preview.$(DOMAIN)
+PUBLISH_TARGET ?= $(PUBLISH_BUCKET)/manual/
+PREVIEW_TARGET ?= $(PREVIEW_BUCKET)/manual/
+
+preview: html html-dir pdf
+	@aws s3 cp $(PKG).html $(PREVIEW_TARGET)
+	@aws s3 cp $(PKG).pdf $(PREVIEW_TARGET)
+	@aws s3 sync $(PKG) $(PREVIEW_TARGET)$(PKG)/
+
 publish: html html-dir pdf
-	@aws s3 cp $(PKG).html "s3://emacsmirror.net/manual/"
-	@aws s3 cp $(PKG).pdf "s3://emacsmirror.net/manual/"
-	@aws s3 sync $(PKG) "s3://emacsmirror.net/manual/$(PKG)/"
+	@aws s3 cp $(PKG).html $(PUBLISH_TARGET)
+	@aws s3 cp $(PKG).pdf $(PUBLISH_TARGET)
+	@aws s3 sync $(PKG) $(PUBLISH_TARGET)$(PKG)/
 
 CLEAN  = $(ELCS) $(PKG)-autoloads.el $(PKG).info dir
 CLEAN += $(PKG) $(PKG).html $(PKG).pdf
