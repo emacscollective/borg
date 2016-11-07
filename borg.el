@@ -412,7 +412,7 @@ With a prefix argument pass \"--force\" to \"git submodule\"."
     (goto-char (point-min))
     (re-search-forward "^\\[submodule")
     (sort-regexp-fields
-     nil "^\\[submodule \"\\([^\"]+\\)\"][\s\t]*\n\\(\t.*\n\\)+"
+     nil "^\\[submodule \"\\([^\"]+\\)\"][\s\t]*\n\\([\s\t].*\n\\)+"
      "\\1" (line-beginning-position) (point-max))
     (save-buffer)))
 
