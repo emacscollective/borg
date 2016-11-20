@@ -111,7 +111,7 @@ directories containing a file named \"dir\"."
          #'string<)))
 
 (defmacro borg-silencio (regexp &rest body)
-  "Exectute the forms in BODY while silencing messages that don't match REGEXP."
+  "Execute the forms in BODY while silencing messages that don't match REGEXP."
   (declare (indent 1))
   `(let ((msg (symbol-function 'message)))
      (cl-letf (((symbol-function 'message)
