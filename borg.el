@@ -237,18 +237,21 @@ This function is to be used only with `--batch'."
              "--eval" (format "(borg-build %S)" drone))))))))
 
 (defconst borg-autoload-format "\
-;;; %s --- automatically extracted autoloads
+;;;\
+ %s --- automatically extracted autoloads
 ;;
-;;; Code:
-(add-to-list 'load-path (directory-file-name \
-(or (file-name-directory #$) (car load-path))))
-
+;;;\
+ Code:
+\(add-to-list 'load-path (directory-file-name \
+\(or (file-name-directory #$) (car load-path))))
+\
 ;; Local Variables:
 ;; version-control: never
 ;; no-byte-compile: t
 ;; no-update-autoloads: t
 ;; End:
-;;; %s ends here\n")
+;;;\
+ %s ends here\n")
 
 (defun borg-update-autoloads (drone path)
   "Update autoload files for the drone named DRONE in the directories in PATH."
