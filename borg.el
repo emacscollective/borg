@@ -103,13 +103,11 @@ directories containing a file named \"dir\"."
 
 (defun borg-drones ()
   "Return a list of all assimilated drones."
-  ;; This is more efficient than using `git submodule'.
-  (cl-mapcan
-   (lambda (line)
-     (and (string-match "\\`submodule\\.[^./]+\\.path=lib/\\(.+\\)" line)
-          (list (match-string 1 line))))
-   (sort (process-lines "git" "config" "--list" "--file" borg-gitmodules-file)
-         #'string<)))
+  (cl-mapcan (lambda (line)
+               (and (string-equal (substring line 50 54) "lib/")
+                    (list (substring line 54))))
+             (let ((default-directory borg-user-emacs-directory))
+               (process-lines "git" "submodule--helper" "list"))))
 
 (defmacro borg-silencio (regexp &rest body)
   "Execute the forms in BODY while silencing messages that don't match REGEXP."
