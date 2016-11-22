@@ -58,15 +58,21 @@ The value of this variable is usually the same as that of
   "Return the top-level of the working tree of the submodule named DRONE."
   (expand-file-name drone borg-drone-directory))
 
+(defvar borg--gitmodule-cache nil)
+
 (defun borg-get (drone variable &optional all)
   "Return the value of `submodule.DRONE.VARIABLE' in `~/.emacs.d/.gitmodules'.
 If optional ALL is non-nil, then return all values as a list."
-  (ignore-errors
-    ;; If the variable has no value then the exit code is non-zero,
-    ;; but that isn't an error as far as we are concerned.
-    (apply #'process-lines "git" "config" "--file" borg-gitmodules-file
-           (nconc (and all (list "--get-all"))
-                  (list (concat "submodule." drone "." variable))))))
+  (if borg--gitmodule-cache
+      (let ((values (plist-get (cdr (assoc drone borg--gitmodule-cache))
+                               (intern variable))))
+        (if all values (car values)))
+    (ignore-errors
+      ;; If the variable has no value then the exit code is non-zero,
+      ;; but that isn't an error as far as we are concerned.
+      (apply #'process-lines "git" "config" "--file" borg-gitmodules-file
+             (nconc (and all (list "--get-all"))
+                    (list (concat "submodule." drone "." variable)))))))
 
 (defun borg-get-all (drone variable)
   "Return all values of `submodule.DRONE.VARIABLE' in `~/.emacs.d/.gitmodules'.
@@ -174,10 +180,11 @@ If the value of a Git variable named `submodule.DRONE.disabled'
 is `true', then the drone named DRONE is skipped."
   (info-initialize)
   (let ((start (current-time))
-        (drones (borg-drones))
         (skipped 0)
-        (initialized 0))
-    (dolist (drone drones)
+        (initialized 0)
+        (borg--gitmodule-cache (borg-drones 'raw)))
+    (dolist (drone borg--gitmodule-cache)
+      (setq  drone (car drone))
       (if (equal (borg-get drone "disabled") "true")
           (cl-incf skipped)
         (cl-incf initialized)

@@ -2,6 +2,9 @@
 
 * v1.0.0    unreleased
 
+- ~borg-initialize~ now uses a cache to avoid calling ~git config~
+  excessively.  On Windows this significantly improves performance.
+
 - ~borg-drones~ learned to optionally return drone variables instead
   of just the drone names.
 
