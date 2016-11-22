@@ -395,7 +395,7 @@ With a prefix argument pass \"--force\" to \"git submodule\"."
   "Uninstall the drone named DRONE."
   (interactive (list (completing-read "Uninstall drone: " (borg-drones) nil t)))
   (let ((default-directory borg-user-emacs-directory))
-    (borg--call-git "rm" (borg-repository drone))))
+    (borg--call-git nil "rm" (borg-repository drone))))
 
 (defun borg--call-git (drone &rest args)
   (let ((process-connection-type nil)
