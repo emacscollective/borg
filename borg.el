@@ -399,7 +399,8 @@ With a prefix argument pass \"--force\" to \"git submodule\"."
 
 (defun borg--call-git (drone &rest args)
   (let ((process-connection-type nil)
-        (buffer (generate-new-buffer (format " *Borg Git %s*" drone))))
+        (buffer (generate-new-buffer
+                 (concat " *Borg Git" (and drone (concat " " drone)) "*"))))
     (if (eq (apply #'call-process "git" nil buffer nil args) 0)
         (kill-buffer buffer)
       (pop-to-buffer buffer)
