@@ -103,13 +103,55 @@ directories containing a file named \"dir\"."
                    (mapcar (lambda (d) (expand-file-name d repo)) path)
                  (list repo)))))
 
-(defun borg-drones ()
-  "Return a list of all assimilated drones."
-  (cl-mapcan (lambda (line)
-               (and (string-equal (substring line 50 54) "lib/")
-                    (list (substring line 54))))
-             (let ((default-directory borg-user-emacs-directory))
-               (process-lines "git" "submodule--helper" "list"))))
+(defvar borg--multi-value-variables
+  '(build-step load-path no-byte-compile info-path)
+  "List of submodule variables which can have multiple values.")
+
+(defun borg-drones (&optional include-variables)
+  "Return a list of all assimilated drones.
+
+The returned value is a list of the names of the assimilated
+drones, unless optional INCLUDE-VARIABLES is non-nil, in which
+case elements of the returned list have the form (NAME . PLIST).
+
+PLIST is a list of paired elements.  Property names are symbols
+and correspond to a VARIABLE defined in the Borg repository's
+\".gitmodules\" file as \"submodule.NAME.VARIABLE\".
+
+Each property value is either a string or a list of strings.  If
+INCLUDE-VARIABLES is `raw' then all values are lists.  Otherwise
+a property value is only a list if the corresponding property
+name is a member of `borg--multi-value-variables'.  If a property
+name isn't a member of `borg--multi-value-variables' but it does
+have multiple values anyway, then it is undefined with value is
+included in the returned value."
+  (if include-variables
+      (let (alist)
+        (dolist (line (process-lines "git" "config" "--list"
+                                     "--file" borg-gitmodules-file))
+          (when (string-match
+                 "\\`submodule\\.\\([^.]+\\)\\.\\([^=]+\\)=\\(.+\\)\\'" line)
+            (let* ((drone (match-string 1 line))
+                   (prop  (intern (match-string 2 line)))
+                   (value (match-string 3 line))
+                   (elt   (assoc drone alist))
+                   (plist (cdr elt)))
+              (unless elt
+                (push (setq elt (list drone)) alist))
+              (setq plist
+                    (plist-put plist prop
+                               (if (or (eq include-variables 'raw)
+                                       (memq prop borg--multi-value-variables))
+                                   (nconc (plist-get plist prop)
+                                          (list value))
+                                 value)))
+              (setcdr elt plist))))
+        (cl-sort alist #'string< :key #'car))
+    (cl-mapcan (lambda (line)
+                 (and (string-equal (substring line 50 54) "lib/")
+                      (list (substring line 54))))
+               (let ((default-directory borg-user-emacs-directory))
+                 (process-lines "git" "submodule--helper" "list")))))
 
 (defmacro borg-silencio (regexp &rest body)
   "Execute the forms in BODY while silencing messages that don't match REGEXP."

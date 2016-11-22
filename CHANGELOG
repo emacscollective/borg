@@ -2,6 +2,9 @@
 
 * v1.0.0    unreleased
 
+- ~borg-drones~ learned to optionally return drone variables instead
+  of just the drone names.
+
 - ~borg-uninstall~ was broken.
 
 - Cosmetic and other minor improvements.
