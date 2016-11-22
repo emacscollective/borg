@@ -1,10 +1,16 @@
 # -*- mode: org -*-
 
+* v1.0.0    unreleased
+
+- Cosmetic and other minor improvements.
+
+- Minor bug fixes and typo fixes.
+
 * v0.2.0    2016/11/05
 
 - Repository moved to https://gitlab.com/emacscollective/borg.
 
-- Updated manual and made made source compatible with Org v9.0.
+- Updated manual and made source compatible with Org v9.0.
 
 - Improved and extended ~make~ targets.
 
