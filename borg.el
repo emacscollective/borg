@@ -50,6 +50,10 @@ The value of this variable is usually the same as that of
 `user-emacs-directory', except when Emacs is started with
 `emacs -q -l /path/to/init.el'.")
 
+(defconst borg-gitmodules-file
+  (expand-file-name ".gitmodules" borg-user-emacs-directory)
+  "The \".gitmodules\" file of the drone repository.")
+
 (defun borg-repository (drone)
   "Return the top-level of the working tree of the submodule named DRONE."
   (expand-file-name drone borg-drone-directory))
@@ -58,8 +62,7 @@ The value of this variable is usually the same as that of
   "Return the value of `submodule.DRONE.VARIABLE' in `~/.emacs.d/.gitmodules'.
 If optional ALL is non-nil, then return all values as a list."
   (ignore-errors
-    (apply #'process-lines "git" "config" "--file"
-           (expand-file-name ".gitmodules" borg-user-emacs-directory)
+    (apply #'process-lines "git" "config" "--file" borg-gitmodules-file
            (nconc (and all (list "--get-all"))
                   (list (concat "submodule." drone "." variable))))))
 
@@ -105,9 +108,7 @@ directories containing a file named \"dir\"."
    (lambda (line)
      (and (string-match "\\`submodule\\.[^./]+\\.path=lib/\\(.+\\)" line)
           (list (match-string 1 line))))
-   (sort (process-lines "git" "config" "--list" "--file"
-                        (expand-file-name ".gitmodules"
-                                          borg-user-emacs-directory))
+   (sort (process-lines "git" "config" "--list" "--file" borg-gitmodules-file)
          #'string<)))
 
 (defmacro borg-silencio (regexp &rest body)

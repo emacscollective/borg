@@ -310,6 +310,11 @@ To use them you have to be in ~~/.emacs.d~ in a shell.
   value is usually the same as that of ~user-emacs-directory~, except
   when Emacs is started with ~emacs -q -l /path/to/init.el~.
 
+- Variable: borg-gitmodules-file
+
+  The value of this constant is the \".gitmodules\" file of the drone
+  repository.
+
 * Git variables
 
 The values of all Git variables describe here have to be set in the
