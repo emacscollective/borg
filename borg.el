@@ -175,10 +175,12 @@ is `true', then the drone named DRONE is skipped."
   (info-initialize)
   (let ((start (current-time))
         (drones (borg-drones))
-        (skipped nil))
+        (skipped 0)
+        (initialized 0))
     (dolist (drone drones)
       (if (equal (borg-get drone "disabled") "true")
-          (push drone skipped)
+          (cl-incf skipped)
+        (cl-incf initialized)
         (dolist (dir (borg-load-path drone))
           (let (file)
             (cond ((and (file-exists-p
@@ -196,9 +198,9 @@ is `true', then the drone named DRONE is skipped."
         (dolist (dir (borg-info-path drone))
           (push  dir Info-directory-list))))
     (message "Initializing drones...done (%s drones in %.3fs%s)"
-             (length drones)
+             initialized
              (float-time (time-subtract (current-time) start))
-             (if skipped
+             (if (> skipped 0)
                  (format ", %d skipped" (length skipped))
                ""))))
 
