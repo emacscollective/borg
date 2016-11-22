@@ -372,7 +372,7 @@ variables you can tell Borg how to build such packages.
             ...
   #+END_SRC
 
-- Variable: submodule.DRONE.no-compile PATH
+- Variable: submodule.DRONE.no-byte-compile PATH
 
   This variable instructs ~borg-byte-compile~ to not compile the library
   at PATH.  PATH has to be relative to the top-level of the repository

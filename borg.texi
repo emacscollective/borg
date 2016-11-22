@@ -442,7 +442,7 @@ locaction.
 @end example
 @end defvar
 
-@defvar submodule.DRONE.no-compile PATH
+@defvar submodule.DRONE.no-byte-compile PATH
 
 This variable instructs @code{borg-byte-compile} to not compile the library
 at PATH.  PATH has to be relative to the top-level of the repository
