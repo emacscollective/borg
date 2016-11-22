@@ -62,6 +62,8 @@ The value of this variable is usually the same as that of
   "Return the value of `submodule.DRONE.VARIABLE' in `~/.emacs.d/.gitmodules'.
 If optional ALL is non-nil, then return all values as a list."
   (ignore-errors
+    ;; If the variable has no value then the exit code is non-zero,
+    ;; but that isn't an error as far as we are concerned.
     (apply #'process-lines "git" "config" "--file" borg-gitmodules-file
            (nconc (and all (list "--get-all"))
                   (list (concat "submodule." drone "." variable))))))
