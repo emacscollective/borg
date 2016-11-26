@@ -54,7 +54,7 @@ pdf:  $(PKG).pdf
 %.texi: %.org
 	@printf "Generating $@\n"
 	@$(EMACS) -Q --batch $(OFLAGS) \
-	-l ox-texinfo+.el $< -f org-texinfo+export-to-texinfo
+	-l ox-texinfo+.el $< -f org-texinfo-export-to-texinfo
 	@printf "\n" >> $@
 	@sed -i -e '/^@title /a@subtitle for version $(VERSION)' $@
 	@rm -f $@~
