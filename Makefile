@@ -14,7 +14,7 @@ OFLAGS ?= -L ../dash -L ../org/lisp -L ../ox-texinfo+
 
 INSTALL_INFO     ?= $(shell command -v ginstall-info || printf install-info)
 MAKEINFO         ?= makeinfo
-MANUAL_HTML_ARGS ?= --css-ref /the.css
+MANUAL_HTML_ARGS ?= --css-ref /assets/the.css
 
 VERSION := $(shell test -e .git && \
 	git tag | cut -c2- | sort --version-sort | tail -1)
