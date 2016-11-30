@@ -2,6 +2,8 @@
 
 * v1.0.0    unreleased
 
+- Repository moved to https://github.com/emacscollective/borg.
+
 - ~borg-initialize~ now uses a cache to avoid calling ~git config~
   excessively.  On Windows this significantly improves performance.
 

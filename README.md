@@ -12,10 +12,10 @@ submodules.  An assimilated package is called a drone and a borg-based
 *For more information see the [announcement][init] and the [manual].*
 
 [init]:    https://emacsair.me/2016/05/17/assimilate-emacs-packages-as-git-submodules
-[repo]:    https://gitlab.com/emacscollective/borg
+[repo]:    https://github.com/emacscollective/borg
 [manual]:  https://emacsmirror.net/manual/borg
 
 [`auto-compile`]: https://github.com/tarsius/auto-compile
-[`epkg`]:         https://gitlab.com/emacscollective/epkg
+[`epkg`]:         https://github.com/emacscollective/epkg
 [`use-package`]:  https://github.com/jwiegley/use-package
 [magit]:          https://github.com/magit/magit
