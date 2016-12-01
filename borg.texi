@@ -121,9 +121,9 @@ This function initializes all assimilated drone modules.  For each
 drone module this adds the appropriate directories to the @code{load-path}
 and @code{Info-directory-list}, and loads the autoloads file if it exits.
 
-To skip these steps for a drone named DRONE, temporarily disabled it
+To skip these steps for a drone named DRONE, temporarily disable it
 by setting the value of the Git variable @code{submodule.DRONE.disabled} to
-@code{true} in @code{~/.emacs.d/.gitsubmodules}.
+@code{true} in @code{~/.emacs.d/.gitmodules}.
 @end defun
 
 @node Assimilation
@@ -134,9 +134,9 @@ if necessary, by configuring it in @code{~/.emacs.d/init.el}.  Built-in
 packages are assimilated merely by configuring them.
 
 To begin the assimilation of a third-party package use the command
-@code{borg-assimilate}, which adds the package's repository as a submodule,
-and attempts to build the drone.  Building the drone can fail,
-e.g. due to missing dependencies.  Failure to build a drone is not
+@code{borg-assimilate}, which adds the package's repository as a submodule
+and attempts to build the drone.  Building the drone can fail, for
+example due to missing dependencies.  Failure to build a drone is not
 considered as a failure to assimilate.
 
 If building a drone fails, then a buffer with information about the
@@ -205,12 +205,12 @@ This command uninstalls the drone named DRONE.
 @cindex borg-build drone
 @deffn Command borg-build drone
 
-This function builds the drone named DRONE.
+This command builds the drone named DRONE.
 @end deffn
 
 @defun borg-update-autoloads drone path
 
-This function updates the autoload files for the drone named DRONE
+This function updates the autoload file for the drone named DRONE
 in the directories in PATH.
 @end defun
 
@@ -236,8 +236,8 @@ This function is not intended for interactive use, but used to
 implement the @code{make} targets described in the following section.
 
 When optional QUICK is non-nil, then do not build drones for which
-@code{gitmodule.DRONE.build} is set, assuming those are the drones that
-take longer to be build.
+@code{submodule.DRONE.build} is set, assuming that those are the drones
+that take longer to be build.
 @end defun
 
 @defun borg-batch-rebuild-init
@@ -268,7 +268,7 @@ the status buffer of @code{~/.emacs.d} press @code{q}.
 
 Inside the status buffer of a submodule, you can pull the upstream
 changes as usual, using @code{F u}.  If you wish you can inspect the changes
-before doing so, and you can also choose to check out another commit,
+before doing so.  And you can also choose to check out another commit
 instead of the upstream @code{HEAD}.
 
 Once you have "updated" to a new commit, you should also rebuild the
@@ -380,8 +380,8 @@ when Emacs is started with @code{emacs -q -l /path/to/init.el}.
 
 @defvar borg-gitmodules-file
 
-The value of this constant is the \".gitmodules\" file of the drone
-repository.
+The value of this constant is the ".gitmodules" file of the
+super-repository.
 @end defvar
 
 @node Git variables
@@ -410,9 +410,9 @@ S-expression.  This variable can be specified multiple times.
 
 @example
 [submodule "mu4e"]
-	build-step = make -C mu4e > /dev/null
-	build-step = "(borg-update-autoloads \"mu4e\" (list (expand-file-name \"mu4e\")))"
-	...
+	   build-step = make -C mu4e > /dev/null
+	   build-step = "(borg-update-autoloads \"mu4e\" (list (expand-file-name \"mu4e\")))"
+	   ...
 @end example
 
 If this variable is set, then all default steps are skipped.
@@ -443,9 +443,9 @@ locaction.
 
 @example
 [submodule "org"]
-	load-path = lisp
-	load-path = contrib/lisp
-	...
+	   load-path = lisp
+	   load-path = contrib/lisp
+	   ...
 @end example
 @end defvar
 
@@ -461,7 +461,7 @@ for some other third-party package, which you don't want to use.
 For example @code{emacsql} comes with a PostgreSQL back-end, which is
 implemented in the library @code{emacsql-pg.el}, which requires the @code{pg}
 package.  The standard Borg collective @code{emacs.g} assimilates @code{emacsql},
-for the sake of the @code{epkg} drone, which only requires the SqLite
+for the sake of the @code{epkg} drone, which only requires the SQLite
 back-end.  To avoid an error about @code{pg} not being available, @code{emacs.g}
 instructs Borg to not compile @code{emacsql-pg.el}.  (Of course if you want
 to use the PostgreSQL back-end and assimilate @code{pg}, then you should
@@ -469,8 +469,8 @@ undo that.)
 
 @example
 [submodule "emacsql"]
-	no-byte-compile = emacsql-pg.el
-	...
+	   no-byte-compile = emacsql-pg.el
+	   ...
 @end example
 @end defvar
 
@@ -514,7 +514,7 @@ optional ALL is non-nil, then it returns all values as a list.
 @defun borg-get-all drone variable
 
 This function returns all values of the Git variable
-@code{submodule.DRONE.VARIABLE} define in @code{~/.emacs.d/.gitmodules} as a
+@code{submodule.DRONE.VARIABLE} defined in @code{~/.emacs.d/.gitmodules} as a
 list.
 @end defun
 
@@ -533,7 +533,7 @@ containing @code{texi} and/or @code{info} files.  Otherwise it returns a list of
 directories containing a file named @code{dir}.
 @end defun
 
-@defun borg-drones
+@defun borg-drones &optional include-variables
 
 This function returns a list of all assimilated drones.
 
@@ -543,7 +543,7 @@ case elements of the returned list have the form @code{(NAME . PLIST)}.
 
 PLIST is a list of paired elements.  Property names are symbols
 and correspond to a VARIABLE defined in the Borg repository's
-".gitmodules" file as "submodule.NAME.VARIABLE".
+@code{.gitmodules} file as @code{submodule.NAME.VARIABLE}.
 
 Each property value is either a string or a list of strings.  If
 INCLUDE-VARIABLES is @code{raw} then all values are lists.  Otherwise a

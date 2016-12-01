@@ -84,9 +84,9 @@ unless you really want to use both ~borg~ and ~package~ at the same time.
   drone module this adds the appropriate directories to the ~load-path~
   and ~Info-directory-list~, and loads the autoloads file if it exits.
 
-  To skip these steps for a drone named DRONE, temporarily disabled it
+  To skip these steps for a drone named DRONE, temporarily disable it
   by setting the value of the Git variable ~submodule.DRONE.disabled~ to
-  ~true~ in ~~/.emacs.d/.gitsubmodules~.
+  ~true~ in ~~/.emacs.d/.gitmodules~.
 
 * Assimilation
 
@@ -95,9 +95,9 @@ if necessary, by configuring it in ~~/.emacs.d/init.el~.  Built-in
 packages are assimilated merely by configuring them.
 
 To begin the assimilation of a third-party package use the command
-~borg-assimilate~, which adds the package's repository as a submodule,
-and attempts to build the drone.  Building the drone can fail,
-e.g. due to missing dependencies.  Failure to build a drone is not
+~borg-assimilate~, which adds the package's repository as a submodule
+and attempts to build the drone.  Building the drone can fail, for
+example due to missing dependencies.  Failure to build a drone is not
 considered as a failure to assimilate.
 
 If building a drone fails, then a buffer with information about the
@@ -161,11 +161,11 @@ Magit status buffer of the ~~/.emacs.d~ repository.
 
 - Command: borg-build drone
 
-  This function builds the drone named DRONE.
+  This command builds the drone named DRONE.
 
 - Function: borg-update-autoloads drone path
 
-  This function updates the autoload files for the drone named DRONE
+  This function updates the autoload file for the drone named DRONE
   in the directories in PATH.
 
 - Function: borg-byte-compile drone path
@@ -188,8 +188,8 @@ Magit status buffer of the ~~/.emacs.d~ repository.
   implement the ~make~ targets described in the following section.
 
   When optional QUICK is non-nil, then do not build drones for which
-  ~gitmodule.DRONE.build~ is set, assuming those are the drones that
-  take longer to be build.
+  ~submodule.DRONE.build~ is set, assuming that those are the drones
+  that take longer to be build.
 
 - Function: borg-batch-rebuild-init
 
@@ -217,7 +217,7 @@ the status buffer of ~~/.emacs.d~ press ~q~.
 
 Inside the status buffer of a submodule, you can pull the upstream
 changes as usual, using ~F u~.  If you wish you can inspect the changes
-before doing so, and you can also choose to check out another commit,
+before doing so.  And you can also choose to check out another commit
 instead of the upstream ~HEAD~.
 
 Once you have "updated" to a new commit, you should also rebuild the
@@ -314,8 +314,8 @@ To use them you have to be in ~~/.emacs.d~ in a shell.
 
 - Variable: borg-gitmodules-file
 
-  The value of this constant is the \".gitmodules\" file of the drone
-  repository.
+  The value of this constant is the ".gitmodules" file of the
+  super-repository.
 
 * Git variables
 
@@ -342,9 +342,9 @@ variables you can tell Borg how to build such packages.
 
   #+BEGIN_SRC undefined
     [submodule "mu4e"]
-            build-step = make -C mu4e > /dev/null
-            build-step = "(borg-update-autoloads \"mu4e\" (list (expand-file-name \"mu4e\")))"
-            ...
+               build-step = make -C mu4e > /dev/null
+               build-step = "(borg-update-autoloads \"mu4e\" (list (expand-file-name \"mu4e\")))"
+               ...
   #+END_SRC
 
   If this variable is set, then all default steps are skipped.
@@ -374,9 +374,9 @@ variables you can tell Borg how to build such packages.
 
   #+BEGIN_SRC undefined
     [submodule "org"]
-            load-path = lisp
-            load-path = contrib/lisp
-            ...
+               load-path = lisp
+               load-path = contrib/lisp
+               ...
   #+END_SRC
 
 - Variable: submodule.DRONE.no-byte-compile PATH
@@ -391,7 +391,7 @@ variables you can tell Borg how to build such packages.
   For example ~emacsql~ comes with a PostgreSQL back-end, which is
   implemented in the library ~emacsql-pg.el~, which requires the ~pg~
   package.  The standard Borg collective ~emacs.g~ assimilates ~emacsql~,
-  for the sake of the ~epkg~ drone, which only requires the SqLite
+  for the sake of the ~epkg~ drone, which only requires the SQLite
   back-end.  To avoid an error about ~pg~ not being available, ~emacs.g~
   instructs Borg to not compile ~emacsql-pg.el~.  (Of course if you want
   to use the PostgreSQL back-end and assimilate ~pg~, then you should
@@ -399,8 +399,8 @@ variables you can tell Borg how to build such packages.
 
   #+BEGIN_SRC undefined
     [submodule "emacsql"]
-            no-byte-compile = emacsql-pg.el
-            ...
+               no-byte-compile = emacsql-pg.el
+               ...
   #+END_SRC
 
 - Variable: submodule.DRONE.info-path PATH
@@ -437,7 +437,7 @@ variables you can tell Borg how to build such packages.
 - Function: borg-get-all drone variable
 
   This function returns all values of the Git variable
-  ~submodule.DRONE.VARIABLE~ define in ~~/.emacs.d/.gitmodules~ as a
+  ~submodule.DRONE.VARIABLE~ defined in ~~/.emacs.d/.gitmodules~ as a
   list.
 
 - Function: borg-load-path drone
@@ -453,7 +453,7 @@ variables you can tell Borg how to build such packages.
   containing ~texi~ and/or ~info~ files.  Otherwise it returns a list of
   directories containing a file named ~dir~.
 
-- Function: borg-drones
+- Function: borg-drones &optional include-variables
 
   This function returns a list of all assimilated drones.
 
@@ -463,7 +463,7 @@ variables you can tell Borg how to build such packages.
 
   PLIST is a list of paired elements.  Property names are symbols
   and correspond to a VARIABLE defined in the Borg repository's
-  ".gitmodules" file as "submodule.NAME.VARIABLE".
+  ~.gitmodules~ file as ~submodule.NAME.VARIABLE~.
 
   Each property value is either a string or a list of strings.  If
   INCLUDE-VARIABLES is ~raw~ then all values are lists.  Otherwise a
