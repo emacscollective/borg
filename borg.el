@@ -334,8 +334,9 @@ This function is to be used only with `--batch'."
       (when buf
         (kill-buffer buf)))))
 
-(defun borg-byte-compile (drone path)
+(defun borg-byte-compile (drone &optional path)
   "Compile libraries for the drone named DRONE in the directories in PATH."
+  (setq path (borg--expand-load-path drone path))
   (let ((exclude (borg-get-all drone "no-byte-compile"))
         (topdir (borg-repository drone)))
     (dolist (dir path)

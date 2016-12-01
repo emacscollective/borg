@@ -217,10 +217,11 @@ omitted or contain file-names that are relative to the top-level of
 DRONE's repository.
 @end defun
 
-@defun borg-byte-compile drone path
+@defun borg-byte-compile drone &optional path
 
 This function compiles the libraries for the drone named DRONE in
-the directories in PATH.
+the directories in PATH.  PATH can be omitted or contain file-names
+that are relative to the top-level of DRONE's repository.
 @end defun
 
 @defun borg-makeinfo drone
