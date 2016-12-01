@@ -10,6 +10,8 @@
 - ~borg-drones~ learned to optionally return drone variables instead
   of just the drone names.
 
+- ~borg-update-autoloads~ now doesn't require the PATH argument.
+
 - ~borg-uninstall~ was broken.
 
 - The manual was updated heavily.

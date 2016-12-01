@@ -166,10 +166,12 @@ Magit status buffer of the ~~/.emacs.d~ repository.
 
   This command builds the drone named DRONE.
 
-- Function: borg-update-autoloads drone path
+- Function: borg-update-autoloads drone &optional path
 
-  This function updates the autoload file for the drone named DRONE
-  in the directories in PATH.
+  This function updates the autoload file for the libraries belonging
+  to the drone named DRONE in the directories in PATH.  PATH can be
+  omitted or contain file-names that are relative to the top-level of
+  DRONE's repository.
 
 - Function: borg-byte-compile drone path
 
@@ -417,7 +419,7 @@ variables you can tell Borg how to build such packages.
   #+BEGIN_SRC undefined
     [submodule "mu4e"]
                build-step = make -C mu4e > /dev/null
-               build-step = "(borg-update-autoloads \"mu4e\" (list (expand-file-name \"mu4e\")))"
+               build-step = "(borg-update-autoloads \"mu4e\" (list \"mu4e\"))"
                ...
   #+END_SRC
 
@@ -556,6 +558,7 @@ internal and might therefore change in incompatible ways without that
 being noted in the changelog.
 
 - Function: borg--call-git drone &rest args
+- Function: borg--expand-load-path drone path
 - Function: borg--sort-submodule-sections
 
 # Local Variables:

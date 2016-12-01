@@ -305,8 +305,9 @@ This function is to be used only with `--batch'."
 ;;;\
  %s ends here\n")
 
-(defun borg-update-autoloads (drone path)
+(defun borg-update-autoloads (drone &optional path)
   "Update autoload files for the drone named DRONE in the directories in PATH."
+  (setq path (borg--expand-load-path drone path))
   (let ((autoload-excludes
          (nconc (mapcar #'expand-file-name
                         (borg-get-all drone "no-byte-compile"))
@@ -457,6 +458,12 @@ With a prefix argument pass \"--force\" to \"git submodule\"."
         (kill-buffer buffer)
       (pop-to-buffer buffer)
       (error "Git failed"))))
+
+(defun borg--expand-load-path (drone path)
+  (let ((default-directory (borg-repository drone)))
+    (mapcar (lambda (p)
+              (file-name-as-directory (expand-file-name p)))
+            (or path (borg-load-path drone)))))
 
 (defun borg--sort-submodule-sections (file)
   (with-current-buffer (or (find-buffer-visiting file)
