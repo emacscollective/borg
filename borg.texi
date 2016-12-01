@@ -490,9 +490,13 @@ COMMANDs are executed in the specified order.
 
 @example
 [submodule "mu4e"]
+	   path = lib/mu4e
+	   url = git@@github.com:djcb/mu.git
+	   build-step = test -e ./configure || autoreconf -i
+	   build-step = ./configure
 	   build-step = make -C mu4e > /dev/null
-	   build-step = "(borg-update-autoloads \"mu4e\" (list \"mu4e\"))"
-	   ...
+	   build-step = "(borg-update-autoloads \"mu4e\")"
+	   load-path = mu4e
 @end example
 
 If this variable is set, then all default steps are skipped.
@@ -523,9 +527,12 @@ locaction.
 
 @example
 [submodule "org"]
+	   path = lib/org
+	   url = git://orgmode.org/org-mode.git
+	   build-step = make
 	   load-path = lisp
 	   load-path = contrib/lisp
-	   ...
+	   info-path = doc
 @end example
 @end defvar
 
@@ -546,12 +553,6 @@ back-end.  To avoid an error about @code{pg} not being available, @code{emacs.g}
 instructs Borg to not compile @code{emacsql-pg.el}.  (Of course if you want
 to use the PostgreSQL back-end and assimilate @code{pg}, then you should
 undo that.)
-
-@example
-[submodule "emacsql"]
-	   no-byte-compile = emacsql-pg.el
-	   ...
-@end example
 @end defvar
 
 @defvar submodule.DRONE.info-path PATH
