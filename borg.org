@@ -419,13 +419,13 @@ variables you can tell Borg how to build such packages.
 
   #+BEGIN_SRC undefined
     [submodule "mu4e"]
-               path = lib/mu4e
-               url = git@github.com:djcb/mu.git
-               build-step = test -e ./configure || autoreconf -i
-               build-step = ./configure
-               build-step = make -C mu4e > /dev/null
-               build-step = "(borg-update-autoloads \"mu4e\")"
-               load-path = mu4e
+            path = lib/mu4e
+            url = git@github.com:djcb/mu.git
+            build-step = test -e ./configure || autoreconf -i
+            build-step = ./configure
+            build-step = make -C mu4e > /dev/null
+            build-step = "(borg-update-autoloads \"mu4e\")"
+            load-path = mu4e
   #+END_SRC
 
   If this variable is set, then all default steps are skipped.
@@ -455,12 +455,12 @@ variables you can tell Borg how to build such packages.
 
   #+BEGIN_SRC undefined
     [submodule "org"]
-               path = lib/org
-               url = git://orgmode.org/org-mode.git
-               build-step = make
-               load-path = lisp
-               load-path = contrib/lisp
-               info-path = doc
+            path = lib/org
+            url = git://orgmode.org/org-mode.git
+            build-step = make
+            load-path = lisp
+            load-path = contrib/lisp
+            info-path = doc
   #+END_SRC
 
 - Variable: submodule.DRONE.no-byte-compile PATH
