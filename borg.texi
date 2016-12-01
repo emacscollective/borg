@@ -292,7 +292,7 @@ Update foo to v1.1.0
 Or for multiple packages:
 
 @example
-Update drones
+Update 2 drones
 
 Update foo to v1.1.0
 Update bar to v1.2.1
