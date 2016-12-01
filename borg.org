@@ -250,25 +250,52 @@ To update the Epkg package database use the command ~epkg-update~.
 
 * Patching drones
 
-A major reason for using Borg is that you can easily make changes to
-the assimilated packages.
+By using Borg you can not only make changes to assimilated packages,
+you can also keep track of those patches and share them with others.
 
-Once you have create a commit or multiple related commits you should
-usually record these changes in the ~~/.emacs.d~ repository.  Like
-when you update a drone by pulling from the upstream repository, you
-should do so by creating a "Update DRONE to VERSION" commit.  You
-should usually delay the creation of such a commit until the changes
-in the drone submodule are "finished".
+If you created some commits in a drone repository and are the
+maintainer of the respective package, then you can just push your
+changes to the "origin" remote.  You don't have to do this every time
+you created some commits, but at important checkpoints, such as after
+creating a release, you should record the changes in the ~~/.emacs.d~
+repository.  To do so proceed as described in [[*Updating drones]].
 
-If your ~~/.emacs.d~ repository is publically available, then you
-should extend the commit message to inform others that the submodule,
-as present in your configuration, requires commits that are not
-available from the upstream repository:
+But for most packages you are not the maintainer and if you create
+commits for such drones, then you have to create a fork and push there
+instead.  You should configure that remote as the push-remote using
+~git config remote.pushDefault FORK~, or pressing ~b C M-p~ in Magit.
+After you have done that you can continue to pull from the upstream
+using ~P u~ in Magit and you can also push to your fork using ~P p~.
 
-#+BEGIN_SRC undefined
-  Update DRONE to VERSION
-    from URL-OF-PUBLIC-REPO
-#+END_SRC
+Of course you should also occasionally record the changes in the
+~~/.emacs.d~ repository.  Additionally, and ideally when you first
+fork a drone, you should also record information about your personal
+remote in the super-repository by setting ~submodule.DRONE.remote~ in
+~~/.emacs.d/.gitmodules~.
+
+- Variable: submodule.DRONE.remote "NAME URL"
+
+  This variable specifies an additional remote named NAME that is
+  fetched from URL.  This variable can be specified multiple times.
+  Note that "NAME URL" is a single value and that the two parts of
+  that value are separated by a single space.
+
+  ~make bootstrap~ automatically adds all remotes that are specified
+  like this to the DRONE repository by setting ~remote.NAME.url~ to
+  URL and using the standard value for ~remote.NAME.fetch~.
+
+- Variable: borg.pushDefault = FORK
+
+  This variable specifies a name used for push-remotes.  Because this
+  variable can only have one value it is recommended that you use the
+  same name, FORK, for your personal remote in all drone repositories
+  in which you have created patches that haven't been merged into the
+  upstream repository (yet).  A good value may be your username.
+
+  For all DRONES for which one value of ~submodule.DRONE.remote~
+  specifies a remote whose NAME matches FORK, ~make bootstrap~
+  automatically configures FORK to be used as the push-remote by
+  setting ~remote.pushDefault~ to FORK.
 
 * Make targets
 
@@ -352,8 +379,21 @@ not be changed by the user.
 
 * Git variables
 
-The values of all Git variables describe here have to be set in the
-file ~~/.emacs.d/.gitmodules~.
+The values of the borg-specific Git variables have to be set in the
+file ~~/.emacs.d/.gitmodules~.  The variables ~borg.pushDefault~ and
+~submodule.DRONE.remote~ are described in [[*Patching drones]].
+
+- Variable: borg.collective = REMOTE
+
+  This variable specifies the name used for remotes that reference
+  a repository that has been patched by the collective.  If a NAME
+  matches REMOTE, then it is configured as the upstream of the
+  current branch of the respective DRONE.
+
+  If the file ".hive-maint" exists, then this variable has the same
+  effect as "borg.pushDefault".  This special case is only useful for
+  maintainers of the collective (but not for maintainers of
+  individual drones).
 
 Because most repositories used to maintain Emacs packages follow some
 common-sense conventions, Borg usually does not have to be told how to
