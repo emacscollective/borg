@@ -51,7 +51,7 @@ General Public License for more details.
 
 @menu
 * Introduction::
-* Getting started::
+* Installation::
 * Startup::
 * Assimilation::
 * Updating drones::
@@ -59,7 +59,7 @@ General Public License for more details.
 * Make targets::
 * Lisp variables::
 * Git variables::
-* Internal functions::
+* Low-level functions::
 @end menu
 
 
@@ -77,19 +77,18 @@ Borg assimilates packages into the @code{~/.emacs.d} repository as Git
 submodules.  An assimilated package is called a drone and a borg-based
 @code{~/.emacs.d} repository is called a collective.
 
-@node Getting started
-@chapter Getting started
+To learn more about this project, also read the blog post @footnote{@uref{https://emacsair.me/2016/05/17/assimilate-emacs-packages-as-git-submodules}.} in
+which it was announced.
 
-To get started clone one of the available collectives to @code{~/.emacs.d}.
-Several different collectives are (or will become) available.  In this
-manual we assume the use of the @code{emacs.g} collective, which already
-assimilated a few drones in addition to @code{borg} itself, namely @code{magit},
-@code{epkg}, @code{use-package}, @code{auto-compile}, @code{git-modes}, @code{diff-hl}, and their
-dependencies.  These drones are not required by @code{borg} but their use is
-highly recommended.
+@node Installation
+@chapter Installation
 
-Alternatively you can use the @code{bootstrap} collective which contains only
-the essentials: the @code{borg} drone, a @code{Makefile}, and a very basic @code{init.el}.
+To get started clone the @code{emacs.g} collective to @code{~/.emacs.d}.
+Currently this is the only available collective and in this manual
+we assume the use that.  This collective already assimilated a few
+drones in addition to @code{borg} itself, namely @code{magit}, @code{epkg}, @code{use-package},
+@code{auto-compile}, @code{git-modes}, @code{diff-hl}, and their dependencies.  These
+drones are not required by @code{borg} but their use is highly recommended.
 
 The @code{emacs.g} collective is available from three different locations:
 
@@ -106,7 +105,9 @@ The @code{emacs.g} collective is available from three different locations:
 
 Clone the repository from your prefered url to either @code{~/.emacs.d}, or
 for testing purposes to any other location.  Then fetch and build the
-assimilated drones using @code{make bootstrap}.
+assimilated drones using @code{make bootstrap}.  If you cloned to somewhere
+other than @code{~/.emacs.d}, then you can use that configuration using
+@code{emacs -Q --load /path/to/emacs.g/init.elc}.
 
 @node Startup
 @chapter Startup
@@ -335,6 +336,9 @@ This target prints information about the following targets.
 @deffn Command make build
 
 This target builds all drones.
+
+It also builds @code{init.el} and @code{USER-REAL-LOGIN-NAME.el}, if that exists.
+Also see @code{make build-init} below.
 @end deffn
 
 @cindex make quick
@@ -343,6 +347,9 @@ This target builds all drones.
 This target builds @emph{most} drones.  Excluded are all drones for which
 the Git variable @code{submodule.DRONE.build} is set, assuming that those
 are the drones that take longer to build.
+
+It also builds @code{init.el} and @code{USER-REAL-LOGIN-NAME.el}, if that exists.
+Also see @code{make build-init} below.
 @end deffn
 
 @cindex make lib/DRONE
@@ -351,16 +358,42 @@ are the drones that take longer to build.
 This target builds the drone named DRONE.
 @end deffn
 
+@cindex make build-init
+@deffn Command make build-init
+
+This target builds @code{init.el} and @code{USER-REAL-LOGIN-NAME.el}, if that
+exists.
+
+If you publish your @code{~/.emacs.d} repository but would like to keep
+some settings private, then you can do so by putting these in a file
+@code{~/.emacs.d/FILE-NAME.el}.  If FILE-NAME matches the value of the
+variable @code{user-real-login-name}, then the @code{init.el} of the emacs.g
+collective automatically loads it.  The downside of this approach
+is that you will have to somehow synchronize that file between your
+machines without checking it into Git.
+@end deffn
+
 @cindex make bootstrap
 @deffn Command make bootstrap
 
-This target attempts to bootstrap the drones.  Due to limitations of
-@code{git submodules} it is recommended that you don't use this target and
-instead proceed as described in @ref{Getting started,Getting started}.
+This target attempts to bootstrap the drones.  To do so it runs
+@code{git submodule init}, @code{bin/bootstrap} (which see), and @code{make build}.
+
+If an error occurs during the @code{bin/bootstrap} phase, then you can just
+run that command again to process the remaining drones.  The drone
+that have already been bootstrapped or that have previously failed
+will be skipped.  If a drone cannot be cloned from any of the known
+remotes, then you should temporarily remove it using @code{git submodule
+  deinit lib/DRONE}.  When done with @code{bin/bootstrap} also manually run
+@code{make build} again.
 @end deffn
 
 @node Lisp variables
 @chapter Lisp variables
+
+Borg doesn't have any user options or other configuration variables.
+The values of the following variables are set at startup and should
+not be changed by the user.
 
 @defvar borg-drone-directory
 
@@ -406,7 +439,8 @@ variables you can tell Borg how to build such packages.
 This variable instructs @code{borg-build} to build the drone named DRONE
 using COMMAND instead of @code{borg-update-autoloads}, @code{borg-byte-compile},
 and @code{borg-makeinfo}.  COMMAND can be a shell command or an Emacs lisp
-S-expression.  This variable can be specified multiple times.
+S-expression.  This variable can be specified multiple times.  The
+COMMANDs are executed in the specified order.
 
 @example
 [submodule "mu4e"]
@@ -495,8 +529,12 @@ If the value of this variable is @code{true}, then it is skipped by
 @code{borg-initialize}.
 @end defvar
 
-@node Internal functions
-@chapter Internal functions
+@node Low-level functions
+@chapter Low-level functions
+
+You normally should not have to use the following low-level functions
+directly.  That being said, you might want to do so anyway if you
+build your own tools on top of Borg.
 
 @defun borg-repository drone
 
@@ -552,6 +590,15 @@ a member of @code{borg--multi-value-variables}.  If a property name isn't
 a member of @code{borg--multi-value-variables} but it does have multiple
 values anyway, then it is undefined with value is included in the
 returned value.
+@end defun
+
+There exist a few more functions, but those are considered to be
+internal and might therefore change in incompatible ways without that
+being noted in the changelog.
+
+@defun borg--call-git drone &rest args
+@end defun
+@defun borg--sort-submodule-sections
 @end defun
 
 @bye
