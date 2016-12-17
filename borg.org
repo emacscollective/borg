@@ -75,6 +75,16 @@ assimilated drones using ~make bootstrap~.  If you cloned to somewhere
 other than ~~/.emacs.d~, then you can use that configuration using
 ~emacs -Q --load /path/to/emacs.g/init.elc~.
 
+For drones whose upstreams are on Github or Gitlab the ~emacs.g~
+collective uses the ~ssh~ protocol by default, which is a problem if you
+don't have accounts there and have properly setup your keys.  Luckily
+this can easily be fixed using:
+
+#+BEGIN_SRC emacs-lisp
+  git config --global url.https://github.com/.insteadOf git@github.com:
+  git config --global url.https://gitlab.com/.insteadOf git@gitlab.com:
+#+END_SRC
+
 * Startup
 
 The ~user-init-file~, ~~/.emacs.d/init.el~, has to contain a call to
