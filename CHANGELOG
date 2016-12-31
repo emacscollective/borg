@@ -1,8 +1,15 @@
 # -*- mode: org -*-
 
-* v1.0.0    unreleased
+* v1.0.0    2016/12/31
 
 - Repository moved to https://github.com/emacscollective/borg.
+
+- The ~~/.emacs.d/bin/borg-bootstrap~ script can now add additional
+  remotes.  That script is part of the repository of the ~emacs.g~
+  collective.  It cannot be part of the ~borg~ repository, because it
+  is has to be available before the ~borg~ repository and all the other
+  drone/submodule repositories are cloned.  But the documentation
+  about this script can be found in the ~borg~ manual.
 
 - ~borg-initialize~ now uses a cache to avoid calling ~git config~
   excessively.  On Windows this significantly improves performance.
