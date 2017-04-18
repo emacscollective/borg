@@ -610,6 +610,16 @@ This function returns the top-level of the working tree of the
 submodule named DRONE.
 @end defun
 
+@defun borg-gitdir clone
+
+This function returns the Git directory of the package named
+CLONE.
+
+It always returns @code{<borg-user-emacs-directory>/.git/modules/<CLONE>},
+even when this repository's Git directory is actually located inside
+the working tree.
+@end defun
+
 @defun borg-get drone variable &optional all
 
 This function returns the value of the Git variable

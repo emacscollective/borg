@@ -71,6 +71,20 @@ The value of this variable is usually the same as that of
   "Return the top-level of the working tree of the submodule named DRONE."
   (expand-file-name drone borg-drone-directory))
 
+(defun borg-gitdir (clone)
+  "Return the Git directory of the package named CLONE.
+
+Always return `<borg-user-emacs-directory>/.git/modules/<CLONE>',
+even when this repository's Git directory is actually located
+inside the working tree."
+  (let* ((default-directory borg-user-emacs-directory)
+         (super (car (process-lines "git" "rev-parse" "--git-dir"))))
+    (if super
+        ;; Do not append a slash because of a Git bug;
+        ;; git clone --separate-git-dir=GITDIR/ fails.
+        (expand-file-name (concat super "/modules/" clone))
+      (error "Cannot locate super-repository"))))
+
 (defvar borg--gitmodule-cache nil)
 
 (defun borg-get (drone variable &optional all)
