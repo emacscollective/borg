@@ -67,9 +67,9 @@ The value of this variable is usually the same as that of
 
 ;;; Utilities
 
-(defun borg-repository (drone)
-  "Return the top-level of the working tree of the submodule named DRONE."
-  (expand-file-name drone borg-drone-directory))
+(defun borg-worktree (clone)
+  "Return the top-level of the working tree of the package named CLONE."
+  (expand-file-name clone borg-drone-directory))
 
 (defun borg-gitdir (clone)
   "Return the Git directory of the package named CLONE.
@@ -108,7 +108,7 @@ Return the values as a list."
 
 (defun borg-load-path (drone)
   "Return the `load-path' for the drone named DRONE."
-  (let ((repo (borg-repository drone))
+  (let ((repo (borg-worktree drone))
         (path (borg-get-all drone "load-path")))
     (if  path
         (mapcar (lambda (d) (expand-file-name d repo)) path)
@@ -121,7 +121,7 @@ Return the values as a list."
 If optional SETUP is non-nil, then return a list of directories
 containing texinfo and/or info files.  Otherwise return a list of
 directories containing a file named \"dir\"."
-  (let ((repo (borg-repository drone))
+  (let ((repo (borg-worktree drone))
         (path (borg-get-all drone "info-path")))
     (cl-mapcan (if setup
                    (lambda (d)
@@ -349,7 +349,7 @@ Interactively, or when optional ACTIVATE is non-nil,
 then also activate the drone using `borg-activate'."
   (interactive (list (completing-read "Build drone: " (borg-drones) nil t)
                      t))
-  (let ((default-directory (borg-repository drone))
+  (let ((default-directory (borg-worktree drone))
         (build (borg-get-all drone "build-step")))
     (if  build
         (dolist (cmd build)
@@ -369,7 +369,7 @@ then also activate the drone using `borg-activate'."
              (generate-new-buffer (format "*Build %s*" drone))
              (expand-file-name invocation-name invocation-directory)
              "--batch" "-Q"
-             "-L" (borg-repository "borg")
+             "-L" (borg-worktree "borg")
              "--eval" "(require 'borg)"
              "--eval" "(borg-initialize)"
              "--eval" (format "(borg-build %S)" drone)))))))
@@ -426,7 +426,7 @@ then also activate the drone using `borg-activate'."
   "Compile libraries for the drone named DRONE in the directories in PATH."
   (setq path (borg--expand-load-path drone path))
   (let ((exclude (borg-get-all drone "no-byte-compile"))
-        (topdir (borg-repository drone)))
+        (topdir (borg-worktree drone)))
     (dolist (dir path)
       (with-current-buffer (get-buffer-create byte-compile-log-buffer)
         (setq default-directory (expand-file-name dir topdir))
@@ -495,7 +495,7 @@ With a prefix argument pass \"--force\" to \"git submodule\"."
   (message "Assimilating %s..." name)
   (let* ((default-directory borg-user-emacs-directory)
          (args (list "--name" name url
-                     (file-relative-name (borg-repository name)))))
+                     (file-relative-name (borg-worktree name)))))
     (apply #'borg--call-git name "submodule" "add"
            (if force (cons "--force" args) args))
     (borg--sort-submodule-sections ".gitmodules")
@@ -510,7 +510,7 @@ With a prefix argument pass \"--force\" to \"git submodule\"."
   "Uninstall the drone named DRONE."
   (interactive (list (completing-read "Uninstall drone: " (borg-drones) nil t)))
   (let ((default-directory borg-user-emacs-directory))
-    (borg--call-git nil "rm" (borg-repository drone))))
+    (borg--call-git nil "rm" (borg-worktree drone))))
 
 ;;; Internal Utilities
 
@@ -524,7 +524,7 @@ With a prefix argument pass \"--force\" to \"git submodule\"."
       (error "Git failed"))))
 
 (defun borg--expand-load-path (drone path)
-  (let ((default-directory (borg-repository drone)))
+  (let ((default-directory (borg-worktree drone)))
     (mapcar (lambda (p)
               (file-name-as-directory (expand-file-name p)))
             (or path (borg-load-path drone)))))

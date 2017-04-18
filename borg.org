@@ -524,10 +524,10 @@ You normally should not have to use the following low-level functions
 directly.  That being said, you might want to do so anyway if you
 build your own tools on top of Borg.
 
-- Function: borg-repository drone
+- Function: borg-worktree clone
 
   This function returns the top-level of the working tree of the
-  submodule named DRONE.
+  package named CLONE.
 
 - Function: borg-gitdir clone
 
