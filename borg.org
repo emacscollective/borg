@@ -49,6 +49,9 @@ Borg assimilates packages into the ~~/.emacs.d~ repository as Git
 submodules.  An assimilated package is called a drone and a borg-based
 ~~/.emacs.d~ repository is called a collective.
 
+It is possible to clone a package repository without assimilating it.
+A cloned package is called a clone.
+
 To learn more about this project, also read the blog post [fn:1] in
 which it was announced.
 
@@ -116,11 +119,17 @@ packages are assimilated merely by configuring them.
 
 To begin the assimilation of a third-party package use the command
 ~borg-assimilate~, which adds the package's repository as a submodule
-and attempts to build the drone.  Building the drone can fail, for
-example due to missing dependencies.  Failure to build a drone is not
-considered as a failure to assimilate.
+and attempts to build the drone.
 
-If building a drone fails, then a buffer with information about the
+A safer alternative is to first clone the package without assimilating
+it, using ~borg-clone~.  This gives you an opportunity to inspect the
+cloned package for broken or malicious code before it gets a chance to
+run arbitrary code.  Later you can proceed with the assimilation using
+~borg-assimilate~.
+
+Building the drone can fail, for example due to missing dependencies.
+Failure to build a drone is not considered as a failure to assimilate.
+If building does fails, then a buffer containing information about the
 issue pops up.  If the failure is due to unsatisfied dependencies,
 then assimilate those too, and then build any drone which previously
 couldn't be build by using the Emacs command ~borg-build~ or ~make
@@ -172,6 +181,12 @@ Magit status buffer of the ~~/.emacs.d~ repository.
 - Command: borg-assimilate name url
 
   This command assimilates the drone named NAME from URL.
+
+- Command: borg-clone name url
+
+  This command clones the package named NAME from URL, without
+  assimilating it.  This is useful when you want to inspect the
+  package before potentially executing malicious or broken code.
 
 - Command: borg-uninstall drone
 

@@ -504,6 +504,27 @@ then also activate the drone using `borg-activate'."
     (magit-refresh))
   (message "Assimilating %s...done" name))
 
+(defun borg-clone (package url)
+  "Clone the package named PACKAGE from URL, without assimilating it."
+  (interactive (borg-read-package "Clone package: "))
+  (message "Cloning %s..." package)
+  (let ((gitdir (borg-gitdir package))
+        (topdir (borg-worktree package)))
+    (when (file-exists-p topdir)
+      (user-error "%s already exists" topdir))
+    (borg--maybe-reuse-gitdir package)
+    (unless (file-exists-p topdir)
+      (let ((default-directory borg-user-emacs-directory))
+        (borg--call-git package "clone"
+                        (concat "--separate-git-dir=" gitdir)
+                        url (file-relative-name topdir)))
+      (with-temp-file (expand-file-name ".git" topdir)
+        (insert (format "gitdir: ../../.git/modules/%s\n" package))))
+    (when (and (derived-mode-p 'magit-mode)
+               (fboundp 'magit-refresh))
+      (magit-refresh))
+    (message "Cloning %s...done" package)))
+
 (defun borg-uninstall (drone)
   "Uninstall the drone named DRONE."
   (interactive (list (completing-read "Uninstall drone: " (borg-drones) nil t)))
