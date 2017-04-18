@@ -172,6 +172,19 @@ included in the returned value."
                (let ((default-directory borg-user-emacs-directory))
                  (process-lines "git" "submodule--helper" "list")))))
 
+(defun borg-clones ()
+  "Return a list of cloned packages.
+
+The returned value includes the names of all drones, as well as
+the names of all other repositories that are located directly
+inside `borg-drone-directory' but aren't tracked as submodules."
+  (cl-mapcan (lambda (name)
+               (and (expand-file-name
+                     (convert-standard-filename (concat name "/.git"))
+                     borg-drone-directory)
+                    (list name)))
+             (cddr (directory-files borg-drone-directory))))
+
 (defun borg-read-package (prompt)
   "Read a package name and url, and return them as a list.
 
@@ -195,6 +208,13 @@ prompting for the package name."
                    (read-string "Url: ")))))
      (list (read-string prompt)
            (read-string "Url: "))))
+
+(defun borg-read-clone (prompt)
+  "Read the name of a cloned package, prompting with PROMPT."
+  (require 'epkg nil t)
+  (completing-read prompt (borg-clones)
+                   (bound-and-true-p epkg-package-history)
+                   t))
 
 (defmacro borg-silencio (regexp &rest body)
   "Execute the forms in BODY while silencing messages that don't match REGEXP."

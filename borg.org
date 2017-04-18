@@ -574,6 +574,14 @@ build your own tools on top of Borg.
   values anyway, then it is undefined with value is included in the
   returned value.
 
+- Function: borg-clones
+
+  This function returns a list of all cloned packages.
+
+  The returned value includes the names of all drones, as well as the
+  names of all other repositories that are located directly inside
+  ~borg-drone-directory~ but aren't tracked as submodules.
+
 - Function: borg-read-package prompt
 
   This function reads a package name and the url of its upstream
@@ -582,6 +590,10 @@ build your own tools on top of Borg.
   When the package ~epkg~ is available, then the user is only prompted
   for the name of the package, and the url is retrieved from the Epkg
   database.  PROMPT is used when prompting for the package name.
+
+- Function: borg-read-clone prompt
+
+  This function reads the name of a cloned package from the user.
 
 There exist a few more functions, but those are considered to be
 internal and might therefore change in incompatible ways without that
