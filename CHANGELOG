@@ -1,5 +1,46 @@
 # -*- mode: org -*-
 
+* v2.0.0    UNRELEASED
+
+- Added new command ~borg-clone~ to make it easier to review a package
+  before assimilating it.  Assimilating a package gives that package
+  a change to run arbitrary code, so the review should happen first.
+
+  Packages that have been cloned are now being referred to as clones.
+  If they have additionally been assimilated, then they are referred
+  to as drones, as before.  Note that drones are also clones.
+
+  When a package has not even been cloned yet, then it is referred
+  to as just a package.  The names of function arguments have been
+  updated to communicate what subset of packages they act on.
+
+- Added new command ~borg-remove~ to replace ~borg-uninstall~.  The new
+  name is more appropriate because this command is also suitable for
+  removing a package that has previously been cloned, without also
+  being assimilated.  This command does not remove the gitdir, moves
+  the working tree to the trash, and refuses to do anything if the
+  working tree isn't clean.
+
+- Command ~borg-assimilate~ now assimilates an already cloned package
+  without the user having to use a prefix argument, while separating
+  the gitdir from the working tree, if that isn't already the case.
+  The latter is useful after the user initialized a new repository,
+  or cloned a package using something other than ~borg-clone~.
+
+  When assimilating a package, that has been cloned or assimilated
+  before but was then removed again, then the user is now given the
+  choice between reusing the existing gitdir or starting over.
+
+- Command ~borg-build~ now also activates the drone using the new
+  command ~borg-activate~, which was extracted from ~borg-assimilate~.
+
+- Added new utility function ~borg-gitdir~ and, in order to avoid
+  confusion and match Git terminology, renamed ~borg-repository~ to
+  ~borg-worktree~.
+
+- Added new utility functions ~borg-read-package~, ~borg-read-clone~,
+  and ~borg-clones~.
+
 * v1.0.0    2016/12/31
 
 - Repository moved to https://github.com/emacscollective/borg.
