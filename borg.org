@@ -628,7 +628,7 @@ being noted in the changelog.
 - Function: borg--maybe-absorb-gitdir pkg
 - Function: borg--maybe-reuse-gitdir pkg
 - Function: borg--restore-worktree pkg
-- Function: borg--call-git drone &rest args
+- Function: borg--call-git pkg &rest args
 - Function: borg--expand-load-path drone path
 - Function: borg--sort-submodule-sections
 

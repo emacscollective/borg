@@ -723,7 +723,7 @@ being noted in the changelog.
 @end defun
 @defun borg--restore-worktree pkg
 @end defun
-@defun borg--call-git drone &rest args
+@defun borg--call-git pkg &rest args
 @end defun
 @defun borg--expand-load-path drone path
 @end defun

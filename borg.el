@@ -582,10 +582,10 @@ The Git directory is not removed."
     (let ((default-directory topdir))
       (borg--call-git pkg "reset" "--hard" "HEAD"))))
 
-(defun borg--call-git (drone &rest args)
+(defun borg--call-git (pkg &rest args)
   (let ((process-connection-type nil)
         (buffer (generate-new-buffer
-                 (concat " *Borg Git" (and drone (concat " " drone)) "*"))))
+                 (concat " *Borg Git" (and pkg (concat " " pkg)) "*"))))
     (if (eq (apply #'call-process "git" nil buffer nil args) 0)
         (kill-buffer buffer)
       (pop-to-buffer buffer)
