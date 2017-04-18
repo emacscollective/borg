@@ -93,13 +93,20 @@ unless you really want to use both ~borg~ and ~package~ at the same time.
 
 - Function: borg-initialize
 
-  This function initializes all assimilated drone modules.  For each
-  drone module this adds the appropriate directories to the ~load-path~
-  and ~Info-directory-list~, and loads the autoloads file if it exits.
+  This function initializes assimilated drone using ~borg-activate~.
 
-  To skip these steps for a drone named DRONE, temporarily disable it
-  by setting the value of the Git variable ~submodule.DRONE.disabled~ to
-  ~true~ in ~~/.emacs.d/.gitmodules~.
+  To skip the activation of the drone named DRONE, temporarily disable
+  it by setting the value of the Git variable ~submodule.DRONE.disabled~
+  to true in ~~/.emacs.d/.gitmodules~.
+
+- Command: borg-activate drone
+
+  This function activates the drone named DRONE by adding the
+  appropriate directories to the ~load-path~ and to ~Info-directory-list~,
+  and by loading the autoloads file, if it exits.
+
+  Unlike ~borg-initialize~, this function ignores the Git variable
+  ~submodule.DRONE.disabled~.
 
 * Assimilation
 
@@ -450,7 +457,7 @@ variables you can tell Borg how to build such packages.
 
 - Variable: submodule.DRONE.load-path PATH
 
-  This variable instructs ~borg-initialize~ to add PATH to the ~load-path~
+  This variable instructs ~borg-activate~ to add PATH to the ~load-path~
   instead of the directory it would otherwise have added.  Likewise it
   instructs ~borg-byte-compile~ to compile the libraries in that
   directory.  PATH has to be relative to the top-level of the

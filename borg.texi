@@ -128,14 +128,23 @@ unless you really want to use both @code{borg} and @code{package} at the same ti
 
 @defun borg-initialize
 
-This function initializes all assimilated drone modules.  For each
-drone module this adds the appropriate directories to the @code{load-path}
-and @code{Info-directory-list}, and loads the autoloads file if it exits.
+This function initializes assimilated drone using @code{borg-activate}.
 
-To skip these steps for a drone named DRONE, temporarily disable it
-by setting the value of the Git variable @code{submodule.DRONE.disabled} to
-@code{true} in @code{~/.emacs.d/.gitmodules}.
+To skip the activation of the drone named DRONE, temporarily disable
+it by setting the value of the Git variable @code{submodule.DRONE.disabled}
+to true in @code{~/.emacs.d/.gitmodules}.
 @end defun
+
+@cindex borg-activate drone
+@deffn Command borg-activate drone
+
+This function activates the drone named DRONE by adding the
+appropriate directories to the @code{load-path} and to @code{Info-directory-list},
+and by loading the autoloads file, if it exits.
+
+Unlike @code{borg-initialize}, this function ignores the Git variable
+@code{submodule.DRONE.disabled}.
+@end deffn
 
 @node Assimilation
 @chapter Assimilation
@@ -522,7 +531,7 @@ not necessarily have to use it.
 
 @defvar submodule.DRONE.load-path PATH
 
-This variable instructs @code{borg-initialize} to add PATH to the @code{load-path}
+This variable instructs @code{borg-activate} to add PATH to the @code{load-path}
 instead of the directory it would otherwise have added.  Likewise it
 instructs @code{borg-byte-compile} to compile the libraries in that
 directory.  PATH has to be relative to the top-level of the

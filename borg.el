@@ -209,14 +209,15 @@ prompting for the package name."
 ;;; Activation
 
 (defun borg-initialize ()
-  "Initialize all assimilated drones.
+  "Initialize assimilated drones.
 
-For each drone add the appropriate directories to the `load-path'
-and `Info-directory-alist', and load the autoloads file if it
-exits.
+For each drone use `borg-activate' to add the appropriate
+directories to the `load-path' and `Info-directory-alist', and
+load the autoloads file, if it exits.
 
 If the value of a Git variable named `submodule.DRONE.disabled'
-is `true', then the drone named DRONE is skipped."
+is true in \"~/.emacs.d/.gitmodules\", then the drone named DRONE
+is skipped."
   (info-initialize)
   (let ((start (current-time))
         (skipped 0)
@@ -227,28 +228,37 @@ is `true', then the drone named DRONE is skipped."
       (if (equal (borg-get drone "disabled") "true")
           (cl-incf skipped)
         (cl-incf initialized)
-        (dolist (dir (borg-load-path drone))
-          (let (file)
-            (cond ((and (file-exists-p
-                         (setq file (expand-file-name
-                                     (concat drone "-autoloads.el") dir)))
-                        (with-demoted-errors "Error loading autoloads: %s"
-                          (load file nil t))))
-                  ((and (file-exists-p
-                         (setq file (expand-file-name
-                                     (concat drone "-loaddefs.el") dir)))
-                        (with-demoted-errors "Error loading autoloads: %s"
-                          (add-to-list 'load-path dir) ; for `org'
-                          (load file nil t))))
-                  (t (push dir load-path)))))
-        (dolist (dir (borg-info-path drone))
-          (push  dir Info-directory-list))))
+        (borg-activate drone)))
     (message "Initializing drones...done (%s drones in %.3fs%s)"
              initialized
              (float-time (time-subtract (current-time) start))
              (if (> skipped 0)
                  (format ", %d skipped" (length skipped))
                ""))))
+
+(defun borg-activate (drone)
+  "Activate the drone named DRONE.
+
+Add the appropriate directories to `load-path' and
+`Info-directory-alist', and load the autoloaads file, if it
+exits."
+  (interactive (list (completing-read "Activate drone: " (borg-drones) nil t)))
+  (dolist (dir (borg-load-path drone))
+    (let (file)
+      (cond ((and (file-exists-p
+                   (setq file (expand-file-name
+                               (concat drone "-autoloads.el") dir)))
+                  (with-demoted-errors "Error loading autoloads: %s"
+                    (load file nil t))))
+            ((and (file-exists-p
+                   (setq file (expand-file-name
+                               (concat drone "-loaddefs.el") dir)))
+                  (with-demoted-errors "Error loading autoloads: %s"
+                    (add-to-list 'load-path dir) ; for `org'
+                    (load file nil t))))
+            (t (push dir load-path)))))
+  (dolist (dir (borg-info-path drone))
+    (push  dir Info-directory-list)))
 
 (defun borg-batch-rebuild (&optional quick)
   "Rebuild all assimilated drones.
