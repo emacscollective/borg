@@ -12,7 +12,7 @@ The Borg assimilate Emacs packages as Git submodules.
 @end ifnottex
 
 @quotation
-Copyright (C) 2016 Jonas Bernoulli <jonas@@bernoul.li>
+Copyright (C) 2016-2017 Jonas Bernoulli <jonas@@bernoul.li>
 
 You can redistribute this document and/or modify it under the terms
 of the GNU General Public License as published by the Free Software
@@ -647,6 +647,16 @@ a member of @code{borg--multi-value-variables}.  If a property name isn't
 a member of @code{borg--multi-value-variables} but it does have multiple
 values anyway, then it is undefined with value is included in the
 returned value.
+@end defun
+
+@defun borg-read-package prompt
+
+This function reads a package name and the url of its upstream
+repository from the user, and returns them as a list.
+
+When the package @code{epkg} is available, then the user is only prompted
+for the name of the package, and the url is retrieved from the Epkg
+database.  PROMPT is used when prompting for the package name.
 @end defun
 
 There exist a few more functions, but those are considered to be

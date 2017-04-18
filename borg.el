@@ -35,6 +35,17 @@
 (require 'cl-lib)
 (require 'info)
 
+(eval-when-compile
+  (require 'epkg nil t))
+(declare-function eieio-oref        "eieio-core" (obj slot))
+(declare-function epkg                    "epkg" (name))
+(declare-function epkgs                   "epkg" (&optional select predicates))
+(declare-function epkg-git-package-p      "epkg" (obj))
+(declare-function epkg-github-package-p   "epkg" (obj))
+(declare-function epkg-gitlab-package-p   "epkg" (obj))
+(declare-function epkg-orphaned-package-p "epkg" (obj))
+(declare-function epkg-read-package       "epkg" (prompt &optional default))
+
 (defconst borg-drone-directory
   (file-name-directory
    (directory-file-name
@@ -160,6 +171,30 @@ included in the returned value."
                       (list (substring line 54))))
                (let ((default-directory borg-user-emacs-directory))
                  (process-lines "git" "submodule--helper" "list")))))
+
+(defun borg-read-package (prompt)
+  "Read a package name and url, and return them as a list.
+
+When the package `epkg' is available, then the user is only
+prompted for the name of the package, and the upstream url
+is retrieved from the Epkg database.  PROMPT is used when
+prompting for the package name."
+(if (require 'epkg nil t)
+      (let* ((packages (epkgs 'name))
+             (name (completing-read prompt packages nil nil nil
+                                    'epkg-package-history)))
+         (list name
+               (let ((pkg (epkg name)))
+                 (if pkg
+                     (if (or (epkg-git-package-p pkg)
+                             (epkg-github-package-p pkg)
+                             (epkg-orphaned-package-p pkg)
+                             (epkg-gitlab-package-p pkg))
+                         (eieio-oref pkg 'url)
+                       (eieio-oref pkg 'mirror-url))
+                   (read-string "Url: ")))))
+     (list (read-string prompt)
+           (read-string "Url: "))))
 
 (defmacro borg-silencio (regexp &rest body)
   "Execute the forms in BODY while silencing messages that don't match REGEXP."
@@ -403,40 +438,11 @@ This function is to be used only with `--batch'."
 
 ;;; Assimilation
 
-(eval-when-compile
-  (require 'epkg nil t))
-(declare-function eieio-oref        "eieio-core" (obj slot))
-(declare-function epkg                    "epkg" (name))
-(declare-function epkgs                   "epkg" (&optional select predicates))
-(declare-function epkg-git-package-p      "epkg" (obj))
-(declare-function epkg-github-package-p   "epkg" (obj))
-(declare-function epkg-gitlab-package-p   "epkg" (obj))
-(declare-function epkg-orphaned-package-p "epkg" (obj))
-(declare-function epkg-read-package       "epkg" (prompt &optional default))
-
 (defun borg-assimilate (name url &optional force)
   "Assimilate the package named NAME from URL.
 With a prefix argument pass \"--force\" to \"git submodule\"."
-  (interactive
-   (if (require 'epkg nil t)
-       (let* ((packages (epkgs 'name))
-              (name (completing-read "Assimilate package: "
-                                     packages nil nil nil
-                                     'epkg-package-history)))
-         (list name
-               (let ((pkg (epkg name)))
-                 (if pkg
-                     (if (or (epkg-git-package-p pkg)
-                             (epkg-github-package-p pkg)
-                             (epkg-orphaned-package-p pkg)
-                             (epkg-gitlab-package-p pkg))
-                         (eieio-oref pkg 'url)
-                       (eieio-oref pkg 'mirror-url))
-                   (read-string "Url: ")))
-               current-prefix-arg))
-     (list (read-string "Assimilate package: ")
-           (read-string "Url: ")
-           current-prefix-arg)))
+  (interactive (nconc (borg-read-package "Assimilate package: ")
+                      (list current-prefix-arg)))
   (message "Assimilating %s..." name)
   (let* ((default-directory borg-user-emacs-directory)
          (args (list "--name" name url
