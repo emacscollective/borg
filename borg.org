@@ -178,9 +178,9 @@ Version strings as those shown above can be optained using ~git
 describe --tags~, or by looking inside the "Modules" section of the
 Magit status buffer of the ~~/.emacs.d~ repository.
 
-- Command: borg-assimilate name url
+- Command: borg-assimilate package url
 
-  This command assimilates the drone named NAME from URL.
+  This command assimilates the package named PACKAGE from URL.
 
 - Command: borg-clone name url
 

@@ -487,22 +487,22 @@ then also activate the drone using `borg-activate'."
 
 ;;; Assimilation
 
-(defun borg-assimilate (name url)
-  "Assimilate the package named NAME from URL."
+(defun borg-assimilate (package url)
+  "Assimilate the package named PACKAGE from URL."
   (interactive (borg-read-package "Assimilate package: "))
-  (message "Assimilating %s..." name)
-  (borg--maybe-reuse-gitdir name)
+  (message "Assimilating %s..." package)
+  (borg--maybe-reuse-gitdir package)
   (let ((default-directory borg-user-emacs-directory))
-    (borg--call-git name "submodule" "add" "--name" name url
-                    (file-relative-name (borg-worktree name)))
+    (borg--call-git package "submodule" "add" "--name" package url
+                    (file-relative-name (borg-worktree package)))
     (borg--sort-submodule-sections ".gitmodules")
-    (borg--call-git name "add" ".gitmodules"))
-  (borg--maybe-absorb-gitdir name)
-  (borg-build name)
+    (borg--call-git package "add" ".gitmodules"))
+  (borg--maybe-absorb-gitdir package)
+  (borg-build package)
   (when (and (derived-mode-p 'magit-mode)
              (fboundp 'magit-refresh))
     (magit-refresh))
-  (message "Assimilating %s...done" name))
+  (message "Assimilating %s...done" package))
 
 (defun borg-clone (package url)
   "Clone the package named PACKAGE from URL, without assimilating it."

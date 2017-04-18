@@ -217,10 +217,10 @@ Version strings as those shown above can be optained using @code{git
 describe --tags}, or by looking inside the "Modules" section of the
 Magit status buffer of the @code{~/.emacs.d} repository.
 
-@cindex borg-assimilate name url
-@deffn Command borg-assimilate name url
+@cindex borg-assimilate package url
+@deffn Command borg-assimilate package url
 
-This command assimilates the drone named NAME from URL.
+This command assimilates the package named PACKAGE from URL.
 @end deffn
 
 @cindex borg-clone name url
