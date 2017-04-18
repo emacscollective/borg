@@ -1,6 +1,6 @@
 ;;; borg.el --- assimilate Emacs packages as Git submodules  -*- lexical-binding: t -*-
 
-;; Copyright (C) 2016  Jonas Bernoulli
+;; Copyright (C) 2016-2017  Jonas Bernoulli
 
 ;; Author: Jonas Bernoulli <jonas@bernoul.li>
 ;; Homepage: https://github.com/emacscollective/borg
@@ -53,6 +53,8 @@ The value of this variable is usually the same as that of
 (defconst borg-gitmodules-file
   (expand-file-name ".gitmodules" borg-user-emacs-directory)
   "The \".gitmodules\" file of the drone repository.")
+
+;;; Utilities
 
 (defun borg-repository (drone)
   "Return the top-level of the working tree of the submodule named DRONE."
@@ -168,6 +170,8 @@ included in the returned value."
                   (unless (string-match-p ,regexp format-string)
                     (apply msg format-string args)))))
        ,@body)))
+
+;;; Activation
 
 (defun borg-initialize ()
   "Initialize all assimilated drones.
@@ -397,6 +401,8 @@ This function is to be used only with `--batch'."
           (shell-command cmd))
         (message "  Running '%s'...done" cmd)))))
 
+;;; Assimilation
+
 (eval-when-compile
   (require 'epkg nil t))
 (declare-function eieio-oref        "eieio-core" (obj slot))
@@ -450,6 +456,8 @@ With a prefix argument pass \"--force\" to \"git submodule\"."
   (interactive (list (completing-read "Uninstall drone: " (borg-drones) nil t)))
   (let ((default-directory borg-user-emacs-directory))
     (borg--call-git nil "rm" (borg-repository drone))))
+
+;;; Internal Utilities
 
 (defun borg--call-git (drone &rest args)
   (let ((process-connection-type nil)
