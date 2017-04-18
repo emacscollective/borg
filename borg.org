@@ -606,6 +606,7 @@ There exist a few more functions, but those are considered to be
 internal and might therefore change in incompatible ways without that
 being noted in the changelog.
 
+- Function: borg--maybe-absorb-gitdir pkg
 - Function: borg--maybe-reuse-gitdir pkg
 - Function: borg--restore-worktree pkg
 - Function: borg--call-git drone &rest args

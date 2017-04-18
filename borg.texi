@@ -696,6 +696,8 @@ There exist a few more functions, but those are considered to be
 internal and might therefore change in incompatible ways without that
 being noted in the changelog.
 
+@defun borg--maybe-absorb-gitdir pkg
+@end defun
 @defun borg--maybe-reuse-gitdir pkg
 @end defun
 @defun borg--restore-worktree pkg

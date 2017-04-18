@@ -497,6 +497,7 @@ then also activate the drone using `borg-activate'."
                     (file-relative-name (borg-worktree name)))
     (borg--sort-submodule-sections ".gitmodules")
     (borg--call-git name "add" ".gitmodules"))
+  (borg--maybe-absorb-gitdir name)
   (borg-build name)
   (when (and (derived-mode-p 'magit-mode)
              (fboundp 'magit-refresh))
@@ -510,6 +511,19 @@ then also activate the drone using `borg-activate'."
     (borg--call-git nil "rm" (borg-worktree drone))))
 
 ;;; Internal Utilities
+
+(defun borg--maybe-absorb-gitdir (pkg)
+  (let ((gitdir (borg-gitdir pkg))
+        (topdir (borg-worktree pkg)))
+    (unless (equal (let ((default-directory topdir))
+                     (car (process-lines "git" "rev-parse" "--git-dir")))
+                   gitdir)
+      (rename-file (expand-file-name ".git" topdir) gitdir)
+      (with-temp-file (expand-file-name ".git" topdir)
+        (insert (format "gitdir: ../../.git/modules/%s\n" pkg)))
+      (let ((default-directory gitdir))
+        (borg--call-git pkg "config" "core.worktree"
+                        (concat "../../../lib/" pkg))))))
 
 (defun borg--maybe-reuse-gitdir (pkg)
   (let ((gitdir (borg-gitdir pkg))
