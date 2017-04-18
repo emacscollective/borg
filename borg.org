@@ -125,7 +125,7 @@ A safer alternative is to first clone the package without assimilating
 it, using ~borg-clone~.  This gives you an opportunity to inspect the
 cloned package for broken or malicious code before it gets a chance to
 run arbitrary code.  Later you can proceed with the assimilation using
-~borg-assimilate~.
+~borg-assimilate~, or remove the clone using ~borg-remove~.
 
 Building the drone can fail, for example due to missing dependencies.
 Failure to build a drone is not considered as a failure to assimilate.
@@ -188,9 +188,13 @@ Magit status buffer of the ~~/.emacs.d~ repository.
   assimilating it.  This is useful when you want to inspect the
   package before potentially executing malicious or broken code.
 
-- Command: borg-uninstall drone
+- Command: borg-remove clone
 
-  This command uninstalls the drone named DRONE.
+  This command remove the cloned or assimilated package named CLONE,
+  by removing the working tree from ~borg-drone-directory~, regardless
+  of whether that repository belongs to an assimilated package or a
+  package that has only been cloned for review using ~borg-clone~.  The
+  Git directory is not removed.
 
 - Command: borg-build drone
 

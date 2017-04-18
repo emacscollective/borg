@@ -525,11 +525,24 @@ then also activate the drone using `borg-activate'."
       (magit-refresh))
     (message "Cloning %s...done" package)))
 
-(defun borg-uninstall (drone)
-  "Uninstall the drone named DRONE."
-  (interactive (list (completing-read "Uninstall drone: " (borg-drones) nil t)))
-  (let ((default-directory borg-user-emacs-directory))
-    (borg--call-git nil "rm" (borg-worktree drone))))
+(defun borg-remove (clone)
+  "Remove the cloned or assimilated package named CLONE.
+
+Remove the working tree from `borg-drone-directory', regardless
+of whether that repository belongs to an assimilated package or a
+package that has only been cloned for review using `borg-clone'.
+The Git directory is not removed."
+  (interactive (list (borg-read-clone "Uninstall clone: ")))
+  (let ((topdir (borg-worktree clone)))
+    (let ((default-directory topdir))
+      (when (or (not (borg--git-success "diff" "--quiet" "--cached"))
+                (not (borg--git-success "diff" "--quiet")))
+        (user-error "%s contains uncommitted changes" topdir))
+      (borg--maybe-absorb-gitdir clone))
+    (if (member clone (borg-drones))
+        (let ((default-directory borg-user-emacs-directory))
+          (borg--call-git nil "rm" "--force" topdir))
+      (delete-directory topdir t t))))
 
 ;;; Internal Utilities
 
@@ -577,6 +590,9 @@ then also activate the drone using `borg-activate'."
         (kill-buffer buffer)
       (pop-to-buffer buffer)
       (error "Git failed"))))
+
+(defun borg--git-success (&rest args)
+  (= (apply #'process-file "git" nil nil nil args) 0))
 
 (defun borg--expand-load-path (drone path)
   (let ((default-directory (borg-worktree drone)))
