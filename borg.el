@@ -309,9 +309,12 @@ This function is to be used only with `--batch'."
           (message "\n--- [%s] ---\n" f)
           (byte-recompile-file (expand-file-name f) t 0))))))
 
-(defun borg-build (drone)
-  "Build the drone named DRONE."
-  (interactive (list (completing-read "Build drone: " (borg-drones) nil t)))
+(defun borg-build (drone &optional activate)
+  "Build the drone named DRONE.
+Interactively, or when optional ACTIVATE is non-nil,
+then also activate the drone using `borg-activate'."
+  (interactive (list (completing-read "Build drone: " (borg-drones) nil t)
+                     t))
   (let ((default-directory (borg-repository drone))
         (build (borg-get-all drone "build-step")))
     (if  build
@@ -335,7 +338,9 @@ This function is to be used only with `--batch'."
              "-L" (borg-repository "borg")
              "--eval" "(require 'borg)"
              "--eval" "(borg-initialize)"
-             "--eval" (format "(borg-build %S)" drone))))))))
+             "--eval" (format "(borg-build %S)" drone)))))))
+  (when activate
+    (borg-activate drone)))
 
 (defconst borg-autoload-format "\
 ;;;\

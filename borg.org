@@ -181,7 +181,9 @@ Magit status buffer of the ~~/.emacs.d~ repository.
 
 - Command: borg-build drone
 
-  This command builds the drone named DRONE.
+  This command builds the drone named DRONE.  Interactively, or when
+  optional ACTIVATE is non-nil, then also activate the drone using
+  ~borg-activate~.
 
 - Function: borg-update-autoloads drone &optional path
 

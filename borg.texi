@@ -225,7 +225,9 @@ This command uninstalls the drone named DRONE.
 @cindex borg-build drone
 @deffn Command borg-build drone
 
-This command builds the drone named DRONE.
+This command builds the drone named DRONE.  Interactively, or when
+optional ACTIVATE is non-nil, then also activate the drone using
+@code{borg-activate}.
 @end deffn
 
 @defun borg-update-autoloads drone &optional path
