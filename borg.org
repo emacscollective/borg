@@ -169,11 +169,9 @@ Version strings as those shown above can be optained using ~git
 describe --tags~, or by looking inside the "Modules" section of the
 Magit status buffer of the ~~/.emacs.d~ repository.
 
-- Command: borg-assimilate drone url &optional force
+- Command: borg-assimilate name url
 
-  This command assimilates the drone named DRONE from URL.
-
-  With a prefix argument it passes ~--force~ to ~git submodule add~.
+  This command assimilates the drone named NAME from URL.
 
 - Command: borg-uninstall drone
 
@@ -608,6 +606,8 @@ There exist a few more functions, but those are considered to be
 internal and might therefore change in incompatible ways without that
 being noted in the changelog.
 
+- Function: borg--maybe-reuse-gitdir pkg
+- Function: borg--restore-worktree pkg
 - Function: borg--call-git drone &rest args
 - Function: borg--expand-load-path drone path
 - Function: borg--sort-submodule-sections

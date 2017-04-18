@@ -487,17 +487,14 @@ then also activate the drone using `borg-activate'."
 
 ;;; Assimilation
 
-(defun borg-assimilate (name url &optional force)
-  "Assimilate the package named NAME from URL.
-With a prefix argument pass \"--force\" to \"git submodule\"."
-  (interactive (nconc (borg-read-package "Assimilate package: ")
-                      (list current-prefix-arg)))
+(defun borg-assimilate (name url)
+  "Assimilate the package named NAME from URL."
+  (interactive (borg-read-package "Assimilate package: "))
   (message "Assimilating %s..." name)
-  (let* ((default-directory borg-user-emacs-directory)
-         (args (list "--name" name url
-                     (file-relative-name (borg-worktree name)))))
-    (apply #'borg--call-git name "submodule" "add"
-           (if force (cons "--force" args) args))
+  (borg--maybe-reuse-gitdir name)
+  (let ((default-directory borg-user-emacs-directory))
+    (borg--call-git name "submodule" "add" "--name" name url
+                    (file-relative-name (borg-worktree name)))
     (borg--sort-submodule-sections ".gitmodules")
     (borg--call-git name "add" ".gitmodules"))
   (borg-build name)
@@ -513,6 +510,29 @@ With a prefix argument pass \"--force\" to \"git submodule\"."
     (borg--call-git nil "rm" (borg-worktree drone))))
 
 ;;; Internal Utilities
+
+(defun borg--maybe-reuse-gitdir (pkg)
+  (let ((gitdir (borg-gitdir pkg))
+        (topdir (borg-worktree pkg)))
+    (when (and (file-exists-p gitdir)
+               (not (file-exists-p topdir)))
+      (pcase (read-char-choice
+              (concat
+               gitdir " already exists.\n"
+               "Type [r] to reuse the existing gitdir and create the worktree\n"
+               "     [d] to delete the old gitdir and clone again\n"
+               "   [C-g] to abort ")
+              '(?r ?d))
+        (?r (borg--restore-worktree pkg))
+        (?d (delete-directory gitdir t t))))))
+
+(defun borg--restore-worktree (pkg)
+  (let ((topdir (borg-worktree pkg)))
+    (make-directory topdir t)
+    (with-temp-file (expand-file-name ".git" topdir)
+      (insert (format "gitdir: ../../.git/modules/%s\n" pkg)))
+    (let ((default-directory topdir))
+      (borg--call-git pkg "reset" "--hard" "HEAD"))))
 
 (defun borg--call-git (drone &rest args)
   (let ((process-connection-type nil)
