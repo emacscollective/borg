@@ -267,7 +267,7 @@ is skipped."
              initialized
              (float-time (time-subtract (current-time) start))
              (if (> skipped 0)
-                 (format ", %d skipped" (length skipped))
+                 (format ", %d skipped" skipped)
                ""))))
 
 (defun borg-activate (drone)

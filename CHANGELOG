@@ -41,6 +41,9 @@
 - Added new utility functions ~borg-read-package~, ~borg-read-clone~,
   and ~borg-clones~.
 
+- Fixed a type error in ~borg-initialized~ when drones are being
+  skipped.
+
 * v1.0.0    2016/12/31
 
 - Repository moved to https://github.com/emacscollective/borg.
