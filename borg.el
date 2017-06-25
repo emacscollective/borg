@@ -303,7 +303,7 @@ first.  `init.el' and `USER-REAL-LOGIN-NAME.el' are also rebuild.
 This function is to be used only with `--batch'.
 
 When optional QUICK is non-nil, then do not build drones for
-which `gitmodule.DRONE.build' is set, assuming those are the
+which `submodule.DRONE.build-step' is set, assuming those are the
 drones that take longer to be build."
   (unless noninteractive
     (error "borg-batch-rebuild is to be used only with --batch"))

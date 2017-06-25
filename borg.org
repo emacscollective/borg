@@ -19,7 +19,7 @@
 
 #+BEGIN_EXPORT texinfo
 @ifnottex
-The Borg assimilate Emacs packages as Git submodules.
+The Borg assimilates Emacs packages as Git submodules.
 @end ifnottex
 
 @quotation
@@ -61,7 +61,7 @@ which it was announced.
 
 To get started clone the ~emacs.g~ collective to ~~/.emacs.d~.
 Currently this is the only available collective and in this manual
-we assume the use that.  This collective already assimilated a few
+we assume you use that.  This collective already assimilated a few
 drones in addition to ~borg~ itself, namely ~magit~, ~epkg~, ~use-package~,
 ~auto-compile~, ~git-modes~, ~diff-hl~, and their dependencies.  These
 drones are not required by ~borg~ but their use is highly recommended.
@@ -72,10 +72,10 @@ The ~emacs.g~ collective is available from three different locations:
 - https://gitlab.com/emacscollective/emacs.g
 - https://bitbucket.org/emacscollective/emacs.g
 
-Clone the repository from your prefered url to either ~~/.emacs.d~, or
+Clone the repository from your preferred url to either ~~/.emacs.d~, or
 for testing purposes to any other location.  Then fetch and build the
 assimilated drones using ~make bootstrap~.  If you cloned to somewhere
-other than ~~/.emacs.d~, then you can use that configuration using
+else than ~~/.emacs.d~, then you can use that configuration using
 ~emacs -Q --load /path/to/emacs.g/init.elc~.
 
 For drones whose upstreams are on Github or Gitlab the ~emacs.g~
@@ -96,7 +96,7 @@ unless you really want to use both ~borg~ and ~package~ at the same time.
 
 - Function: borg-initialize
 
-  This function initializes assimilated drone using ~borg-activate~.
+  This function initializes assimilated drones using ~borg-activate~.
 
   To skip the activation of the drone named DRONE, temporarily disable
   it by setting the value of the Git variable ~submodule.DRONE.disabled~
@@ -129,10 +129,10 @@ run arbitrary code.  Later you can proceed with the assimilation using
 
 Building the drone can fail, for example due to missing dependencies.
 Failure to build a drone is not considered as a failure to assimilate.
-If building does fails, then a buffer containing information about the
+If a build fails, then a buffer containing information about the
 issue pops up.  If the failure is due to unsatisfied dependencies,
 then assimilate those too, and then build any drone which previously
-couldn't be build by using the Emacs command ~borg-build~ or ~make
+couldn't be built by using the Emacs command ~borg-build~ or ~make
 lib/DRONE~.  Alternatively you can just rebuild everything using ~make
 build~.
 
@@ -141,7 +141,7 @@ If you wish to avoid such complications, you should use the command
 useful information, it also provides a dependency tree.
 
 Once the packages have been added as submodules and the drones have
-been build, the assimilation is completed by creating an assimilation
+been built, the assimilation is completed by creating an assimilation
 commit.
 
 If you assimilate a single package, then it is recommended that you
@@ -174,7 +174,7 @@ same commit, but something like this might make sense:
   Assimilate smex               3.0-13-g55aaebe
 #+END_SRC
 
-Version strings as those shown above can be optained using ~git
+Version strings as those shown above can be obtained using ~git
 describe --tags~, or by looking inside the "Modules" section of the
 Magit status buffer of the ~~/.emacs.d~ repository.
 
@@ -190,7 +190,7 @@ Magit status buffer of the ~~/.emacs.d~ repository.
 
 - Command: borg-remove clone
 
-  This command remove the cloned or assimilated package named CLONE,
+  This command removes the cloned or assimilated package named CLONE,
   by removing the working tree from ~borg-drone-directory~, regardless
   of whether that repository belongs to an assimilated package or a
   package that has only been cloned for review using ~borg-clone~.  The
@@ -223,15 +223,15 @@ Magit status buffer of the ~~/.emacs.d~ repository.
 - Function: borg-batch-rebuild &optional quick
 
   This function rebuilds all assimilated drones in alphabetic order,
-  except for Org which is rebuild first.  It also rebuilds ~init.el~ and
+  except for Org which is rebuilt first.  It also rebuilds ~init.el~ and
   ~USER-REAL-LOGIN-NAME.el~.
 
   This function is not intended for interactive use, but used to
   implement the ~make~ targets described in the following section.
 
   When optional QUICK is non-nil, then do not build drones for which
-  ~submodule.DRONE.build~ is set, assuming that those are the drones
-  that take longer to be build.
+  ~submodule.DRONE.build-step~ is set, assuming that those are the drones
+  that take longer to be built.
 
 - Function: borg-batch-rebuild-init
 
@@ -355,7 +355,7 @@ To use them you have to be in ~~/.emacs.d~ in a shell.
 - Command: make quick
 
   This target builds /most/ drones.  Excluded are all drones for which
-  the Git variable ~submodule.DRONE.build~ is set, assuming that those
+  the Git variable ~submodule.DRONE.build-step~ is set, assuming that those
   are the drones that take longer to build.
 
   It also builds ~init.el~ and ~USER-REAL-LOGIN-NAME.el~, if that exists.
@@ -399,7 +399,7 @@ not be changed by the user.
 
 - Variable: borg-drone-directory
 
-  The value of this constant is the directory beneath with drone
+  The value of this constant is the directory beneath which drone
   submodules are placed.  The value is set based on the location of
   the ~borg~ library and should not be changed.
 
@@ -519,7 +519,7 @@ variables you can tell Borg how to build such packages.
 
 - Variable: submodule.DRONE.info-path PATH
 
-  This variable instructs ~borg-initialize~ to add PATH
+  This variable instructs ~borg-initialize~ to add PATH to
   ~Info-directory-list~.  PATH has to be relative to the top-level of
   the repository of the drone named DRONE.
 
