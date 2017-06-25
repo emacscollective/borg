@@ -1,6 +1,6 @@
 \input texinfo    @c -*- texinfo -*-
 @c %**start of header
-@setfilename ./borg.info
+@setfilename borg.info
 @settitle Borg User Manual
 @documentencoding UTF-8
 @documentlanguage en
@@ -61,8 +61,6 @@ General Public License for more details.
 * Git variables::
 * Low-level functions::
 @end menu
-
-
 
 @node Introduction
 @chapter Introduction
@@ -351,7 +349,7 @@ maintainer of the respective package, then you can just push your
 changes to the "origin" remote.  You don't have to do this every time
 you created some commits, but at important checkpoints, such as after
 creating a release, you should record the changes in the @code{~/.emacs.d}
-repository.  To do so proceed as described in @ref{Updating drones,Updating drones}.
+repository.  To do so proceed as described in @ref{Updating drones}.
 
 But for most packages you are not the maintainer and if you create
 commits for such drones, then you have to create a fork and push there
@@ -494,7 +492,7 @@ super-repository.
 
 The values of the borg-specific Git variables have to be set in the
 file @code{~/.emacs.d/.gitmodules}.  The variables @code{borg.pushDefault} and
-@code{submodule.DRONE.remote} are described in @ref{Patching drones,Patching drones}.
+@code{submodule.DRONE.remote} are described in @ref{Patching drones}.
 
 @defvar borg.collective = REMOTE
 
