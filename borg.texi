@@ -8,7 +8,7 @@
 
 @copying
 @ifnottex
-The Borg assimilate Emacs packages as Git submodules.
+The Borg assimilates Emacs packages as Git submodules.
 @end ifnottex
 
 @quotation
@@ -88,7 +88,7 @@ which it was announced.
 
 To get started clone the @code{emacs.g} collective to @code{~/.emacs.d}.
 Currently this is the only available collective and in this manual
-we assume the use that.  This collective already assimilated a few
+we assume you use that.  This collective already assimilated a few
 drones in addition to @code{borg} itself, namely @code{magit}, @code{epkg}, @code{use-package},
 @code{auto-compile}, @code{git-modes}, @code{diff-hl}, and their dependencies.  These
 drones are not required by @code{borg} but their use is highly recommended.
@@ -106,10 +106,10 @@ The @code{emacs.g} collective is available from three different locations:
 @uref{https://bitbucket.org/emacscollective/emacs.g}
 @end itemize
 
-Clone the repository from your prefered url to either @code{~/.emacs.d}, or
+Clone the repository from your preferred url to either @code{~/.emacs.d}, or
 for testing purposes to any other location.  Then fetch and build the
 assimilated drones using @code{make bootstrap}.  If you cloned to somewhere
-other than @code{~/.emacs.d}, then you can use that configuration using
+else than @code{~/.emacs.d}, then you can use that configuration using
 @code{emacs -Q --load /path/to/emacs.g/init.elc}.
 
 For drones whose upstreams are on Github or Gitlab the @code{emacs.g}
@@ -131,7 +131,7 @@ unless you really want to use both @code{borg} and @code{package} at the same ti
 
 @defun borg-initialize
 
-This function initializes assimilated drone using @code{borg-activate}.
+This function initializes assimilated drones using @code{borg-activate}.
 
 To skip the activation of the drone named DRONE, temporarily disable
 it by setting the value of the Git variable @code{submodule.DRONE.disabled}
@@ -168,10 +168,10 @@ run arbitrary code.  Later you can proceed with the assimilation using
 
 Building the drone can fail, for example due to missing dependencies.
 Failure to build a drone is not considered as a failure to assimilate.
-If building does fails, then a buffer containing information about the
+If a build fails, then a buffer containing information about the
 issue pops up.  If the failure is due to unsatisfied dependencies,
 then assimilate those too, and then build any drone which previously
-couldn't be build by using the Emacs command @code{borg-build} or @code{make
+couldn't be built by using the Emacs command @code{borg-build} or @code{make
 lib/DRONE}.  Alternatively you can just rebuild everything using @code{make
 build}.
 
@@ -180,7 +180,7 @@ If you wish to avoid such complications, you should use the command
 useful information, it also provides a dependency tree.
 
 Once the packages have been added as submodules and the drones have
-been build, the assimilation is completed by creating an assimilation
+been built, the assimilation is completed by creating an assimilation
 commit.
 
 If you assimilate a single package, then it is recommended that you
@@ -213,7 +213,7 @@ Assimilate ido-vertical-mode v0.1.6-33-gb42e422
 Assimilate smex               3.0-13-g55aaebe
 @end example
 
-Version strings as those shown above can be optained using @code{git
+Version strings as those shown above can be obtained using @code{git
 describe --tags}, or by looking inside the "Modules" section of the
 Magit status buffer of the @code{~/.emacs.d} repository.
 
@@ -234,7 +234,7 @@ package before potentially executing malicious or broken code.
 @cindex borg-remove clone
 @deffn Command borg-remove clone
 
-This command remove the cloned or assimilated package named CLONE,
+This command removes the cloned or assimilated package named CLONE,
 by removing the working tree from @code{borg-drone-directory}, regardless
 of whether that repository belongs to an assimilated package or a
 package that has only been cloned for review using @code{borg-clone}.  The
@@ -273,15 +273,15 @@ drone named DRONE.
 @defun borg-batch-rebuild &optional quick
 
 This function rebuilds all assimilated drones in alphabetic order,
-except for Org which is rebuild first.  It also rebuilds @code{init.el} and
+except for Org which is rebuilt first.  It also rebuilds @code{init.el} and
 @code{USER-REAL-LOGIN-NAME.el}.
 
 This function is not intended for interactive use, but used to
 implement the @code{make} targets described in the following section.
 
 When optional QUICK is non-nil, then do not build drones for which
-@code{submodule.DRONE.build} is set, assuming that those are the drones
-that take longer to be build.
+@code{submodule.DRONE.build-step} is set, assuming that those are the drones
+that take longer to be built.
 @end defun
 
 @defun borg-batch-rebuild-init
@@ -417,7 +417,7 @@ Also see @code{make build-init} below.
 @deffn Command make quick
 
 This target builds @emph{most} drones.  Excluded are all drones for which
-the Git variable @code{submodule.DRONE.build} is set, assuming that those
+the Git variable @code{submodule.DRONE.build-step} is set, assuming that those
 are the drones that take longer to build.
 
 It also builds @code{init.el} and @code{USER-REAL-LOGIN-NAME.el}, if that exists.
@@ -452,7 +452,7 @@ This target attempts to bootstrap the drones.  To do so it runs
 @code{git submodule init}, @code{bin/bootstrap} (which see), and @code{make build}.
 
 If an error occurs during the @code{bin/bootstrap} phase, then you can just
-run that command again to process the remaining drones.  The drone
+run that command again to process the remaining drones.  The drones
 that have already been bootstrapped or that have previously failed
 will be skipped.  If a drone cannot be cloned from any of the known
 remotes, then you should temporarily remove it using @code{git submodule
@@ -469,7 +469,7 @@ not be changed by the user.
 
 @defvar borg-drone-directory
 
-The value of this constant is the directory beneath with drone
+The value of this constant is the directory beneath which drone
 submodules are placed.  The value is set based on the location of
 the @code{borg} library and should not be changed.
 @end defvar
@@ -597,7 +597,7 @@ undo that.)
 
 @defvar submodule.DRONE.info-path PATH
 
-This variable instructs @code{borg-initialize} to add PATH
+This variable instructs @code{borg-initialize} to add PATH to
 @code{Info-directory-list}.  PATH has to be relative to the top-level of
 the repository of the drone named DRONE.
 @end defvar
