@@ -518,8 +518,7 @@ then also activate the drone using `borg-activate'."
                                 ;; Git fails if this ends with slash.
                                 (directory-file-name gitdir))
                         url (file-relative-name topdir)))
-      (with-temp-file (expand-file-name ".git" topdir)
-        (insert (format "gitdir: ../../.git/modules/%s\n" package))))
+      (borg--link-gitdir package))
     (borg--refresh-magit)
     (message "Cloning %s...done" package)))
 
@@ -554,8 +553,7 @@ The Git directory is not removed."
                      (car (process-lines "git" "rev-parse" "--git-dir")))
                    (directory-file-name gitdir))
       (rename-file (expand-file-name ".git" topdir) gitdir)
-      (with-temp-file (expand-file-name ".git" topdir)
-        (insert (format "gitdir: ../../.git/modules/%s\n" pkg)))
+      (borg--link-gitdir pkg)
       (let ((default-directory gitdir))
         (borg--call-git pkg "config" "core.worktree"
                         (concat "../../../lib/" pkg))))))
@@ -578,10 +576,15 @@ The Git directory is not removed."
 (defun borg--restore-worktree (pkg)
   (let ((topdir (borg-worktree pkg)))
     (make-directory topdir t)
-    (with-temp-file (expand-file-name ".git" topdir)
-      (insert (format "gitdir: ../../.git/modules/%s\n" pkg)))
+    (borg--link-gitdir pkg)
     (let ((default-directory topdir))
       (borg--call-git pkg "reset" "--hard" "HEAD"))))
+
+(defun borg--link-gitdir (pkg)
+  (let ((gitdir (borg-gitdir pkg))
+        (topdir (borg-worktree pkg)))
+    (with-temp-file (expand-file-name ".git" topdir)
+      (insert "gitdir: " (file-relative-name gitdir topdir) "\n"))))
 
 (defun borg--call-git (pkg &rest args)
   (let ((process-connection-type nil)
