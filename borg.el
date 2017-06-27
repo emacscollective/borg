@@ -499,6 +499,7 @@ then also activate the drone using `borg-activate'."
     (borg--call-git package "add" ".gitmodules"))
   (borg--maybe-absorb-gitdir package)
   (borg-build package)
+  (borg-activate package)
   (when (and (derived-mode-p 'magit-mode)
              (fboundp 'magit-refresh))
     (magit-refresh))
