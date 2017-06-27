@@ -616,7 +616,7 @@ The Git directory is not removed."
     (goto-char (point-min))
     (re-search-forward "^\\[submodule")
     (sort-regexp-fields
-     nil "^\\[submodule \"\\([^\"]+\\)\"][\s\t]*\n\\([\s\t].*\n\\)+"
+     nil "^\\[submodule \"\\([^\"]+\\)\"].*\n\\([\s\t].*\n\\)+"
      "\\1" (line-beginning-position) (point-max))
     (save-buffer)))
 
