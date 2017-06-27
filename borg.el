@@ -530,6 +530,7 @@ of whether that repository belongs to an assimilated package or a
 package that has only been cloned for review using `borg-clone'.
 The Git directory is not removed."
   (interactive (list (borg-read-clone "Uninstall clone: ")))
+  (message "Removing %s..." clone)
   (let ((topdir (borg-worktree clone)))
     (let ((default-directory topdir))
       (when (or (not (borg--git-success "diff" "--quiet" "--cached"))
@@ -539,7 +540,9 @@ The Git directory is not removed."
     (if (member clone (borg-drones))
         (let ((default-directory borg-user-emacs-directory))
           (borg--call-git nil "rm" "--force" topdir))
-      (delete-directory topdir t t))))
+      (delete-directory topdir t t)))
+  (borg--refresh-magit)
+  (message "Removing %s...done" clone))
 
 ;;; Internal Utilities
 
