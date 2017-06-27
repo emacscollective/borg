@@ -69,7 +69,7 @@ The value of this variable is usually the same as that of
 
 (defun borg-worktree (clone)
   "Return the top-level of the working tree of the package named CLONE."
-  (expand-file-name clone borg-drone-directory))
+  (expand-file-name (file-name-as-directory clone) borg-drone-directory))
 
 (defun borg-gitdir (clone)
   "Return the Git directory of the package named CLONE.
@@ -78,11 +78,10 @@ Always return `<borg-user-emacs-directory>/.git/modules/<CLONE>',
 even when this repository's Git directory is actually located
 inside the working tree."
   (let* ((default-directory borg-user-emacs-directory)
-         (super (car (process-lines "git" "rev-parse" "--git-dir"))))
+         (super (ignore-errors
+                  (car (process-lines "git" "rev-parse" "--git-dir")))))
     (if super
-        ;; Do not append a slash because of a Git bug;
-        ;; git clone --separate-git-dir=GITDIR/ fails.
-        (expand-file-name (concat super "/modules/" clone))
+        (expand-file-name (concat super "/modules/" clone "/"))
       (error "Cannot locate super-repository"))))
 
 (defvar borg--gitmodule-cache nil)
@@ -515,7 +514,9 @@ then also activate the drone using `borg-activate'."
     (unless (file-exists-p topdir)
       (let ((default-directory borg-user-emacs-directory))
         (borg--call-git package "clone"
-                        (concat "--separate-git-dir=" gitdir)
+                        (concat "--separate-git-dir="
+                                ;; Git fails if this ends with slash.
+                                (directory-file-name gitdir))
                         url (file-relative-name topdir)))
       (with-temp-file (expand-file-name ".git" topdir)
         (insert (format "gitdir: ../../.git/modules/%s\n" package))))
@@ -551,7 +552,7 @@ The Git directory is not removed."
         (topdir (borg-worktree pkg)))
     (unless (equal (let ((default-directory topdir))
                      (car (process-lines "git" "rev-parse" "--git-dir")))
-                   gitdir)
+                   (directory-file-name gitdir))
       (rename-file (expand-file-name ".git" topdir) gitdir)
       (with-temp-file (expand-file-name ".git" topdir)
         (insert (format "gitdir: ../../.git/modules/%s\n" pkg)))
