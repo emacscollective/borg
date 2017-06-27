@@ -500,9 +500,7 @@ then also activate the drone using `borg-activate'."
   (borg--maybe-absorb-gitdir package)
   (borg-build package)
   (borg-activate package)
-  (when (and (derived-mode-p 'magit-mode)
-             (fboundp 'magit-refresh))
-    (magit-refresh))
+  (borg--refresh-magit)
   (message "Assimilating %s...done" package))
 
 (defun borg-clone (package url)
@@ -521,9 +519,7 @@ then also activate the drone using `borg-activate'."
                         url (file-relative-name topdir)))
       (with-temp-file (expand-file-name ".git" topdir)
         (insert (format "gitdir: ../../.git/modules/%s\n" package))))
-    (when (and (derived-mode-p 'magit-mode)
-               (fboundp 'magit-refresh))
-      (magit-refresh))
+    (borg--refresh-magit)
     (message "Cloning %s...done" package)))
 
 (defun borg-remove (clone)
@@ -594,6 +590,11 @@ The Git directory is not removed."
 
 (defun borg--git-success (&rest args)
   (= (apply #'process-file "git" nil nil nil args) 0))
+
+(defun borg--refresh-magit ()
+  (when (and (derived-mode-p 'magit-mode)
+             (fboundp 'magit-refresh))
+    (magit-refresh)))
 
 (defun borg--expand-load-path (drone path)
   (let ((default-directory (borg-worktree drone)))
