@@ -225,9 +225,7 @@ prompting for the package name."
 (defun borg-read-clone (prompt)
   "Read the name of a cloned package, prompting with PROMPT."
   (require 'epkg nil t)
-  (completing-read prompt (borg-clones)
-                   (bound-and-true-p epkg-package-history)
-                   t))
+  (completing-read prompt (borg-clones) nil t nil 'epkg-package-history t))
 
 (defmacro borg-silencio (regexp &rest body)
   "Execute the forms in BODY while silencing messages that don't match REGEXP."
