@@ -7,6 +7,7 @@
 #+TEXINFO_DIR_CATEGORY: Emacs
 #+TEXINFO_DIR_TITLE: Borg: (borg).
 #+TEXINFO_DIR_DESC: Assimilate Emacs packages as Git submodules
+#+SUBTITLE: for version 1.0.0
 
 #+TEXINFO_DEFFN: t
 #+TEXINFO_CLASS: info+
