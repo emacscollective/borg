@@ -7,10 +7,6 @@
 @c %**end of header
 
 @copying
-@ifnottex
-The Borg assimilates Emacs packages as Git submodules.
-@end ifnottex
-
 @quotation
 Copyright (C) 2016-2017 Jonas Bernoulli <jonas@@bernoul.li>
 
@@ -46,7 +42,22 @@ General Public License for more details.
 @ifnottex
 @node Top
 @top Borg User Manual
-@insertcopying
+
+The Borg assimilates Emacs packages as Git submodules.
+
+@quotation
+Copyright (C) 2016-2017 Jonas Bernoulli <jonas@@bernoul.li>
+
+You can redistribute this document and/or modify it under the terms
+of the GNU General Public License as published by the Free Software
+Foundation, either version 3 of the License, or (at your option) any
+later version.
+
+This document is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+General Public License for more details.
+@end quotation
 @end ifnottex
 
 @menu

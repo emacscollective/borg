@@ -1,7 +1,7 @@
 #+TITLE: Borg User Manual
 #+AUTHOR: Jonas Bernoulli
 #+EMAIL: jonas@bernoul.li
-#+DATE: 2016
+#+DATE: 2017
 #+LANGUAGE: en
 
 #+TEXINFO_DIR_CATEGORY: Emacs
@@ -12,18 +12,10 @@
 #+TEXINFO_CLASS: info+
 #+OPTIONS: H:4 num:nil toc:2
 
-* Copying
-:PROPERTIES:
-:COPYING:    t
-:END:
-
-#+BEGIN_EXPORT texinfo
-@ifnottex
 The Borg assimilates Emacs packages as Git submodules.
-@end ifnottex
 
-@quotation
-Copyright (C) 2016-2017 Jonas Bernoulli <jonas@@bernoul.li>
+#+BEGIN_QUOTE
+Copyright (C) 2016-2017 Jonas Bernoulli <jonas@bernoul.li>
 
 You can redistribute this document and/or modify it under the terms
 of the GNU General Public License as published by the Free Software
@@ -34,8 +26,7 @@ This document is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 General Public License for more details.
-@end quotation
-#+END_EXPORT
+#+END_QUOTE
 
 * Introduction
 
@@ -635,3 +626,21 @@ being noted in the changelog.
 # Local Variables:
 # eval: (require 'ox-texinfo+ nil t)
 # End:
+* Copying
+:PROPERTIES:
+:COPYING:    t
+:END:
+
+#+BEGIN_QUOTE
+Copyright (C) 2016-2017 Jonas Bernoulli <jonas@bernoul.li>
+
+You can redistribute this document and/or modify it under the terms
+of the GNU General Public License as published by the Free Software
+Foundation, either version 3 of the License, or (at your option) any
+later version.
+
+This document is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+General Public License for more details.
+#+END_QUOTE
