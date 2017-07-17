@@ -226,8 +226,8 @@ Version strings as those shown above can be obtained using @code{git
 describe --tags}, or by looking inside the "Modules" section of the
 Magit status buffer of the @code{~/.emacs.d} repository.
 
-@cindex borg-assimilate package url
-@deffn Command borg-assimilate package url
+@cindex borg-assimilate package url &optional partially
+@deffn Command borg-assimilate package url &optional partially
 
 This command assimilates the package named PACKAGE from URL.
 
@@ -235,6 +235,12 @@ If @code{epkg} is available, then only the name of the package is read in
 the minibuffer and the url stored in the Epkg database is used.  If
 @code{epkg} is unavailable, the package is not in the database, or if a
 prefix argument is used, then the url too is read in the minibuffer.
+
+If a negative prefix argument is used, then the submodule is added
+but the build and activation steps are skipped.  This is useful when
+assimilating a package that require special build steps.  After
+configuring the build steps use @code{borg-build} to complete the
+assimilation.
 @end deffn
 
 @cindex borg-clone name url

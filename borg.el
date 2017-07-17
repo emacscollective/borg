@@ -486,14 +486,19 @@ then also activate the drone using `borg-activate'."
 
 ;;; Assimilation
 
-(defun borg-assimilate (package url)
+(defun borg-assimilate (package url &optional partially)
   "Assimilate the package named PACKAGE from URL.
 
 If `epkg' is available, then only read the name of the package
 in the minibuffer and use the url stored in the Epkg database.
 If `epkg' is unavailable, the package is not in the database, or
-with a prefix argument, then also read the url in the minibuffer."
-  (interactive (borg-read-package "Assimilate package: " current-prefix-arg))
+with a prefix argument, then also read the url in the minibuffer.
+
+With a negative prefix argument only add the submodule but don't
+build and activate the drone."
+  (interactive
+   (nconc (borg-read-package "Assimilate package: " current-prefix-arg)
+          (list (< (prefix-numeric-value current-prefix-arg) 0))))
   (message "Assimilating %s..." package)
   (borg--maybe-reuse-gitdir package)
   (let ((default-directory borg-user-emacs-directory))
@@ -502,8 +507,9 @@ with a prefix argument, then also read the url in the minibuffer."
     (borg--sort-submodule-sections ".gitmodules")
     (borg--call-git package "add" ".gitmodules"))
   (borg--maybe-absorb-gitdir package)
-  (borg-build package)
-  (borg-activate package)
+  (unless partially
+    (borg-build package)
+    (borg-activate package))
   (borg--refresh-magit)
   (message "Assimilating %s...done" package))
 
