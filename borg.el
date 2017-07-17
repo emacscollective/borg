@@ -205,21 +205,21 @@ When the package `epkg' is available, then the user is only
 prompted for the name of the package, and the upstream url
 is retrieved from the Epkg database.  PROMPT is used when
 prompting for the package name."
-(if (require 'epkg nil t)
-    (let ((name (completing-read prompt (epkgs 'name)
-                                 nil nil nil 'epkg-package-history)))
-      (list name
-            (let ((pkg (epkg name)))
-              (if pkg
-                  (if (or (epkg-git-package-p pkg)
-                          (epkg-github-package-p pkg)
-                          (epkg-orphaned-package-p pkg)
-                          (epkg-gitlab-package-p pkg))
-                      (eieio-oref pkg 'url)
-                    (eieio-oref pkg 'mirror-url))
-                (read-string "Url: ")))))
-  (list (read-string prompt)
-        (read-string "Url: "))))
+  (if (require 'epkg nil t)
+      (let ((name (completing-read prompt (epkgs 'name)
+                                   nil nil nil 'epkg-package-history)))
+        (list name
+              (let ((pkg (epkg name)))
+                (if pkg
+                    (if (or (epkg-git-package-p pkg)
+                            (epkg-github-package-p pkg)
+                            (epkg-orphaned-package-p pkg)
+                            (epkg-gitlab-package-p pkg))
+                        (eieio-oref pkg 'url)
+                      (eieio-oref pkg 'mirror-url))
+                  (read-string "Url: ")))))
+    (list (read-string prompt)
+          (read-string "Url: "))))
 
 (defun borg-read-clone (prompt)
   "Read the name of a cloned package, prompting with PROMPT."
