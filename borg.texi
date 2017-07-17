@@ -230,6 +230,11 @@ Magit status buffer of the @code{~/.emacs.d} repository.
 @deffn Command borg-assimilate package url
 
 This command assimilates the package named PACKAGE from URL.
+
+If @code{epkg} is available, then only the name of the package is read in
+the minibuffer and the url stored in the Epkg database is used.  If
+@code{epkg} is unavailable, the package is not in the database, or if a
+prefix argument is used, then the url too is read in the minibuffer.
 @end deffn
 
 @cindex borg-clone name url
@@ -238,6 +243,12 @@ This command assimilates the package named PACKAGE from URL.
 This command clones the package named NAME from URL, without
 assimilating it.  This is useful when you want to inspect the
 package before potentially executing malicious or broken code.
+
+Interactively, when the @code{epkg} package is available, then the name
+is read in the minibuffer and the url stored in the Epkg database
+is used.  If @code{epkg} is unavailable, the package is unknown, or when
+a prefix argument is used, then the url is also read in the
+minibuffer.
 @end deffn
 
 @cindex borg-remove clone
@@ -707,14 +718,19 @@ names of all other repositories that are located directly inside
 @code{borg-drone-directory} but aren't tracked as submodules.
 @end defun
 
-@defun borg-read-package prompt
+@defun borg-read-package prompt &optional edit-url
 
 This function reads a package name and the url of its upstream
 repository from the user, and returns them as a list.
 
-When the package @code{epkg} is available, then the user is only prompted
-for the name of the package, and the url is retrieved from the Epkg
-database.  PROMPT is used when prompting for the package name.
+When the @code{epkg} package is available, then the user is only prompted
+for the name of the package, and the upstream url is retrieved from
+the Epkg database.  If the package isn't in the database then the
+url has to be provided by the user.  If optional EDIT-URL is
+non-nil, then the url from the database, if any, is provided as
+initial input for the user to edit.
+
+PROMPT is used when prompting for the package name.
 @end defun
 
 @defun borg-read-clone prompt

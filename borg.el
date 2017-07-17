@@ -198,26 +198,29 @@ inside `borg-drone-directory' but aren't tracked as submodules."
                     (list name)))
              (cddr (directory-files borg-drone-directory))))
 
-(defun borg-read-package (prompt)
+(defun borg-read-package (prompt &optional edit-url)
   "Read a package name and url, and return them as a list.
 
-When the package `epkg' is available, then the user is only
-prompted for the name of the package, and the upstream url
-is retrieved from the Epkg database.  PROMPT is used when
-prompting for the package name."
+When the `epkg' package is available, then read the name in the
+minibuffer and use the url stored in the Epkg database.  If
+`epkg' is unavailable, the package is unknown, or when EDIT-URL
+is non-nil, then also read the url in the minibuffer.  PROMPT
+is used when reading the package name."
   (if (require 'epkg nil t)
-      (let ((name (completing-read prompt (epkgs 'name)
-                                   nil nil nil 'epkg-package-history)))
+      (let* ((name (completing-read prompt (epkgs 'name)
+                                    nil nil nil 'epkg-package-history))
+             (pkg  (epkg name))
+             (url  (and pkg
+                        (if (or (epkg-git-package-p pkg)
+                                (epkg-github-package-p pkg)
+                                (epkg-orphaned-package-p pkg)
+                                (epkg-gitlab-package-p pkg))
+                            (eieio-oref pkg 'url)
+                          (eieio-oref pkg 'mirror-url)))))
         (list name
-              (let ((pkg (epkg name)))
-                (if pkg
-                    (if (or (epkg-git-package-p pkg)
-                            (epkg-github-package-p pkg)
-                            (epkg-orphaned-package-p pkg)
-                            (epkg-gitlab-package-p pkg))
-                        (eieio-oref pkg 'url)
-                      (eieio-oref pkg 'mirror-url))
-                  (read-string "Url: ")))))
+              (if (or (not url) edit-url)
+                  (read-string "Url: " url)
+                url)))
     (list (read-string prompt)
           (read-string "Url: "))))
 
@@ -484,8 +487,13 @@ then also activate the drone using `borg-activate'."
 ;;; Assimilation
 
 (defun borg-assimilate (package url)
-  "Assimilate the package named PACKAGE from URL."
-  (interactive (borg-read-package "Assimilate package: "))
+  "Assimilate the package named PACKAGE from URL.
+
+If `epkg' is available, then only read the name of the package
+in the minibuffer and use the url stored in the Epkg database.
+If `epkg' is unavailable, the package is not in the database, or
+with a prefix argument, then also read the url in the minibuffer."
+  (interactive (borg-read-package "Assimilate package: " current-prefix-arg))
   (message "Assimilating %s..." package)
   (borg--maybe-reuse-gitdir package)
   (let ((default-directory borg-user-emacs-directory))
@@ -500,8 +508,13 @@ then also activate the drone using `borg-activate'."
   (message "Assimilating %s...done" package))
 
 (defun borg-clone (package url)
-  "Clone the package named PACKAGE from URL, without assimilating it."
-  (interactive (borg-read-package "Clone package: "))
+  "Clone the package named PACKAGE from URL, without assimilating it.
+
+If `epkg' is available, then only read the name of the package
+in the minibuffer and use the url stored in the Epkg database.
+If `epkg' is unavailable, the package is not in the database, or
+with a prefix argument, then also read the url in the minibuffer."
+  (interactive (borg-read-package "Clone package: " current-prefix-arg))
   (message "Cloning %s..." package)
   (let ((gitdir (borg-gitdir package))
         (topdir (borg-worktree package)))
