@@ -10,14 +10,18 @@ DEPS  =
 EMACS  ?= emacs
 EFLAGS ?=
 DFLAGS ?= $(addprefix -L ../,$(DEPS))
-OFLAGS ?= -L ../dash -L ../org/lisp -L ../ox-texinfo+
+OFLAGS ?= -L ../dash -L ../org/lisp -L ../ox-texinfo+ -L ../magit/lisp -L ../with-editor
 
 INSTALL_INFO     ?= $(shell command -v ginstall-info || printf install-info)
 MAKEINFO         ?= makeinfo
 MANUAL_HTML_ARGS ?= --css-ref /assets/the.css
 
-VERSION := $(shell test -e .git && \
-	git tag | cut -c2- | sort --version-sort | tail -1)
+ifdef VERSION
+GITDESC := v$(VERSION)
+else
+VERSION := $(shell test -e .git && git tag | cut -c2- | sort --version-sort | tail -1)
+GITDESC := $(shell test -e .git && git describe --tags)"+1"
+endif
 
 all: lisp info
 doc: info html html-dir pdf
@@ -47,10 +51,14 @@ loaddefs: $(PKG)-autoloads.el
 	@printf "Compiling $<\n"
 	@$(EMACS) -Q --batch $(EFLAGS) -L . $(DFLAGS) -f batch-byte-compile $<
 
-bump-version:
-	@sed -i -e "s/\(#+SUBTITLE: for version \)[.0-9]*/\1$(VERSION)/" $(PKG).org
+set-version:
+	@sed -i \
+	-e "s/\(#+SUBTITLE: for version \).*/\1$(VERSION) ($(GITDESC))/" \
+	-e "s/\(This manual is for $(shell echo $(PKG) | \
+        sed 's/.*/\u&/') version \).*/\1$(VERSION) ($(GITDESC))./" \
+	$(PKG).org
 
-texi: $(PKG).texi
+texi: set-version $(PKG).texi
 info: $(PKG).info dir
 html: $(PKG).html
 pdf:  $(PKG).pdf
