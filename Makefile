@@ -83,6 +83,7 @@ html-dir: $(PKG).texi
 	@texi2pdf --clean $< > /dev/null
 
 DOMAIN         ?= emacsmirror.net
+CFRONT_DIST    ?= E1IXJGPIOM4EUW
 PUBLISH_BUCKET ?= s3://$(DOMAIN)
 PREVIEW_BUCKET ?= s3://preview.$(DOMAIN)
 PUBLISH_TARGET ?= $(PUBLISH_BUCKET)/manual/
@@ -97,6 +98,9 @@ publish: html html-dir pdf
 	@aws s3 cp $(PKG).html $(PUBLISH_TARGET)
 	@aws s3 cp $(PKG).pdf $(PUBLISH_TARGET)
 	@aws s3 sync $(PKG) $(PUBLISH_TARGET)$(PKG)/
+	@aws cloudfront create-invalidation \
+	--distribution-id $(CFRONT_DIST) \
+	--paths "/manual/$(PKG).html,/manual/$(PKG).pdf,/manual/$(PKG)/*"
 
 CLEAN  = $(ELCS) $(PKG)-autoloads.el $(PKG).info dir
 CLEAN += $(PKG) $(PKG).html $(PKG).pdf
