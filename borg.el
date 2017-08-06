@@ -563,16 +563,19 @@ The Git directory is not removed."
 ;;; Internal Utilities
 
 (defun borg--maybe-absorb-gitdir (pkg)
-  (let ((gitdir (borg-gitdir pkg))
-        (topdir (borg-worktree pkg)))
-    (unless (equal (let ((default-directory topdir))
-                     (car (process-lines "git" "rev-parse" "--git-dir")))
-                   (directory-file-name gitdir))
-      (rename-file (expand-file-name ".git" topdir) gitdir)
-      (borg--link-gitdir pkg)
-      (let ((default-directory gitdir))
-        (borg--call-git pkg "config" "core.worktree"
-                        (concat "../../../lib/" pkg))))))
+  (if (version< (nth 2 (split-string (car (process-lines "git" "version")) " "))
+                "2.12.0")
+      (let ((gitdir (borg-gitdir pkg))
+            (topdir (borg-worktree pkg)))
+        (unless (equal (let ((default-directory topdir))
+                         (car (process-lines "git" "rev-parse" "--git-dir")))
+                       (directory-file-name gitdir))
+          (rename-file (expand-file-name ".git" topdir) gitdir)
+          (borg--link-gitdir pkg)
+          (let ((default-directory gitdir))
+            (borg--call-git pkg "config" "core.worktree"
+                            (concat "../../../lib/" pkg)))))
+    (borg--call-git pkg "submodule" "absorbgitdirs" "--" (borg-worktree pkg))))
 
 (defun borg--maybe-reuse-gitdir (pkg)
   (let ((gitdir (borg-gitdir pkg))
