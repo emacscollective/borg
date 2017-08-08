@@ -351,6 +351,31 @@ This function is to be used only with `--batch'."
           (borg-build-step cmd)
           (message "  Running '%s'...done" cmd)))))
 
+(defun borg-run-build-steps-nix-shell (drone)
+  "Run the build-steps for DRONE, if it has any, on a nix-shell.
+
+The nix-shell is started with the file at
+submodules.DRONE.build-nix-shell-file or the packages at
+submodules.DRONE.build-nix-shell-packages.  If none of this is
+provided, and the package has no default.nix, it is run with the
+-p argument.  If there's a default.nix or shell.nix, no extra
+arguments are added."
+  (let ((build (borg-get-all drone "build-step"))
+        (nix-shell-args (or
+                         (when-let ((nix-shell-file (car (borg-get drone "build-nix-shell-file")))) nix-shell-file)
+                         (when-let ((nix-shell-pkgs (car (borg-get drone "build-nix-shell-packages")))) (concat "-p " nix-shell-pkgs))
+                         (unless
+                             (or
+                              (file-exists-p (expand-file-name "default.nix" default-directory))
+                              (file-exists-p (expand-file-name "shell.nix" default-directory)))
+                           "-p")
+                         "")))
+    (when build
+      (message "Building %s from nix-shell %s" drone nix-shell-args)
+      (dolist (cmd build)
+        (borg-build-step cmd
+                         (lambda (cmd) (shell-command (concat "nix-shell --run " cmd " " nix-shell-args))))))))
+
 (defvar borg-run-build-steps-function
   'borg-run-build-steps-shell
   "The command to run the build-steps for a drone.
