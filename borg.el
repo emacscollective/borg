@@ -344,12 +344,10 @@ This function is to be used only with `--batch'."
 
 (defun borg-run-build-steps-shell (drone)
   "Run the build-steps for DRONE, if it has any, as shell commands."
-  (let ((default-directory (borg-worktree drone))
-        (build (borg-get-all drone "build-step")))
-    (when build
-        (dolist (cmd build)
-          (borg-build-step cmd)
-          (message "  Running '%s'...done" cmd)))))
+  (let ((default-directory (borg-worktree drone)))
+    (dolist (cmd (borg-get-all drone "build-step"))
+      (borg-build-step cmd)
+      (message "  Running '%s'...done" cmd))))
 
 (defun borg-run-build-steps-nix-shell (drone)
   "Run the build-steps for DRONE, if it has any, on a nix-shell.
