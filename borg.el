@@ -342,36 +342,61 @@ This function is to be used only with `--batch'."
           (message "\n--- [%s] ---\n" f)
           (byte-recompile-file (expand-file-name f) t 0))))))
 
+(defun borg-run-build-steps-shell (drone)
+  "Run the build-steps for DRONE, if it has any, as shell commands."
+  (let ((default-directory (borg-worktree drone))
+        (build (borg-get-all drone "build-step")))
+    (when build
+        (dolist (cmd build)
+          (borg-build-step cmd)
+          (message "  Running '%s'...done" cmd)))))
+
+(defvar borg-run-build-steps-function
+  'borg-run-build-steps-shell
+  "The command to run the build-steps for a drone.
+
+The value should be a function taking one argument, the drone
+name, and returning non-nil if all steps ran successfully.
+
+The default value runs each step with `shell-command'.")
+
+(defun borg-build-step (cmd &optional func)
+  "Run CMD with FUNC or (eval) it.
+
+If CMD starts with \"(\", it is evaluated as Lisp.  If not, it is
+run through FUNC.
+
+if FUNC is nil, it defaults to shell-command."
+  (if (string-match-p "\\`(" cmd)
+      (eval (read cmd))
+    (message "  Running '%s'..." cmd)
+    (funcall (or func 'shell-command) cmd)
+  (message "  Running '%s'...done" cmd)))
+
 (defun borg-build (drone &optional activate)
   "Build the drone named DRONE.
 Interactively, or when optional ACTIVATE is non-nil,
 then also activate the drone using `borg-activate'."
   (interactive (list (completing-read "Build drone: " (borg-drones) nil t)
                      t))
-  (let ((default-directory (borg-worktree drone))
-        (build (borg-get-all drone "build-step")))
-    (if  build
-        (dolist (cmd build)
-          (message "  Running '%s'..." cmd)
-          (if (string-match-p "\\`(" cmd)
-              (eval (read cmd))
-            (shell-command cmd))
-          (message "  Running '%s'...done" cmd))
-      (let ((path (mapcar #'file-name-as-directory (borg-load-path drone))))
-        (if noninteractive
-            (progn (borg-update-autoloads drone path)
-                   (borg-byte-compile drone path)
-                   (borg-makeinfo drone))
-          (let ((process-connection-type nil))
-            (start-process
-             (format "Build %s" drone)
-             (generate-new-buffer (format "*Build %s*" drone))
-             (expand-file-name invocation-name invocation-directory)
-             "--batch" "-Q"
-             "-L" (borg-worktree "borg")
-             "--eval" "(require 'borg)"
-             "--eval" "(borg-initialize)"
-             "--eval" (format "(borg-build %S)" drone)))))))
+  (let ((default-directory (borg-worktree drone)))
+    (funcall borg-run-build-steps-function drone)
+
+    (let ((path (mapcar #'file-name-as-directory (borg-load-path drone))))
+      (if noninteractive
+          (progn (borg-update-autoloads drone path)
+                 (borg-byte-compile drone path)
+                 (borg-makeinfo drone))
+        (let ((process-connection-type nil))
+          (start-process
+           (format "Build %s" drone)
+           (generate-new-buffer (format "*Build %s*" drone))
+           (expand-file-name invocation-name invocation-directory)
+           "--batch" "-Q"
+           "-L" (borg-worktree "borg")
+           "--eval" "(require 'borg)"
+           "--eval" "(borg-initialize)"
+           "--eval" (format "(borg-build %S)" drone))))))
   (when activate
     (borg-activate drone)))
 
