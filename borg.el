@@ -392,30 +392,30 @@ then also activate the drone using `borg-activate'."
   (let ((default-directory (borg-worktree drone))
         (build-cmd (funcall borg-build-command drone))
         (build (borg-get-all drone "build-step")))
-    (when build
+    (if build
         (dolist (cmd build)
           (if (string-match-p "\\`(" cmd)
               (eval (read cmd))
             (when-let ((fcmd (funcall build-cmd cmd)))
               (message "  Running '%s'..." fcmd)
-              (shell-command fcmd))))))
+              (shell-command fcmd))))
 
-  ;; Then the standard build operations.
-  (let ((path (mapcar #'file-name-as-directory (borg-load-path drone))))
-    (if noninteractive
-        (progn (borg-update-autoloads drone path)
-               (borg-byte-compile drone path)
-               (borg-makeinfo drone))
-      (let ((process-connection-type nil))
-        (start-process
-         (format "Build %s" drone)
-         (generate-new-buffer (format "*Build %s*" drone))
-         (expand-file-name invocation-name invocation-directory)
-         "--batch" "-Q"
-         "-L" (borg-worktree "borg")
-         "--eval" "(require 'borg)"
-         "--eval" "(borg-initialize)"
-         "--eval" (format "(borg-build %S)" drone)))))
+      ;; Then the standard build operations.
+      (let ((path (mapcar #'file-name-as-directory (borg-load-path drone))))
+        (if noninteractive
+            (progn (borg-update-autoloads drone path)
+                   (borg-byte-compile drone path)
+                   (borg-makeinfo drone))
+          (let ((process-connection-type nil))
+            (start-process
+             (format "Build %s" drone)
+             (generate-new-buffer (format "*Build %s*" drone))
+             (expand-file-name invocation-name invocation-directory)
+             "--batch" "-Q"
+             "-L" (borg-worktree "borg")
+             "--eval" "(require 'borg)"
+             "--eval" "(borg-initialize)"
+             "--eval" (format "(borg-build %S)" drone)))))))
   (when activate
     (borg-activate drone)))
 
