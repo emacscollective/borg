@@ -34,6 +34,7 @@
 (require 'bytecomp)
 (require 'cl-lib)
 (require 'info)
+(require 'subr-x)
 
 (eval-when-compile
   (require 'epkg nil t))
@@ -342,21 +343,64 @@ This function is to be used only with `--batch'."
           (message "\n--- [%s] ---\n" f)
           (byte-recompile-file (expand-file-name f) t 0))))))
 
+(defvar borg-nix-shell-build-use-pure-shell
+  t
+  "Determine if nix-shells should be pure.")
+
+(defun borg-nix-shell-build-command (drone)
+  "Return a function wrapping a command in a nix-shell invocation for DRONE.
+
+The nix-shell is started with the file at
+submodules.DRONE.build-nix-shell-file or the packages at
+submodules.DRONE.build-nix-shell-packages.  If none of this is
+provided, and the package has no default.nix, it is run with the
+-p argument.  If there's a default.nix or shell.nix, no extra
+arguments are added."
+  (lambda (cmd)
+    (concat "nix-shell "
+            (when borg-nix-shell-build-use-pure-shell "--pure ")
+            "--run "
+            (shell-quote-argument cmd)
+            " "
+            (or (car (borg-get drone "build-nix-shell-file"))
+                (let ((pkgs (car (borg-get drone "build-nix-shell-packages"))))
+                  (and pkgs (concat "-p " pkgs)))
+                (and (not (file-exists-p (expand-file-name "default.nix" (borg-worktree drone))))
+                     (not (file-exists-p (expand-file-name "shell.nix" (borg-worktree drone))))
+                     "-p")))))
+
+(defvar borg-build-command
+  (lambda (_) (lambda (y) y))
+  "The command to run the build-steps for a drone.
+
+The value should be a function taking one argument, the drone
+name, and returning another function also taking a single
+argument, the command to run.  This second function should either
+return a string to run through `shell-command' or nil.  If nil,
+the function is assumed to have been called for effect and no
+other operation is performed.
+
+The default value simply returns the input string unmodified.")
+
 (defun borg-build (drone &optional activate)
   "Build the drone named DRONE.
 Interactively, or when optional ACTIVATE is non-nil,
 then also activate the drone using `borg-activate'."
   (interactive (list (completing-read "Build drone: " (borg-drones) nil t)
                      t))
+  ;;; First run user-provided build steps.
   (let ((default-directory (borg-worktree drone))
+        (build-cmd (funcall borg-build-command drone))
         (build (borg-get-all drone "build-step")))
-    (if  build
+    (if build
         (dolist (cmd build)
-          (message "  Running '%s'..." cmd)
           (if (string-match-p "\\`(" cmd)
               (eval (read cmd))
-            (shell-command cmd))
-          (message "  Running '%s'...done" cmd))
+            (when-let ((fcmd (funcall build-cmd cmd)))
+              (message "  Running '%s'..." fcmd)
+              (shell-command fcmd))))
+
+      ;; Then the standard build operations.
       (let ((path (mapcar #'file-name-as-directory (borg-load-path drone))))
         (if noninteractive
             (progn (borg-update-autoloads drone path)
