@@ -45,6 +45,7 @@
 (declare-function epkg-gitlab-package-p   "epkg" (obj))
 (declare-function epkg-orphaned-package-p "epkg" (obj))
 (declare-function epkg-read-package       "epkg" (prompt &optional default))
+(declare-function format-spec      "format-spec" (format specification))
 
 (defconst borg-drone-directory
   (file-name-directory
@@ -372,6 +373,7 @@ then also activate the drone using `borg-activate'."
                     (build-cmd
                      (when (or (stringp build-cmd)
                                (setq build-cmd (funcall build-cmd drone cmd)))
+                       (require 'format-spec)
                        (shell-command
                         (format-spec build-cmd
                                      `((%s . ,cmd)
