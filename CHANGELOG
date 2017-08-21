@@ -34,6 +34,10 @@
 - Command ~borg-build~ now also activates the drone using the new
   command ~borg-activate~, which was extracted from ~borg-assimilate~.
 
+- Command ~borg-build~ now always uses a non-interactive Emacs instance
+  to avoid polluting the new byte-code with old versions of the same
+  code that is already loaded.
+
 - Added new utility function ~borg-gitdir~ and, in order to avoid
   confusion and match Git terminology, renamed ~borg-repository~ to
   ~borg-worktree~.
