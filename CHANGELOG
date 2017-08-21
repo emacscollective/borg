@@ -38,6 +38,10 @@
   to avoid polluting the new byte-code with old versions of the same
   code that is already loaded.
 
+- The functions ~borg-update-autoloads~, ~borg-byte-compile~, and
+  ~borg-makeinfo~ can now be used as explicit build steps without
+  having to specify their argument(s).
+
 - Added new utility function ~borg-gitdir~ and, in order to avoid
   confusion and match Git terminology, renamed ~borg-repository~ to
   ~borg-worktree~.

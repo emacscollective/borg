@@ -354,9 +354,14 @@ then also activate the drone using `borg-activate'."
         (if  build
             (dolist (cmd build)
               (message "  Running '%s'..." cmd)
-              (if (string-match-p "\\`(" cmd)
-                  (eval (read cmd))
-                (shell-command cmd))
+              (cond ((member cmd '("borg-update-autoloads"
+                                   "borg-byte-compile"
+                                   "borg-makeinfo"))
+                     (funcall (intern cmd) drone))
+                    ((string-match-p "\\`(" cmd)
+                     (eval (read cmd)))
+                    (t
+                     (shell-command cmd)))
               (message "  Running '%s'...done" cmd))
           (let ((path (mapcar #'file-name-as-directory (borg-load-path drone))))
             (borg-update-autoloads drone path)
