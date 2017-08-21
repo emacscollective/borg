@@ -65,6 +65,12 @@ The value of this variable is usually the same as that of
   (expand-file-name ".gitmodules" borg-user-emacs-directory)
   "The \".gitmodules\" file of the drone repository.")
 
+;;; Variables
+
+(defvar borg-build-shell-command nil
+  "Optional command used to run shell command build steps.
+This variable is documented in the manual (which see).")
+
 ;;; Utilities
 
 (defun borg-worktree (clone)
@@ -350,6 +356,9 @@ then also activate the drone using `borg-activate'."
                      t))
   (if noninteractive
       (let ((default-directory (borg-worktree drone))
+            (build-cmd (if (functionp borg-build-shell-command)
+                           (funcall borg-build-shell-command drone)
+                         borg-build-shell-command))
             (build (borg-get-all drone "build-step")))
         (if  build
             (dolist (cmd build)
@@ -360,6 +369,13 @@ then also activate the drone using `borg-activate'."
                      (funcall (intern cmd) drone))
                     ((string-match-p "\\`(" cmd)
                      (eval (read cmd)))
+                    (build-cmd
+                     (when (or (stringp build-cmd)
+                               (setq build-cmd (funcall build-cmd drone cmd)))
+                       (shell-command
+                        (format-spec build-cmd
+                                     `((%s . ,cmd)
+                                       (%S . ,(shell-quote-argument cmd)))))))
                     (t
                      (shell-command cmd)))
               (message "  Running '%s'...done" cmd))

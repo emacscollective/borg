@@ -42,6 +42,9 @@
   ~borg-makeinfo~ can now be used as explicit build steps without
   having to specify their argument(s).
 
+- Added new variable ~borg-build-shell-command~ to give users complete
+  control over how shell command build steps are exectured.
+
 - Added new utility function ~borg-gitdir~ and, in order to avoid
   confusion and match Git terminology, renamed ~borg-repository~ to
   ~borg-worktree~.

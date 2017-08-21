@@ -7,7 +7,7 @@
 #+TEXINFO_DIR_CATEGORY: Emacs
 #+TEXINFO_DIR_TITLE: Borg: (borg).
 #+TEXINFO_DIR_DESC: Assimilate Emacs packages as Git submodules
-#+SUBTITLE: for version 1.0.0 (v1.0.0-37-geda44c6+1)
+#+SUBTITLE: for version 1.0.0 (v1.0.0-38-g202a380+1)
 
 #+TEXINFO_DEFFN: t
 #+OPTIONS: H:4 num:4 toc:2
@@ -17,7 +17,7 @@ The Borg assimilates Emacs packages as Git submodules.  Borg is a
 bare-bones package manager for Emacs packages.
 
 #+BEGIN_QUOTE
-This manual is for Borg version 1.0.0 (v1.0.0-37-geda44c6+1).
+This manual is for Borg version 1.0.0 (v1.0.0-38-g202a380+1).
 
 Copyright (C) 2016-2017 Jonas Bernoulli <jonas@bernoul.li>
 
@@ -482,6 +482,30 @@ variables you can tell Borg how to build such packages.
 
   Note that just because a package provides a ~Makefile~, you do not
   necessarily have to use it.
+
+- Variable: borg-build-shell-command
+
+  This variable can be used to change how shell commands specified
+  by ~submodule.DRONE.build-step~ are run.  The default value is ~nil~,
+  meaning that each build step is run unchanged using ~shell-command~.
+
+  If the value is a string, then that is combined with each build step
+  in turn and the results are run using ~shell-command~.  This string
+  must contain either %s, which is replaced with the unchanged build
+  step, or %S, which is replaced with the result of quoting the build
+  step using ~shell-quote-argument~.
+
+  If the value is a function, then that is called once with the drone
+  as argument and must return either a string or a function.  If the
+  returned value is a string, then that is used as described above.
+
+  If the value returned by the first function, then this second
+  function is called for each build step with the drone and the build
+  step as arguments.  It must return a string or ~nil~.  If the returned
+  value is a string, then that is used as described above.
+
+  Finally the second function may execute the build step at its own
+  discretion and return ~nil~ to indicate that it has done so.
 
 - Variable: submodule.DRONE.load-path PATH
 
