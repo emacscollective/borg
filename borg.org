@@ -649,9 +649,6 @@ being noted in the changelog.
 - Function: borg--expand-load-path drone path
 - Function: borg--sort-submodule-sections
 
-# Local Variables:
-# eval: (require 'ox-texinfo+ nil t)
-# End:
 * Copying
 :PROPERTIES:
 :COPYING:    t
