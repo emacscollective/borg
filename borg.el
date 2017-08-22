@@ -253,7 +253,7 @@ is used when reading the package name."
 
 For each drone use `borg-activate' to add the appropriate
 directories to the `load-path' and `Info-directory-alist', and
-load the autoloads file, if it exits.
+load the autoloads file, if it exists.
 
 If the value of a Git variable named `submodule.DRONE.disabled'
 is true in \"~/.emacs.d/.gitmodules\", then the drone named DRONE
@@ -281,7 +281,7 @@ is skipped."
 
 Add the appropriate directories to `load-path' and
 `Info-directory-alist', and load the autoloaads file, if it
-exits."
+exists."
   (interactive (list (completing-read "Activate drone: " (borg-drones) nil t)))
   (dolist (dir (borg-load-path drone))
     (let (file)
