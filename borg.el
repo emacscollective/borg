@@ -282,7 +282,7 @@ is skipped."
 Add the appropriate directories to `load-path' and
 `Info-directory-alist', and load the autoloaads file, if it
 exists."
-  (interactive (list (completing-read "Activate drone: " (borg-drones) nil t)))
+  (interactive (list (borg-read-clone "Activate drone: ")))
   (dolist (dir (borg-load-path drone))
     (let (file)
       (cond ((and (file-exists-p
@@ -353,8 +353,7 @@ This function is to be used only with `--batch'."
   "Build the drone named DRONE.
 Interactively, or when optional ACTIVATE is non-nil,
 then also activate the drone using `borg-activate'."
-  (interactive (list (completing-read "Build drone: " (borg-drones) nil t)
-                     t))
+  (interactive (list (borg-read-clone "Build drone: ") t))
   (if noninteractive
       (let ((default-directory (borg-worktree drone))
             (build-cmd (if (functionp borg-build-shell-command)
