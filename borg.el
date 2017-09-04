@@ -280,8 +280,8 @@ is skipped."
   "Activate the drone named DRONE.
 
 Add the appropriate directories to `load-path' and
-`Info-directory-alist', and load the autoloaads file, if it
-exists."
+`Info-directory-alist', and load the autoloads file,
+if it exists."
   (interactive (list (completing-read "Activate drone: " (borg-drones) nil t)))
   (dolist (dir (borg-load-path drone))
     (let (file)
