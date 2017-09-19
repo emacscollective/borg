@@ -1,6 +1,6 @@
 # -*- mode: org -*-
 
-* v2.0.0    UNRELEASED
+* v2.0.0    2017/09/19
 
 - Added new command ~borg-clone~ to make it easier to review a package
   before assimilating it.  Assimilating a package gives that package
