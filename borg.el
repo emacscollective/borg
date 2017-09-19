@@ -195,15 +195,13 @@ included in the returned value."
 (defun borg-clones ()
   "Return a list of cloned packages.
 
-The returned value includes the names of all drones, as well as
-the names of all other repositories that are located directly
-inside `borg-drone-directory' but aren't tracked as submodules."
-  (cl-mapcan (lambda (name)
-               (and (expand-file-name
-                     (convert-standard-filename (concat name "/.git"))
-                     borg-drone-directory)
-                    (list name)))
-             (cddr (directory-files borg-drone-directory))))
+The returned value includes the names of all packages that were
+cloned into `borg-drone-directory', including clones that have
+not been assimilated yet."
+  (cl-mapcan (lambda (file)
+               (and (file-directory-p file)
+                    (list (file-name-nondirectory file))))
+             (directory-files borg-drone-directory t "\\`[^.]")))
 
 (defun borg-read-package (prompt &optional edit-url)
   "Read a package name and url, and return them as a list.
