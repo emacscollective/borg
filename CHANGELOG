@@ -11,8 +11,7 @@
   to as drones, as before.  Note that drones are also clones.
 
   When a package has not even been cloned yet, then it is referred
-  to as just a package.  The names of function arguments have been
-  updated to communicate what subset of packages they act on.
+  to as just a package.
 
 - Added new command ~borg-remove~ to replace ~borg-uninstall~.  The new
   name is more appropriate because this command is also suitable for
@@ -31,8 +30,8 @@
   before but was then removed again, then the user is now given the
   choice between reusing the existing gitdir or starting over.
 
-- Command ~borg-build~ now also activates the drone using the new
-  command ~borg-activate~, which was extracted from ~borg-assimilate~.
+- Command ~borg-build~ now also activates the clone or drone using the
+  new command ~borg-activate~, which was extracted from ~borg-assimilate~.
 
 - Command ~borg-build~ now always uses a non-interactive Emacs instance
   to avoid polluting the new byte-code with old versions of the same

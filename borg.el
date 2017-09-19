@@ -93,11 +93,11 @@ inside the working tree."
 
 (defvar borg--gitmodule-cache nil)
 
-(defun borg-get (drone variable &optional all)
-  "Return the value of `submodule.DRONE.VARIABLE' in `~/.emacs.d/.gitmodules'.
+(defun borg-get (clone variable &optional all)
+  "Return the value of `submodule.CLONE.VARIABLE' in `~/.emacs.d/.gitmodules'.
 If optional ALL is non-nil, then return all values as a list."
   (if borg--gitmodule-cache
-      (let ((values (plist-get (cdr (assoc drone borg--gitmodule-cache))
+      (let ((values (plist-get (cdr (assoc clone borg--gitmodule-cache))
                                (intern variable))))
         (if all values (car values)))
     (ignore-errors
@@ -105,30 +105,30 @@ If optional ALL is non-nil, then return all values as a list."
       ;; but that isn't an error as far as we are concerned.
       (apply #'process-lines "git" "config" "--file" borg-gitmodules-file
              (nconc (and all (list "--get-all"))
-                    (list (concat "submodule." drone "." variable)))))))
+                    (list (concat "submodule." clone "." variable)))))))
 
-(defun borg-get-all (drone variable)
-  "Return all values of `submodule.DRONE.VARIABLE' in `~/.emacs.d/.gitmodules'.
+(defun borg-get-all (clone variable)
+  "Return all values of `submodule.CLONE.VARIABLE' in `~/.emacs.d/.gitmodules'.
 Return the values as a list."
-  (borg-get drone variable t))
+  (borg-get clone variable t))
 
-(defun borg-load-path (drone)
-  "Return the `load-path' for the drone named DRONE."
-  (let ((repo (borg-worktree drone))
-        (path (borg-get-all drone "load-path")))
+(defun borg-load-path (clone)
+  "Return the `load-path' for the clone named CLONE."
+  (let ((repo (borg-worktree clone))
+        (path (borg-get-all clone "load-path")))
     (if  path
         (mapcar (lambda (d) (expand-file-name d repo)) path)
       (let ((lisp (expand-file-name "lisp" repo)))
         (list (if (file-exists-p lisp) lisp repo))))))
 
-(defun borg-info-path (drone &optional setup)
-  "Return the `Info-directory-list' for the drone named DRONE.
+(defun borg-info-path (clone &optional setup)
+  "Return the `Info-directory-list' for the clone named CLONE.
 
 If optional SETUP is non-nil, then return a list of directories
 containing texinfo and/or info files.  Otherwise return a list of
 directories containing a file named \"dir\"."
-  (let ((repo (borg-worktree drone))
-        (path (borg-get-all drone "info-path")))
+  (let ((repo (borg-worktree clone))
+        (path (borg-get-all clone "info-path")))
     (cl-mapcan (if setup
                    (lambda (d)
                      (setq d (file-name-as-directory d))
@@ -276,28 +276,28 @@ is skipped."
                  (format ", %d skipped" skipped)
                ""))))
 
-(defun borg-activate (drone)
-  "Activate the drone named DRONE.
+(defun borg-activate (clone)
+  "Activate the clone named CLONE.
 
 Add the appropriate directories to `load-path' and
 `Info-directory-alist', and load the autoloads file,
 if it exists."
-  (interactive (list (completing-read "Activate drone: " (borg-drones) nil t)))
-  (dolist (dir (borg-load-path drone))
+  (interactive (list (borg-read-clone "Activate clone: ")))
+  (dolist (dir (borg-load-path clone))
     (let (file)
       (cond ((and (file-exists-p
                    (setq file (expand-file-name
-                               (concat drone "-autoloads.el") dir)))
+                               (concat clone "-autoloads.el") dir)))
                   (with-demoted-errors "Error loading autoloads: %s"
                     (load file nil t))))
             ((and (file-exists-p
                    (setq file (expand-file-name
-                               (concat drone "-loaddefs.el") dir)))
+                               (concat clone "-loaddefs.el") dir)))
                   (with-demoted-errors "Error loading autoloads: %s"
                     (add-to-list 'load-path dir) ; for `org'
                     (load file nil t))))
             (t (push dir load-path)))))
-  (dolist (dir (borg-info-path drone))
+  (dolist (dir (borg-info-path clone))
     (push  dir Info-directory-list)))
 
 (defun borg-batch-rebuild (&optional quick)
@@ -349,30 +349,29 @@ This function is to be used only with `--batch'."
           (message "\n--- [%s] ---\n" f)
           (byte-recompile-file (expand-file-name f) t 0))))))
 
-(defun borg-build (drone &optional activate)
-  "Build the drone named DRONE.
+(defun borg-build (clone &optional activate)
+  "Build the clone named CLONE.
 Interactively, or when optional ACTIVATE is non-nil,
-then also activate the drone using `borg-activate'."
-  (interactive (list (completing-read "Build drone: " (borg-drones) nil t)
-                     t))
+then also activate the clone using `borg-activate'."
+  (interactive (list (borg-read-clone "Build drone: ") t))
   (if noninteractive
-      (let ((default-directory (borg-worktree drone))
+      (let ((default-directory (borg-worktree clone))
             (build-cmd (if (functionp borg-build-shell-command)
-                           (funcall borg-build-shell-command drone)
+                           (funcall borg-build-shell-command clone)
                          borg-build-shell-command))
-            (build (borg-get-all drone "build-step")))
+            (build (borg-get-all clone "build-step")))
         (if  build
             (dolist (cmd build)
               (message "  Running '%s'..." cmd)
               (cond ((member cmd '("borg-update-autoloads"
                                    "borg-byte-compile"
                                    "borg-makeinfo"))
-                     (funcall (intern cmd) drone))
+                     (funcall (intern cmd) clone))
                     ((string-match-p "\\`(" cmd)
                      (eval (read cmd)))
                     (build-cmd
                      (when (or (stringp build-cmd)
-                               (setq build-cmd (funcall build-cmd drone cmd)))
+                               (setq build-cmd (funcall build-cmd clone cmd)))
                        (require 'format-spec)
                        (shell-command
                         (format-spec build-cmd
@@ -381,22 +380,22 @@ then also activate the drone using `borg-activate'."
                     (t
                      (shell-command cmd)))
               (message "  Running '%s'...done" cmd))
-          (let ((path (mapcar #'file-name-as-directory (borg-load-path drone))))
-            (borg-update-autoloads drone path)
-            (borg-byte-compile drone path)
-            (borg-makeinfo drone))))
+          (let ((path (mapcar #'file-name-as-directory (borg-load-path clone))))
+            (borg-update-autoloads clone path)
+            (borg-byte-compile clone path)
+            (borg-makeinfo clone))))
     (let ((process-connection-type nil))
       (start-process
-       (format "Build %s" drone)
-       (generate-new-buffer (format "*Build %s*" drone))
+       (format "Build %s" clone)
+       (generate-new-buffer (format "*Build %s*" clone))
        (expand-file-name invocation-name invocation-directory)
        "--batch" "-Q"
        "-L" (borg-worktree "borg")
        "--eval" "(require 'borg)"
        "--eval" "(borg-initialize)"
-       "--eval" (format "(borg-build %S)" drone))))
+       "--eval" (format "(borg-build %S)" clone))))
   (when activate
-    (borg-activate drone)))
+    (borg-activate clone)))
 
 (defconst borg-autoload-format "\
 ;;;\
@@ -415,21 +414,21 @@ then also activate the drone using `borg-activate'."
 ;;;\
  %s ends here\n")
 
-(defun borg-update-autoloads (drone &optional path)
-  "Update autoload files for the drone named DRONE in the directories in PATH."
-  (setq path (borg--expand-load-path drone path))
+(defun borg-update-autoloads (clone &optional path)
+  "Update autoload files for the clone named CLONE in the directories in PATH."
+  (setq path (borg--expand-load-path clone path))
   (let ((autoload-excludes
          (nconc (mapcar #'expand-file-name
-                        (borg-get-all drone "no-byte-compile"))
+                        (borg-get-all clone "no-byte-compile"))
                 (cl-mapcan
                  (lambda (dir)
-                   (list (expand-file-name (concat drone "-pkg.el") dir)
-                         (expand-file-name (concat drone "-test.el") dir)
-                         (expand-file-name (concat drone "-tests.el") dir)))
+                   (list (expand-file-name (concat clone "-pkg.el") dir)
+                         (expand-file-name (concat clone "-test.el") dir)
+                         (expand-file-name (concat clone "-tests.el") dir)))
                  path)
                 autoload-excludes))
         (generated-autoload-file
-         (expand-file-name (format "%s-autoloads.el" drone) (car path))))
+         (expand-file-name (format "%s-autoloads.el" clone) (car path))))
     (message " Creating %s..." generated-autoload-file)
     (when (file-exists-p generated-autoload-file)
       (delete-file generated-autoload-file t))
@@ -444,11 +443,11 @@ then also activate the drone using `borg-activate'."
       (when buf
         (kill-buffer buf)))))
 
-(defun borg-byte-compile (drone &optional path)
-  "Compile libraries for the drone named DRONE in the directories in PATH."
-  (setq path (borg--expand-load-path drone path))
-  (let ((exclude (borg-get-all drone "no-byte-compile"))
-        (topdir (borg-worktree drone)))
+(defun borg-byte-compile (clone &optional path)
+  "Compile libraries for the clone named CLONE in the directories in PATH."
+  (setq path (borg--expand-load-path clone path))
+  (let ((exclude (borg-get-all clone "no-byte-compile"))
+        (topdir (borg-worktree clone)))
     (dolist (dir path)
       (with-current-buffer (get-buffer-create byte-compile-log-buffer)
         (setq default-directory (expand-file-name dir topdir))
@@ -484,10 +483,10 @@ then also activate the drone using `borg-activate'."
                    (if (> skip-count 0) (format ", %d skipped" skip-count) "")
                    )))))) ; o, the horror
 
-(defun borg-makeinfo (drone)
-  "Generate Info manuals and the Info index for the drone named DRONE."
-  (dolist (default-directory (borg-info-path drone t))
-    (let ((exclude (borg-get-all drone "no-makeinfo")))
+(defun borg-makeinfo (clone)
+  "Generate Info manuals and the Info index for the clone named CLONE."
+  (dolist (default-directory (borg-info-path clone t))
+    (let ((exclude (borg-get-all clone "no-makeinfo")))
       (dolist (texi (directory-files default-directory nil "\\.texi\\'"))
         (let ((info (concat (file-name-sans-extension texi) ".info")))
           (when (and (not (member texi exclude))
@@ -645,11 +644,11 @@ The Git directory is not removed."
              (fboundp 'magit-refresh))
     (magit-refresh)))
 
-(defun borg--expand-load-path (drone path)
-  (let ((default-directory (borg-worktree drone)))
+(defun borg--expand-load-path (clone path)
+  (let ((default-directory (borg-worktree clone)))
     (mapcar (lambda (p)
               (file-name-as-directory (expand-file-name p)))
-            (or path (borg-load-path drone)))))
+            (or path (borg-load-path clone)))))
 
 (defun borg--sort-submodule-sections (file)
   (with-current-buffer (or (find-buffer-visiting file)

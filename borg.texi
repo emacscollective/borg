@@ -30,7 +30,7 @@ General Public License for more details.
 @finalout
 @titlepage
 @title Borg User Manual
-@subtitle for version 1.0.0 (v1.0.0-43-g22d4643+1)
+@subtitle for version 1.0.0 (v1.0.0-44-g1136908+1)
 @author Jonas Bernoulli
 @page
 @vskip 0pt plus 1filll
@@ -47,7 +47,7 @@ The Borg assimilates Emacs packages as Git submodules.  Borg is a
 bare-bones package manager for Emacs packages.
 
 @quotation
-This manual is for Borg version 1.0.0 (v1.0.0-43-g22d4643+1).
+This manual is for Borg version 1.0.0 (v1.0.0-44-g1136908+1).
 
 Copyright (C) 2016-2017 Jonas Bernoulli <jonas@@bernoul.li>
 
@@ -139,15 +139,16 @@ it by setting the value of the Git variable @code{submodule.DRONE.disabled}
 to true in @code{~/.emacs.d/.gitmodules}.
 @end defun
 
-@cindex borg-activate drone
-@deffn Command borg-activate drone
+@cindex borg-activate clone
+@deffn Command borg-activate clone
 
-This function activates the drone named DRONE by adding the
+This function activates the clone named CLONE by adding the
 appropriate directories to the @code{load-path} and to @code{Info-directory-list},
 and by loading the autoloads file, if it exits.
 
 Unlike @code{borg-initialize}, this function ignores the Git variable
-@code{submodule.DRONE.disabled}.
+@code{submodule.DRONE.disabled} and can be used to activate clones that
+have not been assimilated.
 @end deffn
 
 @node Assimilation
@@ -235,10 +236,10 @@ configuring the build steps use @code{borg-build} to complete the
 assimilation.
 @end deffn
 
-@cindex borg-clone name url
-@deffn Command borg-clone name url
+@cindex borg-clone package url
+@deffn Command borg-clone package url
 
-This command clones the package named NAME from URL, without
+This command clones the package named PACKAGE from URL, without
 assimilating it.  This is useful when you want to inspect the
 package before potentially executing malicious or broken code.
 
@@ -259,33 +260,33 @@ package that has only been cloned for review using @code{borg-clone}.  The
 Git directory is not removed.
 @end deffn
 
-@cindex borg-build drone
-@deffn Command borg-build drone
+@cindex borg-build clone &optional activate
+@deffn Command borg-build clone &optional activate
 
-This command builds the drone named DRONE.  Interactively, or when
+This command builds the clone named CLONE.  Interactively, or when
 optional ACTIVATE is non-nil, then also activate the drone using
 @code{borg-activate}.
 @end deffn
 
-@defun borg-update-autoloads drone &optional path
+@defun borg-update-autoloads clone &optional path
 
 This function updates the autoload file for the libraries belonging
-to the drone named DRONE in the directories in PATH.  PATH can be
+to the clone named CLONE in the directories in PATH.  PATH can be
 omitted or contain file-names that are relative to the top-level of
-DRONE's repository.
+CLONE's repository.
 @end defun
 
-@defun borg-byte-compile drone &optional path
+@defun borg-byte-compile clone &optional path
 
-This function compiles the libraries for the drone named DRONE in
+This function compiles the libraries for the clone named CLONE in
 the directories in PATH.  PATH can be omitted or contain file-names
-that are relative to the top-level of DRONE's repository.
+that are relative to the top-level of CLONE's repository.
 @end defun
 
-@defun borg-makeinfo drone
+@defun borg-makeinfo clone
 
 This function generates the Info manuals and the Info index for the
-drone named DRONE.
+clone named CLONE.
 @end defun
 
 @defun borg-batch-rebuild &optional quick
@@ -665,42 +666,41 @@ build your own tools on top of Borg.
 @defun borg-worktree clone
 
 This function returns the top-level of the working tree of the
-package named CLONE.
+clone named CLONE.
 @end defun
 
 @defun borg-gitdir clone
 
-This function returns the Git directory of the package named
-CLONE.
+This function returns the Git directory of the clone named CLONE.
 
-It always returns @code{<borg-user-emacs-directory>/.git/modules/<CLONE>},
-even when this repository's Git directory is actually located inside
-the working tree.
+It always returns @code{BORG-USER-EMACS-DIRECTORY/.git/modules/CLONE}, even
+when CLONE's Git directory is actually located inside the working
+tree.
 @end defun
 
-@defun borg-get drone variable &optional all
+@defun borg-get clone variable &optional all
 
 This function returns the value of the Git variable
-@code{submodule.DRONE.VARIABLE} defined in @code{~/.emacs.d/.gitmodules}.  If
+@code{submodule.CLONE.VARIABLE} defined in @code{~/.emacs.d/.gitmodules}.  If
 optional ALL is non-nil, then it returns all values as a list.
 @end defun
 
-@defun borg-get-all drone variable
+@defun borg-get-all clone variable
 
 This function returns all values of the Git variable
-@code{submodule.DRONE.VARIABLE} defined in @code{~/.emacs.d/.gitmodules} as a
+@code{submodule.CLONE.VARIABLE} defined in @code{~/.emacs.d/.gitmodules} as a
 list.
 @end defun
 
-@defun borg-load-path drone
+@defun borg-load-path clone
 
-This function returns the @code{load-path} for the drone named DRONE.
+This function returns the @code{load-path} for the clone named CLONE.
 @end defun
 
-@defun borg-info-path drone &optional setup
+@defun borg-info-path clone &optional setup
 
-This function returns the @code{Info-directory-list} for the drone named
-DRONE.
+This function returns the @code{Info-directory-list} for the clone named
+CLONE.
 
 If optional SETUP is non-nil, then it returns a list of directories
 containing @code{texi} and/or @code{info} files.  Otherwise it returns a list of
