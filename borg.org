@@ -7,7 +7,7 @@
 #+TEXINFO_DIR_CATEGORY: Emacs
 #+TEXINFO_DIR_TITLE: Borg: (borg).
 #+TEXINFO_DIR_DESC: Assimilate Emacs packages as Git submodules
-#+SUBTITLE: for version 1.0.0 (v1.0.0-40-gf018925+1)
+#+SUBTITLE: for version 1.0.0 (v1.0.0-43-g22d4643+1)
 
 #+TEXINFO_DEFFN: t
 #+OPTIONS: H:4 num:4 toc:2
@@ -17,7 +17,7 @@ The Borg assimilates Emacs packages as Git submodules.  Borg is a
 bare-bones package manager for Emacs packages.
 
 #+BEGIN_QUOTE
-This manual is for Borg version 1.0.0 (v1.0.0-40-gf018925+1).
+This manual is for Borg version 1.0.0 (v1.0.0-43-g22d4643+1).
 
 Copyright (C) 2016-2017 Jonas Bernoulli <jonas@bernoul.li>
 
@@ -61,11 +61,8 @@ drones in addition to ~borg~ itself, namely ~magit~, ~epkg~, ~use-package~,
 ~auto-compile~, ~git-modes~, ~diff-hl~, and their dependencies.  These
 drones are not required by ~borg~ but their use is highly recommended.
 
-The ~emacs.g~ collective is available from three different locations:
-
-- https://github.com/emacscollective/emacs.g
-- https://gitlab.com/emacscollective/emacs.g
-- https://bitbucket.org/emacscollective/emacs.g
+The ~emacs.g~ collective is available
+https://github.com/emacscollective/emacs.g.
 
 Clone the repository from your preferred url to either ~~/.emacs.d~, or
 for testing purposes to any other location.  Then fetch and build the

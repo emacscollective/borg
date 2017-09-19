@@ -30,7 +30,7 @@ General Public License for more details.
 @finalout
 @titlepage
 @title Borg User Manual
-@subtitle for version 1.0.0 (v1.0.0-40-gf018925+1)
+@subtitle for version 1.0.0 (v1.0.0-43-g22d4643+1)
 @author Jonas Bernoulli
 @page
 @vskip 0pt plus 1filll
@@ -47,7 +47,7 @@ The Borg assimilates Emacs packages as Git submodules.  Borg is a
 bare-bones package manager for Emacs packages.
 
 @quotation
-This manual is for Borg version 1.0.0 (v1.0.0-40-gf018925+1).
+This manual is for Borg version 1.0.0 (v1.0.0-43-g22d4643+1).
 
 Copyright (C) 2016-2017 Jonas Bernoulli <jonas@@bernoul.li>
 
@@ -104,18 +104,8 @@ drones in addition to @code{borg} itself, namely @code{magit}, @code{epkg}, @cod
 @code{auto-compile}, @code{git-modes}, @code{diff-hl}, and their dependencies.  These
 drones are not required by @code{borg} but their use is highly recommended.
 
-The @code{emacs.g} collective is available from three different locations:
-
-@itemize
-@item
-@uref{https://github.com/emacscollective/emacs.g}
-
-@item
-@uref{https://gitlab.com/emacscollective/emacs.g}
-
-@item
-@uref{https://bitbucket.org/emacscollective/emacs.g}
-@end itemize
+The @code{emacs.g} collective is available
+@uref{https://github.com/emacscollective/emacs.g}.
 
 Clone the repository from your preferred url to either @code{~/.emacs.d}, or
 for testing purposes to any other location.  Then fetch and build the
