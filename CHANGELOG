@@ -17,9 +17,9 @@
 - Added new command ~borg-remove~ to replace ~borg-uninstall~.  The new
   name is more appropriate because this command is also suitable for
   removing a package that has previously been cloned, without also
-  being assimilated.  This command does not remove the gitdir, moves
-  the working tree to the trash, and refuses to do anything if the
-  working tree isn't clean.
+  being assimilated.  This command moves the working tree to the
+  trash, but does not remove the gitdir.  It also refuses to do
+  anything if the working tree isn't clean.
 
 - Command ~borg-assimilate~ now assimilates an already cloned package
   without the user having to use a prefix argument, while separating
