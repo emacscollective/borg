@@ -71,10 +71,15 @@ info: $(PKG).info dir
 html: $(PKG).html
 pdf:  $(PKG).pdf
 
+ORG_ARGS  = --batch -Q $(ORG_LOAD_PATH) -l ox-extra -l ox-texinfo+.el
+ORG_EVAL  = --eval "(ox-extras-activate '(ignore-headlines))"
+ORG_EVAL += --eval "(setq indent-tabs-mode nil)"
+ORG_EVAL += --eval "(setq org-src-preserve-indentation nil)"
+ORG_EVAL += --funcall org-texinfo-export-to-texinfo
+
 %.texi: %.org
 	@printf "Generating $@\n"
-	@$(EMACS) -Q --batch $(ORG_LOAD_PATH) \
-	-l ox-extra.el -l ox-texinfo+.el $< -f org-texinfo-export-to-texinfo
+	@$(EMACS) $(ORG_ARGS) $< $(ORG_EVAL)
 	@printf "\n" >> $@
 	@rm -f $@~
 
