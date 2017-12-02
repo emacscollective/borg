@@ -520,13 +520,13 @@ build and activate the drone."
    (nconc (borg-read-package "Assimilate package: " current-prefix-arg)
           (list (< (prefix-numeric-value current-prefix-arg) 0))))
   (message "Assimilating %s..." package)
-  (borg--maybe-reuse-gitdir package)
   (let ((default-directory borg-user-emacs-directory))
+    (borg--maybe-reuse-gitdir package)
     (borg--call-git package "submodule" "add" "--name" package url
                     (file-relative-name (borg-worktree package)))
     (borg--sort-submodule-sections ".gitmodules")
-    (borg--call-git package "add" ".gitmodules"))
-  (borg--maybe-absorb-gitdir package)
+    (borg--call-git package "add" ".gitmodules")
+    (borg--maybe-absorb-gitdir package))
   (unless partially
     (borg-build package)
     (borg-activate package))
@@ -546,9 +546,9 @@ with a prefix argument, then also read the url in the minibuffer."
         (topdir (borg-worktree package)))
     (when (file-exists-p topdir)
       (user-error "%s already exists" topdir))
-    (borg--maybe-reuse-gitdir package)
-    (unless (file-exists-p topdir)
-      (let ((default-directory borg-user-emacs-directory))
+    (let ((default-directory borg-user-emacs-directory))
+      (borg--maybe-reuse-gitdir package)
+      (unless (file-exists-p topdir)
         (borg--call-git package "clone"
                         (concat "--separate-git-dir="
                                 ;; Git fails if this ends with slash.
