@@ -46,6 +46,8 @@
 (declare-function epkg-orphaned-package-p "epkg" (obj))
 (declare-function epkg-read-package       "epkg" (prompt &optional default))
 (declare-function format-spec      "format-spec" (format specification))
+(declare-function magit-get             "magit-git" (&rest keys))
+(declare-function magit-get-some-remote "magit-git" (&optional branch))
 
 (defconst borg-drone-directory
   (file-name-directory
@@ -215,13 +217,15 @@ is used when reading the package name."
       (let* ((name (completing-read prompt (epkgs 'name)
                                     nil nil nil 'epkg-package-history))
              (pkg  (epkg name))
-             (url  (and pkg
-                        (if (or (epkg-git-package-p pkg)
-                                (epkg-github-package-p pkg)
-                                (epkg-orphaned-package-p pkg)
-                                (epkg-gitlab-package-p pkg))
-                            (eieio-oref pkg 'url)
-                          (eieio-oref pkg 'mirror-url)))))
+             (url  (if pkg
+                       (if (or (epkg-git-package-p pkg)
+                               (epkg-github-package-p pkg)
+                               (epkg-orphaned-package-p pkg)
+                               (epkg-gitlab-package-p pkg))
+                           (eieio-oref pkg 'url)
+                         (eieio-oref pkg 'mirror-url))
+                     (and (require 'magit nil t)
+                          (magit-get "remote" (magit-get-some-remote) "url")))))
         (list name
               (if (or (not url) edit-url)
                   (read-string "Url: " url)
