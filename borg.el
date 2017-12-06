@@ -480,27 +480,28 @@ then also activate the clone using `borg-activate'."
   (setq path (borg--expand-load-path clone path))
   (let ((exclude (borg-get-all clone "no-byte-compile"))
         (topdir (borg-worktree clone)))
-    (dolist (dir path)
+    (dolist (path-dir path)
       (with-current-buffer (get-buffer-create byte-compile-log-buffer)
-        (setq default-directory (expand-file-name dir topdir))
+        (setq default-directory (expand-file-name path-dir topdir))
         (unless (eq major-mode 'compilation-mode)
           (compilation-mode))
         (let ((skip-count 0)
               (fail-count 0)
               (file-count 0))
           (displaying-byte-compile-warnings
-           (dolist (file (directory-files dir t emacs-lisp-file-regexp))
+           (dolist (file (directory-files path-dir t))
              (let ((file-relative (file-relative-name file topdir))
                    (name (file-name-nondirectory file)))
                (when (and (file-regular-p  file)
                           (file-readable-p file)
+                          (string-match-p emacs-lisp-file-regexp name)
                           (not (auto-save-file-name-p file))
-                          (not (string-match "\\`\\." name))
-                          (not (string-match "-autoloads.el\\'" name))
+                          (not (string-match-p "\\`\\." name))
+                          (not (string-match-p "-autoloads.el\\'" name))
                           (not (string-equal dir-locals-file name)))
                  (cl-incf
-                  (if (or (string-match "-pkg.el\\'" name)
-                          (string-match "-tests?.el\\'" name)
+                  (if (or (string-match-p "-pkg.el\\'" name)
+                          (string-match-p "-tests?.el\\'" name)
                           (member file-relative exclude))
                       (progn (message " Skipping %s...skipped" file)
                              skip-count)
@@ -510,11 +511,12 @@ then also activate the clone using `borg-activate'."
                           skip-count)
                       ('t file-count)
                       (_  fail-count))))))))
-          (message "Done (Total of %d file%s compiled%s%s)"
-                   file-count (if (= file-count 1) "" "s")
-                   (if (> fail-count 0) (format ", %d failed"  fail-count) "")
-                   (if (> skip-count 0) (format ", %d skipped" skip-count) "")
-                   )))))) ; o, the horror
+          (message
+           "Done (Total of %d file%s compiled%s%s)"
+           file-count (if (= file-count 1) "" "s")
+           (if (> fail-count 0) (format ", %d failed"  fail-count) "")
+           (if (> skip-count 0) (format ", %d skipped" skip-count) "")
+           )))))) ; oh, the horror
 
 (defun borg-makeinfo (clone)
   "Generate Info manuals and the Info index for the clone named CLONE."
