@@ -483,6 +483,8 @@ then also activate the clone using `borg-activate'."
     (dolist (path-dir path)
       (with-current-buffer (get-buffer-create byte-compile-log-buffer)
         (setq default-directory (expand-file-name path-dir topdir))
+        (when (> (length path) 1)
+          (message "\n Building %s..." default-directory))
         (unless (eq major-mode 'compilation-mode)
           (compilation-mode))
         (let ((skip-count 0)
