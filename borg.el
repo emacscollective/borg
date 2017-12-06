@@ -298,6 +298,8 @@ if it exists."
   (dolist (dir (borg-info-path clone))
     (push  dir Info-directory-list)))
 
+;;; Construction
+
 (defun borg-batch-rebuild (&optional quick)
   "Rebuild all assimilated drones.
 
@@ -382,18 +384,50 @@ then also activate the clone using `borg-activate'."
             (borg-update-autoloads clone path)
             (borg-byte-compile clone path)
             (borg-makeinfo clone))))
-    (let ((process-connection-type nil))
-      (start-process
-       (format "Build %s" clone)
-       (generate-new-buffer (format "*Build %s*" clone))
-       (expand-file-name invocation-name invocation-directory)
-       "--batch" "-Q"
-       "-L" (borg-worktree "borg")
-       "--eval" "(require 'borg)"
-       "--eval" "(borg-initialize)"
-       "--eval" (format "(borg-build %S)" clone))))
+    (let ((buffer (get-buffer-create "*Epkg Build*"))
+          (process-connection-type nil))
+      (switch-to-buffer buffer)
+      (with-current-buffer buffer
+        (borg-build-mode)
+        (goto-char (point-max))
+        (let ((inhibit-read-only t))
+          (insert (format "\n(%s) Building %s\n\n"
+                          (format-time-string "%H:%M:%S")
+                          clone))))
+      (set-process-filter
+       (start-process
+        (format "emacs --eval (borg-build %S)" clone)
+        buffer
+        (expand-file-name invocation-name invocation-directory)
+        "--batch" "-Q"
+        "-L" (borg-worktree "borg")
+        "--eval" "(require 'borg)"
+        "--eval" "(borg-initialize)"
+        "--eval" (format "(borg-build %S)" clone))
+       'borg-build--process-filter)))
   (when activate
     (borg-activate clone)))
+
+(defun borg-build--process-filter (process string)
+  (when (buffer-live-p (process-buffer process))
+    (with-current-buffer (process-buffer process)
+      (let ((moving (= (point) (process-mark process))))
+        (save-excursion
+          (goto-char (process-mark process))
+          (let ((inhibit-read-only t))
+            (insert string))
+          (set-marker (process-mark process) (point)))
+        (if moving (goto-char (process-mark process)))))))
+
+(defvar borg-build-mode-map
+  (let ((map (make-sparse-keymap)))
+    (define-key map "\C-q" 'bury-buffer)
+    map)
+  "Keymap for `borg-build-mode'.")
+
+(define-derived-mode borg-build-mode special-mode
+  "Mode for the \"*Epkg Build*\" buffer."
+  (setq buffer-read-only t))
 
 (defconst borg-autoload-format "\
 ;;;\

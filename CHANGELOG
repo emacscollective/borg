@@ -1,5 +1,12 @@
 # -*- mode: org -*-
 
+* v2.1.0    UNRELEASED
+
+- All build output is appened to the same buffer now.  Previously each
+  build created a new, unspecialized buffer that never got cleaned up.
+  The buffer is automatically shown on every build but can easily be
+  burried using ~C-q~.
+
 * v2.0.0    2017/09/19
 
 - Added new command ~borg-clone~ to make it easier to review a package
