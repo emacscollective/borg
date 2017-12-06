@@ -4,6 +4,8 @@
 
 - Compilation is now done recursively.
 
+- The user is asked to save relevant buffers before compiling.
+
 - The values of ~submodule.DRONE.no-byte-compile~ are now treated as
   relative to the top-level.  The documentation already claimed that
   was the case before.

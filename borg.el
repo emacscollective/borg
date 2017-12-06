@@ -384,6 +384,13 @@ then also activate the clone using `borg-activate'."
             (borg-update-autoloads clone path)
             (borg-byte-compile clone path)
             (borg-makeinfo clone))))
+    (save-some-buffers
+     nil (let ((top default-directory))
+           (lambda ()
+             (let ((file (buffer-file-name)))
+               (and file
+                    (string-match-p emacs-lisp-file-regexp file)
+                    (file-in-directory-p file top))))))
     (let ((buffer (get-buffer-create "*Epkg Build*"))
           (process-connection-type nil))
       (switch-to-buffer buffer)
