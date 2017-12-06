@@ -490,7 +490,8 @@ then also activate the clone using `borg-activate'."
               (file-count 0))
           (displaying-byte-compile-warnings
            (dolist (file (directory-files dir t emacs-lisp-file-regexp))
-             (let ((name (file-name-nondirectory file)))
+             (let ((file-relative (file-relative-name file topdir))
+                   (name (file-name-nondirectory file)))
                (when (and (file-regular-p  file)
                           (file-readable-p file)
                           (not (auto-save-file-name-p file))
@@ -500,7 +501,7 @@ then also activate the clone using `borg-activate'."
                  (cl-incf
                   (if (or (string-match "-pkg.el\\'" name)
                           (string-match "-tests?.el\\'" name)
-                          (member name exclude))
+                          (member file-relative exclude))
                       (progn (message " Skipping %s...skipped" file)
                              skip-count)
                     (pcase (byte-recompile-file file t 0)
