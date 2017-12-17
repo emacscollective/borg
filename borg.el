@@ -134,7 +134,7 @@ directories containing a file named \"dir\"."
     (cl-mapcan (if setup
                    (lambda (d)
                      (setq d (file-name-as-directory d))
-                     (when (directory-files d t "\\.\\(texi\\|info\\)\\'" t)
+                     (when (directory-files d t "\\.\\(texi\\(nfo\\)?\\|info\\)\\'" t)
                        (list d)))
                  (lambda (d)
                    (setq d (file-name-as-directory d))
@@ -552,7 +552,7 @@ then also activate the clone using `borg-activate'."
   "Generate Info manuals and the Info index for the clone named CLONE."
   (dolist (default-directory (borg-info-path clone t))
     (let ((exclude (borg-get-all clone "no-makeinfo")))
-      (dolist (texi (directory-files default-directory nil "\\.texi\\'"))
+      (dolist (texi (directory-files default-directory nil "\\.texi\\(nfo\\)?\\'"))
         (let ((info (concat (file-name-sans-extension texi) ".info")))
           (when (and (not (member texi exclude))
                      (or (not (file-exists-p info))
