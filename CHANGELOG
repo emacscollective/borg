@@ -2,7 +2,10 @@
 
 * v2.1.0    UNRELEASED
 
-- Compilation is now done recursively.
+- The new option ~borg-byte-compile-recursively~ allows compiling
+  recursively.  You probably don't want this because there are more
+  packages that have random crap in subdirectories than there are
+  packages that put actual libraries into subdirectories.
 
 - The user is asked to save relevant buffers before compiling.
 

@@ -70,6 +70,13 @@ The value of this variable is usually the same as that of
 
 ;;; Variables
 
+(defvar borg-byte-compile-recursively nil
+  "Whether to compile recursively.
+
+You probably don't want this because there are more packages that
+have random crap in subdirectories than there are packages that
+put actual libraries into subdirectories.")
+
 (defvar borg-build-shell-command nil
   "Optional command used to run shell command build steps.
 This variable is documented in the manual (which see).")
@@ -511,7 +518,8 @@ then also activate the clone using `borg-activate'."
                (let ((file-relative (file-relative-name file topdir))
                      (name (file-name-nondirectory file)))
                  (if (file-directory-p file)
-		     (when (and (not (file-symlink-p file))
+		     (when (and borg-byte-compile-recursively
+                                (not (file-symlink-p file))
 		                (not (string-prefix-p "." name))
 		                (not (member name '("RCS" "CVS"))))
                        (if (or (file-exists-p (expand-file-name ".nosearch" file))
