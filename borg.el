@@ -178,7 +178,7 @@ included in the returned value."
         (dolist (line (process-lines "git" "config" "--list"
                                      "--file" borg-gitmodules-file))
           (when (string-match
-                 "\\`submodule\\.\\([^.]+\\)\\.\\([^=]+\\)=\\(.+\\)\\'" line)
+                 "\\`submodule\\.\\(.+\\)\\.\\([^=]+\\)=\\(.+\\)\\'" line)
             (let* ((drone (match-string 1 line))
                    (prop  (intern (match-string 2 line)))
                    (value (match-string 3 line))
