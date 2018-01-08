@@ -54,7 +54,7 @@
    (directory-file-name
     (file-name-directory
      (or load-file-name buffer-file-name))))
-  "Directory beneath with drone submodules are placed.")
+  "Directory beneath which drone submodules are placed.")
 
 (defconst borg-user-emacs-directory
   (file-name-directory (directory-file-name borg-drone-directory))
