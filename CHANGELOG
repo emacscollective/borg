@@ -1,6 +1,20 @@
 # -*- mode: org -*-
 
-* v2.1.0    UNRELEASED
+* v3.0.0    UNRELEASED
+
+- The new files ~borg.mk~ and ~borg.sh~ were added, replacing files that
+  were previously located directly in the super-repository.
+
+  The super-repository still contains a ~Makefile~, which users who do
+  not use the Emacs.g collective have to update manually, but failure
+  to do so should be less problematic now, because this file only
+  defines a single target needed to make ~borg.mk~ and ~borg.sh~
+  accessible during bootstrap, while using these files for everything
+  it previously did itself.
+
+  This makes it easier and safer to improve the respective
+  functionality iteratively and to create configurations that are not
+  based on the Emacs.d collective.
 
 - The new option ~borg-byte-compile-recursively~ allows compiling
   recursively.  You probably don't want this because there are more

@@ -1,13 +1,13 @@
 #+TITLE: Borg User Manual
 #+AUTHOR: Jonas Bernoulli
 #+EMAIL: jonas@bernoul.li
-#+DATE: 2017
+#+DATE: 2018
 #+LANGUAGE: en
 
 #+TEXINFO_DIR_CATEGORY: Emacs
 #+TEXINFO_DIR_TITLE: Borg: (borg).
 #+TEXINFO_DIR_DESC: Assimilate Emacs packages as Git submodules
-#+SUBTITLE: for version 2.0.0 (v2.0.0-18-gd80d105+1)
+#+SUBTITLE: for version 2.0.0 (v2.0.0-19-g4b908fd+1)
 
 #+TEXINFO_DEFFN: t
 #+OPTIONS: H:4 num:4 toc:2
@@ -17,10 +17,10 @@ The Borg assimilates Emacs packages as Git submodules.  Borg is a
 bare-bones package manager for Emacs packages.
 
 #+TEXINFO: @noindent
-This manual is for Borg version 2.0.0 (v2.0.0-18-gd80d105+1).
+This manual is for Borg version 2.0.0 (v2.0.0-19-g4b908fd+1).
 
 #+BEGIN_QUOTE
-Copyright (C) 2016-2017 Jonas Bernoulli <jonas@bernoul.li>
+Copyright (C) 2016-2018 Jonas Bernoulli <jonas@bernoul.li>
 
 You can redistribute this document and/or modify it under the terms
 of the GNU General Public License as published by the Free Software
@@ -55,26 +55,43 @@ which it was announced.
 
 * Installation
 
-To get started clone the ~emacs.g~ collective to ~~/.emacs.d~.
-Currently this is the only available collective and in this manual
-we assume you use that.  This collective already assimilated a few
-drones in addition to ~borg~ itself, namely ~magit~, ~epkg~, ~use-package~,
-~auto-compile~, ~git-modes~, ~diff-hl~, and their dependencies.  These
-drones are not required by ~borg~ but their use is highly recommended.
+To get started clone the repository of the ~emacs.g~ collective.
+Currently this is the only available collective and, for the time
+being this manual assume that you use that.
 
-The ~emacs.g~ collective is available
-https://github.com/emacscollective/emacs.g.
+This collective already assimilated a few drones in addition to ~borg~
+itself, namely ~magit~, ~epkg~, ~use-package~, ~auto-compile~, ~git-modes~,
+~diff-hl~, and their dependencies.  These drones are not required by
+~borg~ but their use is highly recommended.
 
-Clone the repository from your preferred url to either ~~/.emacs.d~, or
-for testing purposes to any other location.  Then fetch and build the
-assimilated drones using ~make bootstrap~.  If you cloned to somewhere
-else than ~~/.emacs.d~, then you can use that configuration using
-~emacs -Q --load /path/to/emacs.g/init.elc~.
+Instructions on how to bootstrap a configuration without basing it on
+the ~emacs.g~ collective will be added in the near future.
+
+Clone the ~emacs.g~ repository to either ~~/.emacs.d~, or for testing
+purposes to any other location.  This repository contains a ~Makefile~
+that imports ~lib/borg/borg.mk~ and defines an additional target whose
+purpose is to make that file and ~lib/borg/borg.sh~ available.  Run ~make
+bootstrap-borg~ to clone the ~borg~ repository.  That does not completely
+setup the ~borg~ repository but it makes the latest version of the
+mentioned files available.  Now that these files are available you can
+run ~make bootstrap~ to get and configure all submodules (including the
+~borg~ submodule) and to build all drones.
+
+#+BEGIN_SRC sh
+  git clone git@github.com:emacscollective/emacs.g.git ~/.emacs.d
+  cd ~/.emacs.d
+  make bootstrap-borg
+  make bootstrap
+#+END_SRC
+
+If you cloned to somewhere else than ~~/.emacs.d~, then you can use that
+configuration using ~emacs -Q --load /path/to/emacs.g/init.elc~.
 
 For drones whose upstreams are on Github or Gitlab the ~emacs.g~
 collective uses the ~ssh~ protocol by default, which is a problem if you
-don't have accounts there and have properly setup your keys.  Luckily
-this can easily be fixed using:
+don't have accounts there and have not properly setup your keys.
+Luckily this can easily be fixed using the following right after
+cloning the super-repository.
 
 #+BEGIN_SRC emacs-lisp
   git config --global url.https://github.com/.insteadOf git@github.com:
@@ -674,7 +691,7 @@ being noted in the changelog.
 :END:
 
 #+BEGIN_QUOTE
-Copyright (C) 2016-2017 Jonas Bernoulli <jonas@bernoul.li>
+Copyright (C) 2016-2018 Jonas Bernoulli <jonas@bernoul.li>
 
 You can redistribute this document and/or modify it under the terms
 of the GNU General Public License as published by the Free Software

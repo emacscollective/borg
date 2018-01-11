@@ -8,7 +8,7 @@
 
 @copying
 @quotation
-Copyright (C) 2016-2017 Jonas Bernoulli <jonas@@bernoul.li>
+Copyright (C) 2016-2018 Jonas Bernoulli <jonas@@bernoul.li>
 
 You can redistribute this document and/or modify it under the terms
 of the GNU General Public License as published by the Free Software
@@ -30,7 +30,7 @@ General Public License for more details.
 @finalout
 @titlepage
 @title Borg User Manual
-@subtitle for version 2.0.0 (v2.0.0-18-gd80d105+1)
+@subtitle for version 2.0.0 (v2.0.0-19-g4b908fd+1)
 @author Jonas Bernoulli
 @page
 @vskip 0pt plus 1filll
@@ -47,10 +47,10 @@ The Borg assimilates Emacs packages as Git submodules.  Borg is a
 bare-bones package manager for Emacs packages.
 
 @noindent
-This manual is for Borg version 2.0.0 (v2.0.0-18-gd80d105+1).
+This manual is for Borg version 2.0.0 (v2.0.0-19-g4b908fd+1).
 
 @quotation
-Copyright (C) 2016-2017 Jonas Bernoulli <jonas@@bernoul.li>
+Copyright (C) 2016-2018 Jonas Bernoulli <jonas@@bernoul.li>
 
 You can redistribute this document and/or modify it under the terms
 of the GNU General Public License as published by the Free Software
@@ -98,26 +98,43 @@ which it was announced.
 @node Installation
 @chapter Installation
 
-To get started clone the @code{emacs.g} collective to @code{~/.emacs.d}.
-Currently this is the only available collective and in this manual
-we assume you use that.  This collective already assimilated a few
-drones in addition to @code{borg} itself, namely @code{magit}, @code{epkg}, @code{use-package},
-@code{auto-compile}, @code{git-modes}, @code{diff-hl}, and their dependencies.  These
-drones are not required by @code{borg} but their use is highly recommended.
+To get started clone the repository of the @code{emacs.g} collective.
+Currently this is the only available collective and, for the time
+being this manual assume that you use that.
 
-The @code{emacs.g} collective is available
-@uref{https://github.com/emacscollective/emacs.g}.
+This collective already assimilated a few drones in addition to @code{borg}
+itself, namely @code{magit}, @code{epkg}, @code{use-package}, @code{auto-compile}, @code{git-modes},
+@code{diff-hl}, and their dependencies.  These drones are not required by
+@code{borg} but their use is highly recommended.
 
-Clone the repository from your preferred url to either @code{~/.emacs.d}, or
-for testing purposes to any other location.  Then fetch and build the
-assimilated drones using @code{make bootstrap}.  If you cloned to somewhere
-else than @code{~/.emacs.d}, then you can use that configuration using
-@code{emacs -Q --load /path/to/emacs.g/init.elc}.
+Instructions on how to bootstrap a configuration without basing it on
+the @code{emacs.g} collective will be added in the near future.
+
+Clone the @code{emacs.g} repository to either @code{~/.emacs.d}, or for testing
+purposes to any other location.  This repository contains a @code{Makefile}
+that imports @code{lib/borg/borg.mk} and defines an additional target whose
+purpose is to make that file and @code{lib/borg/borg.sh} available.  Run @code{make
+bootstrap-borg} to clone the @code{borg} repository.  That does not completely
+setup the @code{borg} repository but it makes the latest version of the
+mentioned files available.  Now that these files are available you can
+run @code{make bootstrap} to get and configure all submodules (including the
+@code{borg} submodule) and to build all drones.
+
+@example
+git clone git@@github.com:emacscollective/emacs.g.git ~/.emacs.d
+cd ~/.emacs.d
+make bootstrap-borg
+make bootstrap
+@end example
+
+If you cloned to somewhere else than @code{~/.emacs.d}, then you can use that
+configuration using @code{emacs -Q --load /path/to/emacs.g/init.elc}.
 
 For drones whose upstreams are on Github or Gitlab the @code{emacs.g}
 collective uses the @code{ssh} protocol by default, which is a problem if you
-don't have accounts there and have properly setup your keys.  Luckily
-this can easily be fixed using:
+don't have accounts there and have not properly setup your keys.
+Luckily this can easily be fixed using the following right after
+cloning the super-repository.
 
 @lisp
 git config --global url.https://github.com/.insteadOf git@@github.com:
