@@ -552,7 +552,7 @@ then also activate the clone using `borg-activate'."
            file-count (if (= file-count 1) "" "s")
            (if (> fail-count 0) (format ", %d failed"  fail-count) "")
            (if (> skip-count 0) (format ", %d skipped" skip-count) "")
-           (if (> dir-count  0) (format " in %d directories" dir-count) "")
+           (if (> dir-count  1) (format " in %d directories" dir-count) "")
            )))))) ; oh, the horror
 
 (defun borg-makeinfo (clone)
