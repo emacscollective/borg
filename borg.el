@@ -513,7 +513,6 @@ then also activate the clone using `borg-activate'."
               dir last-dir)
           (displaying-byte-compile-warnings
            (while (setq dir (pop dirs))
-             (cl-incf dir-count)
              (dolist (file (directory-files dir t))
                (let ((file-relative (file-relative-name file topdir))
                      (name (file-name-nondirectory file)))
