@@ -402,7 +402,7 @@ then also activate the clone using `borg-activate'."
                (and file
                     (string-match-p emacs-lisp-file-regexp file)
                     (file-in-directory-p file top))))))
-    (let ((buffer (get-buffer-create "*Epkg Build*"))
+    (let ((buffer (get-buffer-create "*Borg Build*"))
           (process-connection-type nil))
       (switch-to-buffer buffer)
       (with-current-buffer buffer
