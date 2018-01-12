@@ -25,6 +25,7 @@ help:
 	$(info make quick           = rebuild most drones and init files)
 	$(info make lib/DRONE/build = rebuild DRONE)
 	$(info make build-init      = rebuild init files)
+	$(info make tangle-init     = recreate init.el from init.org)
 	$(info make bootstrap-borg  = bootstrap borg itself)
 	$(info make bootstrap       = bootstrap collective or new drones)
 	@printf "\n"
@@ -43,6 +44,11 @@ build-init:
 	@$(EMACS) -Q --batch -L lib/borg --load borg \
 	--funcall borg-initialize \
 	--funcall borg-batch-rebuild-init 2>&1
+
+tangle-init: init.el
+init.el: init.org
+	@$(EMACS) -Q --batch --load org \
+	--eval '(org-babel-tangle-file "init.org")' 2>&1
 
 quick:
 	@rm -f init.elc

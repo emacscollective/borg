@@ -16,6 +16,9 @@
   functionality iteratively and to create configurations that are not
   based on the Emacs.d collective.
 
+- A new make target ~tangle-init~ was added which recreates ~init.el~ from
+  ~init.org~.
+
 - The new option ~borg-byte-compile-recursively~ allows compiling
   recursively.  You probably don't want this because there are more
   packages that have random crap in subdirectories than there are
