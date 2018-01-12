@@ -6,6 +6,14 @@
 ;; Homepage: https://github.com/emacscollective/borg
 ;; Keywords: tools
 
+;; Package-Version: 3.0.0
+;; Package-Requires: ((emacs "26") (dash "2.13") (epkg "3.0") (magit "2.11"))
+
+;;   Borg itself does no actually require Emacs 26 and has no
+;;   other dependencies but when it is installed from Melpa,
+;;   then it includes `borg-elpa' and that requires Emacs 26
+;;   and Epkg.
+
 ;; This file contains code from GNU Emacs, which is
 ;; Copyright (C) 1976-2016 Free Software Foundation, Inc.
 
@@ -26,7 +34,16 @@
 
 ;;; Commentary:
 
-;; Assimilate Emacs packages as Git submodules.
+;; The Borg assimilate Emacs packages as Git submodules.  Borg is
+;; an alternative, bare-bones package manager for Emacs packages.
+
+;; Please consult the manual for more information:
+;; https://www.emacsmirror.net/manual/borg.
+
+;; Borg can be used by itself or alongside `package.el'.  In the
+;; latter case Borg itself should be installed from Melpa, which
+;; is still experimental and not yet covered in the manual.  See
+;; https://github.com/emacscollective/borg/issues/46 for now.
 
 ;;; Code:
 
@@ -49,12 +66,19 @@
 (declare-function magit-get             "magit-git" (&rest keys))
 (declare-function magit-get-some-remote "magit-git" (&optional branch))
 
-(defconst borg-drone-directory
-  (file-name-directory
-   (directory-file-name
-    (file-name-directory
-     (or load-file-name buffer-file-name))))
-  "Directory beneath which drone submodules are placed.")
+(defvar borg-drone-directory
+  (expand-file-name (file-name-as-directory "lib")
+                    (file-name-directory
+                     (directory-file-name
+                      ;; If Borg was used to install Borg,
+                      ;; then the above is redundant, but
+                      ;; maybe Elpa was used instead.
+                      (file-name-directory
+                       (directory-file-name
+                        (file-name-directory
+                         (or load-file-name buffer-file-name)))))))
+  "Directory beneath which drone submodules are placed.
+If you need to change this, then do so before loading `borg'.")
 
 (defconst borg-user-emacs-directory
   (file-name-directory (directory-file-name borg-drone-directory))
@@ -175,8 +199,9 @@ have multiple values anyway, then it is undefined with value is
 included in the returned value."
   (if include-variables
       (let (alist)
-        (dolist (line (process-lines "git" "config" "--list"
-                                     "--file" borg-gitmodules-file))
+        (dolist (line (and (file-exists-p borg-gitmodules-file)
+                           (process-lines "git" "config" "--list"
+                                          "--file" borg-gitmodules-file)))
           (when (string-match
                  "\\`submodule\\.\\([^.]+\\)\\.\\([^=]+\\)=\\(.+\\)\\'" line)
             (let* ((drone (match-string 1 line))
@@ -418,7 +443,7 @@ then also activate the clone using `borg-activate'."
         buffer
         (expand-file-name invocation-name invocation-directory)
         "--batch" "-Q"
-        "-L" (borg-worktree "borg")
+        "-L" (file-name-directory (locate-library "borg"))
         "--eval" "(require 'borg)"
         "--eval" "(borg-initialize)"
         "--eval" (format "(borg-build %S)" clone))

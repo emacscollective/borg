@@ -2,6 +2,12 @@
 
 * v3.0.0    UNRELEASED
 
+- Borg can now be used as a secondary package manager alongside
+  ~package.el~.  When used like this, then Borg itself should be
+  installed from Melpa.  This is still experimental.  For instructions
+  and help see https://github.com/emacscollective/borg/issues/46.  The
+  manual does not yet cover this topic.
+
 - The new files ~borg.mk~ and ~borg.sh~ were added, replacing files that
   were previously located directly in the super-repository.
 

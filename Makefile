@@ -3,6 +3,7 @@
 PKG = borg
 
 ELS   = $(PKG).el
+ELS  += $(PKG)-elpa.el
 ELCS  = $(ELS:.el=.elc)
 
 DEPS  =
