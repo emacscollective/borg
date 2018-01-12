@@ -21,12 +21,12 @@ SILENCIO += --eval "(fset 'message\
 
 help:
 	$(info )
-	$(info make [all|build]    = rebuild all drones and init files)
-	$(info make quick          = rebuild most drones and init files)
-	$(info make lib/DRONE      = rebuild DRONE)
-	$(info make build-init     = rebuild init files)
-	$(info make bootstrap-borg = bootstrap borg itself)
-	$(info make bootstrap      = bootstrap collective or new drones)
+	$(info make [all|build]     = rebuild all drones and init files)
+	$(info make quick           = rebuild most drones and init files)
+	$(info make lib/DRONE/build = rebuild DRONE)
+	$(info make build-init      = rebuild init files)
+	$(info make bootstrap-borg  = bootstrap borg itself)
+	$(info make bootstrap       = bootstrap collective or new drones)
 	@printf "\n"
 
 clean:
@@ -50,7 +50,7 @@ quick:
 	--funcall borg-initialize \
 	--eval  '(borg-batch-rebuild t)' 2>&1
 
-lib/%: .FORCE
+lib/%/build: .FORCE
 	@$(EMACS) -Q --batch -L lib/borg --load borg $(SILENCIO) \
 	--funcall borg-initialize \
 	--eval  '(borg-build "$(@F)")' 2>&1
