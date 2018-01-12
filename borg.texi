@@ -30,7 +30,7 @@ General Public License for more details.
 @finalout
 @titlepage
 @title Borg User Manual
-@subtitle for version 2.0.0 (v2.0.0-19-g4b908fd+1)
+@subtitle for version 2.0.0 (v2.0.0-26-g8545c7e+1)
 @author Jonas Bernoulli
 @page
 @vskip 0pt plus 1filll
@@ -43,11 +43,11 @@ General Public License for more details.
 @node Top
 @top Borg User Manual
 
-The Borg assimilates Emacs packages as Git submodules.  Borg is a
+The Borg assimilate Emacs packages as Git submodules.  Borg is a
 bare-bones package manager for Emacs packages.
 
 @noindent
-This manual is for Borg version 2.0.0 (v2.0.0-19-g4b908fd+1).
+This manual is for Borg version 2.0.0 (v2.0.0-26-g8545c7e+1).
 
 @quotation
 Copyright (C) 2016-2018 Jonas Bernoulli <jonas@@bernoul.li>
