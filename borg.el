@@ -414,7 +414,7 @@ then also activate the clone using `borg-activate'."
                           clone))))
       (set-process-filter
        (start-process
-        (format "emacs --eval (borg-build %S)" clone)
+        (format "emacs ... --eval (borg-build %S)" clone)
         buffer
         (expand-file-name invocation-name invocation-directory)
         "--batch" "-Q"
