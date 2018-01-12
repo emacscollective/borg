@@ -30,7 +30,7 @@ help:
 	@printf "\n"
 
 clean:
-	find -name '*.elc' -exec rm '{}' ';'
+	@find -name '*.elc' -exec rm '{}' ';'
 
 build:
 	@rm -f init.elc
