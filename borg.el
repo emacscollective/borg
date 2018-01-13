@@ -444,9 +444,19 @@ then also activate the clone using `borg-activate'."
         (expand-file-name invocation-name invocation-directory)
         "--batch" "-Q"
         "-L" (file-name-directory (locate-library "borg"))
-        "--eval" "(require 'borg)"
-        "--eval" "(borg-initialize)"
-        "--eval" (format "(borg-build %S)" clone))
+        "--eval" (if (featurep 'borg-elpa)
+                     (format "(progn
+  (setq user-emacs-directory %S)
+  (require 'package)
+  (package-initialize 'no-activate)
+  (package-activate 'borg)
+  (require 'borg-elpa)
+  (borg-elpa-initialize)
+  (borg-build %S))" user-emacs-directory clone)
+                   (format "(progn
+  (require 'borg)
+  (borg-initialize)
+  (borg-build %S))" clone)))
        'borg-build--process-filter)))
   (when activate
     (borg-activate clone)))
