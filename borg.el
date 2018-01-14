@@ -96,6 +96,12 @@ The value of this variable is usually the same as that of
 
 ;;; Variables
 
+(defvar borg-emacs-arguments '("-Q")
+  "Arguments used when calling an inferior Emacs instance.
+Set this in \"~/.emacs.d/etc/borg/config.el\" and also set
+`EMACS_ARGUMENTS' in \"~/.emacs.d/etc/borg/config.mk\" to
+the same value")
+
 (defvar borg-byte-compile-recursively nil
   "Whether to compile recursively.
 
@@ -430,12 +436,20 @@ then also activate the clone using `borg-activate'."
                     (string-match-p emacs-lisp-file-regexp file)
                     (file-in-directory-p file top))))))
     (let ((buffer (get-buffer-create "*Borg Build*"))
+          (config (expand-file-name
+                   (convert-standard-filename "etc/borg/config.el")
+                   user-emacs-directory))
           (process-connection-type nil))
       (switch-to-buffer buffer)
       (with-current-buffer buffer
         (borg-build-mode)
         (goto-char (point-max))
         (let ((inhibit-read-only t))
+          (when (file-exists-p config)
+            (insert (format "\n(%s) Loading %s\n\n"
+                            (format-time-string "%H:%M:%S")
+                            config))
+            (load-file config))
           (insert (format "\n(%s) Building %s\n\n"
                           (format-time-string "%H:%M:%S")
                           clone))))
@@ -444,7 +458,7 @@ then also activate the clone using `borg-activate'."
         (format "emacs ... --eval (borg-build %S)" clone)
         buffer
         (expand-file-name invocation-name invocation-directory)
-        "--batch" "-Q"
+        "--batch" borg-emacs-arguments
         "-L" (file-name-directory (locate-library "borg"))
         "--eval" (if (featurep 'borg-elpa)
                      (format "(progn

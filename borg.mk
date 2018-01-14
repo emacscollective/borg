@@ -3,7 +3,10 @@
 # Author: Jonas Bernoulli <jonas@bernoul.li>
 # License: GPL v3 <https://www.gnu.org/licenses/gpl-3.0.txt>
 
-EMACS ?= emacs
+-include ../../etc/borg/config.mk
+
+EMACS           ?= emacs
+EMACS_ARGUMENTS ?= -Q
 
 .PHONY: all help clean build build-init quick bootstrap
 .FORCE:
@@ -35,30 +38,35 @@ clean:
 
 build:
 	@rm -f init.elc
-	@$(EMACS) -Q --batch -L lib/borg --load borg $(SILENCIO) \
+	@$(EMACS) $(EMACS_ARGUMENTS) \
+	--batch -L lib/borg --load borg $(SILENCIO) \
 	--funcall borg-initialize \
 	--funcall borg-batch-rebuild 2>&1
 
 build-init:
 	@rm -f init.elc
-	@$(EMACS) -Q --batch -L lib/borg --load borg \
+	@$(EMACS) $(EMACS_ARGUMENTS) \
+	--batch -L lib/borg --load borg \
 	--funcall borg-initialize \
 	--funcall borg-batch-rebuild-init 2>&1
 
 tangle-init: init.el
 init.el: init.org
-	@$(EMACS) -Q --batch --load org \
+	@$(EMACS) $(EMACS_ARGUMENTS) \
+	--batch --load org \
 	--eval '(org-babel-tangle-file "init.org")' 2>&1
 
 quick:
 	@rm -f init.elc
-	@$(EMACS) -Q --batch -L lib/borg --load borg $(SILENCIO) \
+	@$(EMACS) $(EMACS_ARGUMENTS) \
+	--batch -L lib/borg --load borg $(SILENCIO) \
 	--funcall borg-initialize \
 	--eval  '(borg-batch-rebuild t)' 2>&1
 
 lib/borg/borg.mk: ;
 lib/%: .FORCE
-	@$(EMACS) -Q --batch -L lib/borg --load borg $(SILENCIO) \
+	@$(EMACS) $(EMACS_ARGUMENTS) \
+	--batch -L lib/borg --load borg $(SILENCIO) \
 	--funcall borg-initialize \
 	--eval  '(borg-build "$*")' 2>&1
 
