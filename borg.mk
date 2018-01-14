@@ -59,7 +59,7 @@ quick:
 lib/%/build: .FORCE
 	@$(EMACS) -Q --batch -L lib/borg --load borg $(SILENCIO) \
 	--funcall borg-initialize \
-	--eval  '(borg-build "$(@F)")' 2>&1
+	--eval  '(borg-build "$*")' 2>&1
 
 bootstrap:
 	@printf "\n=== Running 'git submodule init' ===\n\n"
