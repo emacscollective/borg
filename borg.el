@@ -66,6 +66,8 @@
 (declare-function magit-get             "magit-git" (&rest keys))
 (declare-function magit-get-some-remote "magit-git" (&optional branch))
 
+(defvar git-commit-mode-map)
+
 (defvar borg-drone-directory
   (expand-file-name (file-name-as-directory "lib")
                     (file-name-directory
@@ -688,6 +690,39 @@ The Git directory is not removed."
       (delete-directory topdir t t)))
   (borg--refresh-magit)
   (message "Removing %s...done" clone))
+
+;;; Convenience
+
+(with-eval-after-load 'git-commit
+  (define-key git-commit-mode-map "\C-c\C-b" 'borg-insert-update-message))
+
+(defun borg-insert-update-message ()
+  "Insert information about drones that are updated in the index.
+Formatting is according to the commit message conventions."
+  (interactive)
+  (let* ((alist (borg-updated-drones))
+         (count (length alist))
+         (width (apply #'max (mapcar (lambda (e) (length (car e))) alist)))
+         (align (cl-member-if (lambda (e) (string-match-p "\\`v[0-9]" (cdr e)))
+                              alist))
+         (format (format "Update %%-%is to %%s%%s\n" width)))
+    (when (> count 1)
+      (insert (format "Update %-s drones\n\n" (length alist))))
+    (pcase-dolist (`(,drone . ,version) alist)
+      (insert (format
+               format drone
+               (if (and align (string-match-p "\\`[0-9]" version)) " " "")
+               version)))))
+
+(defun borg-updated-drones ()
+  (let ((default-directory borg-user-emacs-directory))
+    (mapcar
+     (lambda (module)
+       (let ((default-directory (expand-file-name module)))
+         (cons (file-name-nondirectory module)
+               (car (process-lines "git" "describe" "--tags" "--always")))))
+     (process-lines
+      "git" "diff-index" "--name-only" "--cached" "HEAD" "--" "lib/"))))
 
 ;;; Internal Utilities
 

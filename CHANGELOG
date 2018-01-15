@@ -22,6 +22,12 @@
   functionality iteratively and to create configurations that are not
   based on the Emacs.d collective.
 
+- The new command ~borg-insert-update-message~ inserts information
+  about drones that are updated in the index.  The inserted text is
+  formatted according to the commit message conventions documented
+  in the manual.  In ~git-commit-mode-map~ ~C-c C-b~ is bound to this
+  command.
+
 - A new make target ~tangle-init~ was added which recreates ~init.el~ from
   ~init.org~.
 
