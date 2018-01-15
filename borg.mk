@@ -23,7 +23,7 @@ help:
 	$(info )
 	$(info make [all|build]     = rebuild all drones and init files)
 	$(info make quick           = rebuild most drones and init files)
-	$(info make lib/DRONE/build = rebuild DRONE)
+	$(info make lib/DRONE       = rebuild DRONE)
 	$(info make build-init      = rebuild init files)
 	$(info make tangle-init     = recreate init.el from init.org)
 	$(info make bootstrap-borg  = bootstrap borg itself)
@@ -56,7 +56,8 @@ quick:
 	--funcall borg-initialize \
 	--eval  '(borg-batch-rebuild t)' 2>&1
 
-lib/%/build: .FORCE
+lib/borg/borg.mk: ;
+lib/%: .FORCE
 	@$(EMACS) -Q --batch -L lib/borg --load borg $(SILENCIO) \
 	--funcall borg-initialize \
 	--eval  '(borg-build "$*")' 2>&1
