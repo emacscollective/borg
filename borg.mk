@@ -35,29 +35,29 @@ clean:
 
 build:
 	@rm -f init.elc
-	@$(EMACS) -Q --batch -L lib/borg --load borg $(SILENCIO) \
+	@$(EMACS) --no-init-file --no-site-file --batch -L lib/borg --load borg $(SILENCIO) \
 	--funcall borg-initialize \
 	--funcall borg-batch-rebuild 2>&1
 
 build-init:
 	@rm -f init.elc
-	@$(EMACS) -Q --batch -L lib/borg --load borg \
+	@$(EMACS) --no-init-file --no-site-file --batch -L lib/borg --load borg \
 	--funcall borg-initialize \
 	--funcall borg-batch-rebuild-init 2>&1
 
 tangle-init: init.el
 init.el: init.org
-	@$(EMACS) -Q --batch --load org \
+	@$(EMACS) --no-init-file --no-site-file --batch --load org \
 	--eval '(org-babel-tangle-file "init.org")' 2>&1
 
 quick:
 	@rm -f init.elc
-	@$(EMACS) -Q --batch -L lib/borg --load borg $(SILENCIO) \
+	@$(EMACS) --no-init-file --no-site-file --batch -L lib/borg --load borg $(SILENCIO) \
 	--funcall borg-initialize \
 	--eval  '(borg-batch-rebuild t)' 2>&1
 
 lib/%/build: .FORCE
-	@$(EMACS) -Q --batch -L lib/borg --load borg $(SILENCIO) \
+	@$(EMACS) --no-init-file --no-site-file --batch -L lib/borg --load borg $(SILENCIO) \
 	--funcall borg-initialize \
 	--eval  '(borg-build "$*")' 2>&1
 
