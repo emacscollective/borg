@@ -38,7 +38,6 @@
 (require 'cl-lib)
 (require 'eieio)
 (require 'seq)
-(require 'subr-x)
 
 (require 'borg)
 (require 'package)
@@ -75,20 +74,21 @@
 (define-advice package-load-descriptor
     (:around (fn pkg-dir) borg)
   "For a Borg-installed package, use information from the Epkgs database."
-  (if-let* ((dir (package--borg-clone-p pkg-dir)))
-      (let* ((name (file-name-nondirectory (directory-file-name dir)))
-             (epkg (epkg name))
-             (desc (package-process-define-package
-                    (list 'define-package
-                          name
-                          (borg--package-version name)
-                          (if epkg
-                              (or (oref epkg summary)
-                                  "[No summary]")
-                            "[Installed using Borg, but not in Epkgs database]")
-                          ()))))
-        (setf (package-desc-dir desc) pkg-dir)
-        desc)
+  (let ((dir (package--borg-clone-p pkg-dir)))
+    (if dir
+        (let* ((name (file-name-nondirectory (directory-file-name dir)))
+               (epkg (epkg name))
+               (desc (package-process-define-package
+                      (list 'define-package
+                            name
+                            (borg--package-version name)
+                            (if epkg
+                                (or (oref epkg summary)
+                                    "[No summary]")
+                              "[Installed using Borg, but not in Epkgs database]")
+                            ()))))
+          (setf (package-desc-dir desc) pkg-dir)
+          desc))
     (funcall fn pkg-dir)))
 
 (defun package--borg-clone-p (pkg-dir)
@@ -101,12 +101,13 @@
 (defvar borg--version-tag-glob "*[0-9]*")
 
 (defun borg--package-version (clone)
-  (or (when-let* ((version
-                   (let ((default-directory (borg-worktree clone)))
-                     (ignore-errors
-                       (car (process-lines "git" "describe" "--tags" "--match"
-                                           borg--version-tag-glob))))))
-        (and (string-match
+  (or (let ((version
+             (let ((default-directory (borg-worktree clone)))
+               (ignore-errors
+                 (car (process-lines "git" "describe" "--tags" "--match"
+                                     borg--version-tag-glob))))))
+        (and version
+             (string-match
               "\\`\\(?:[^0-9]+\\)?\\([.0-9]+\\)\\(?:-\\([0-9]+-g\\)\\)?"
               version)
              (let ((version (version-to-list (match-string 1 version)))
