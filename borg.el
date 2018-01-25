@@ -630,6 +630,7 @@ build and activate the drone."
   (interactive
    (nconc (borg-read-package "Assimilate package: " current-prefix-arg)
           (list (< (prefix-numeric-value current-prefix-arg) 0))))
+  (borg--maybe-confirm-unsafe-action "assimilate" package url)
   (message "Assimilating %s..." package)
   (let ((default-directory borg-user-emacs-directory))
     (borg--maybe-reuse-gitdir package)
@@ -652,6 +653,7 @@ in the minibuffer and use the url stored in the Epkg database.
 If `epkg' is unavailable, the package is not in the database, or
 with a prefix argument, then also read the url in the minibuffer."
   (interactive (borg-read-package "Clone package: " current-prefix-arg))
+  (borg--maybe-confirm-unsafe-action "clone" package url)
   (message "Cloning %s..." package)
   (let ((gitdir (borg-gitdir package))
         (topdir (borg-worktree package)))
@@ -802,6 +804,33 @@ Formatting is according to the commit message conventions."
      nil "^\\[submodule \"\\([^\"]+\\)\"].*\n\\([\s\t].*\n\\)+"
      "\\1" (line-beginning-position) (point-max))
     (save-buffer)))
+
+(defun borg--maybe-confirm-unsafe-action (action package url)
+  (require 'epkg nil t)
+  (let* ((pkg (epkg package))
+         (ask (cond ((and pkg
+                          (fboundp 'epkg-wiki-package-p)
+                          (epkg-wiki-package-p pkg)) "\
+This package is from the Emacswiki.  Anyone could trivially \
+inject malicious code.  Do you really want to %s it? ")
+                    ((or (and pkg
+                              (fboundp 'epkg-orphaned-package-p)
+                              (epkg-orphaned-package-p pkg))
+                         (string-match-p "emacsorphanage" url)) "\
+This package is from the Emacsorphanage, which might import it \
+over an insecure connection.  Do you really want to %s it? ")
+                    ((or (and pkg
+                              (fboundp 'epkg-shelved-package-p)
+                              (epkg-shelved-package-p pkg))
+                         (string-match-p "emacsattic" url)) "\
+This package is from the Emacsattic, which might have imported it \
+over an insecure connection.  Do you really want to %s it? ")
+                    ((or (string-prefix-p "git://" url)
+                         (string-prefix-p "http://" url)) "\
+This package is being fetched over an insecure connection. \
+Do you really want to %s it? "))))
+    (when (and ask (not (yes-or-no-p (format ask action))))
+      (user-error "Abort"))))
 
 (provide 'borg)
 ;; Local Variables:
