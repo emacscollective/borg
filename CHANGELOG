@@ -42,10 +42,10 @@
   relative to the top-level.  The documentation already claimed that
   was the case before.
 
-- All build output is appened to the same buffer now.  Previously each
+- All build output is appended to the same buffer now.  Previously each
   build created a new, unspecialized buffer that never got cleaned up.
   The buffer is automatically shown on every build but can easily be
-  burried using ~C-q~.
+  buried using ~C-q~.
 
 * v2.0.0    2017/09/19
 
