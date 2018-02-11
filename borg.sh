@@ -19,7 +19,7 @@ do
     then
         name=$(git submodule--helper name "$path")
 
-        echo "\n--- [$name] ---\n"
+        printf "\n--- [%s] ---\n\n" $name
 
         if ! test -e "$path"/.git
         then
