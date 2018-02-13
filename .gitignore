@@ -4,3 +4,4 @@
 /borg.pdf
 /dir
 *.elc
+/borg-autoloads.el
