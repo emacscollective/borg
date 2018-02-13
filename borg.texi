@@ -30,7 +30,7 @@ General Public License for more details.
 @finalout
 @titlepage
 @title Borg User Manual
-@subtitle for version 2.0.0 (v2.0.0-26-g8545c7e+1)
+@subtitle for version 2.0.0 (v2.0.0-40-gba2e504+1)
 @author Jonas Bernoulli
 @page
 @vskip 0pt plus 1filll
@@ -47,7 +47,7 @@ The Borg assimilate Emacs packages as Git submodules.  Borg is a
 bare-bones package manager for Emacs packages.
 
 @noindent
-This manual is for Borg version 2.0.0 (v2.0.0-26-g8545c7e+1).
+This manual is for Borg version 2.0.0 (v2.0.0-40-gba2e504+1).
 
 @quotation
 Copyright (C) 2016-2018 Jonas Bernoulli <jonas@@bernoul.li>
@@ -486,15 +486,15 @@ machines without checking it into Git.
 @deffn Command make bootstrap
 
 This target attempts to bootstrap the drones.  To do so it runs
-@code{git submodule init}, @code{bin/bootstrap} (which see), and @code{make build}.
+@code{git submodule init}, @code{borg.sh} (which see), and @code{make build}.
 
-If an error occurs during the @code{bin/bootstrap} phase, then you can just
-run that command again to process the remaining drones.  The drone
-that have already been bootstrapped or that have previously failed
-will be skipped.  If a drone cannot be cloned from any of the known
+If an error occurs during the @code{borg.sh} phase, then you can just run
+that command again to process the remaining drones.  The drone that
+have already been bootstrapped or that have previously failed will
+be skipped.  If a drone cannot be cloned from any of the known
 remotes, then you should temporarily remove it using @code{git submodule
-  deinit lib/DRONE}.  When done with @code{bin/bootstrap} also manually run
-@code{make build} again.
+  deinit lib/DRONE}.  When done with @code{borg.sh} also manually run @code{make
+  build} again.
 @end deffn
 
 @node Variables

@@ -7,7 +7,7 @@
 #+TEXINFO_DIR_CATEGORY: Emacs
 #+TEXINFO_DIR_TITLE: Borg: (borg).
 #+TEXINFO_DIR_DESC: Assimilate Emacs packages as Git submodules
-#+SUBTITLE: for version 2.0.0 (v2.0.0-26-g8545c7e+1)
+#+SUBTITLE: for version 2.0.0 (v2.0.0-40-gba2e504+1)
 
 #+TEXINFO_DEFFN: t
 #+OPTIONS: H:4 num:4 toc:2
@@ -17,7 +17,7 @@ The Borg assimilate Emacs packages as Git submodules.  Borg is a
 bare-bones package manager for Emacs packages.
 
 #+TEXINFO: @noindent
-This manual is for Borg version 2.0.0 (v2.0.0-26-g8545c7e+1).
+This manual is for Borg version 2.0.0 (v2.0.0-40-gba2e504+1).
 
 #+BEGIN_QUOTE
 Copyright (C) 2016-2018 Jonas Bernoulli <jonas@bernoul.li>
@@ -409,15 +409,15 @@ To use them you have to be in ~~/.emacs.d~ in a shell.
 - Command: make bootstrap
 
   This target attempts to bootstrap the drones.  To do so it runs
-  ~git submodule init~, ~bin/bootstrap~ (which see), and ~make build~.
+  ~git submodule init~, ~borg.sh~ (which see), and ~make build~.
 
-  If an error occurs during the ~bin/bootstrap~ phase, then you can just
-  run that command again to process the remaining drones.  The drone
-  that have already been bootstrapped or that have previously failed
-  will be skipped.  If a drone cannot be cloned from any of the known
+  If an error occurs during the ~borg.sh~ phase, then you can just run
+  that command again to process the remaining drones.  The drone that
+  have already been bootstrapped or that have previously failed will
+  be skipped.  If a drone cannot be cloned from any of the known
   remotes, then you should temporarily remove it using ~git submodule
-  deinit lib/DRONE~.  When done with ~bin/bootstrap~ also manually run
-  ~make build~ again.
+  deinit lib/DRONE~.  When done with ~borg.sh~ also manually run ~make
+  build~ again.
 
 * Variables
 
