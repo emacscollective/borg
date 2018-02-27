@@ -30,7 +30,7 @@ General Public License for more details.
 @finalout
 @titlepage
 @title Borg User Manual
-@subtitle for version 2.0.0 (v2.0.0-40-gba2e504+1)
+@subtitle for version 2.0.0 (v2.0.0-42-g28abb4b+1)
 @author Jonas Bernoulli
 @page
 @vskip 0pt plus 1filll
@@ -47,7 +47,7 @@ The Borg assimilate Emacs packages as Git submodules.  Borg is a
 bare-bones package manager for Emacs packages.
 
 @noindent
-This manual is for Borg version 2.0.0 (v2.0.0-40-gba2e504+1).
+This manual is for Borg version 2.0.0 (v2.0.0-42-g28abb4b+1).
 
 @quotation
 Copyright (C) 2016-2018 Jonas Bernoulli <jonas@@bernoul.li>
@@ -577,6 +577,19 @@ it is assumed to be a shell command and executed with @code{shell-command}.
         build-step = make -C mu4e > /dev/null
         build-step = borg-update-autoloads
         load-path = mu4e
+@end example
+
+To skip generating "autoloads" (e.g. using @code{use-package} to create
+"autoloads" on the fly), just provide the required build steps to
+build the package, omitting @code{borg-update-autoloads}. Borg silently
+ignores a missing "autoloads" file during initialization
+(@code{borg-initialize}).
+
+@example
+[submodule "multiple-cursors"]
+        path = lib/multiple-cursors
+        url = git@@github.com:magnars/multiple-cursors.el.git
+        build-step = borg-byte-compile
 @end example
 
 Note that just because a package provides a @code{Makefile}, you do not
