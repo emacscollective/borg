@@ -5,12 +5,16 @@
 # Author: Jonas Bernoulli <jonas@bernoul.li>
 # License: GPL v3 <https://www.gnu.org/licenses/gpl-3.0.txt>
 
+borg=$(dirname $0)
+test -n "$borg" || exit 2
+cd $borg || exit 2
+
+toplevel=$(git rev-parse --show-superproject-working-tree)
+test -n "$toplevel" || exit 2
+cd $toplevel || exit 2
+
 hive_remote=$(git config -f .gitmodules borg.collective)
 push_remote=$(git config -f .gitmodules borg.pushDefault)
-
-toplevel=$(git rev-parse --show-toplevel)
-test -n "$toplevel" || exit 2
-cd "$toplevel"
 
 git submodule--helper list |
 while read mode sha1 stage path
