@@ -454,11 +454,13 @@ then also activate the clone using `borg-activate'."
   (package-activate 'borg)
   (require 'borg-elpa)
   (borg-elpa-initialize)
-  (borg-build %S))" user-emacs-directory clone)
+  (setq borg-build-shell-command (quote %S))
+  (borg-build %S))" user-emacs-directory borg-build-shell-command clone)
                    (format "(progn
   (require 'borg)
   (borg-initialize)
-  (borg-build %S))" clone)))
+  (setq borg-build-shell-command (quote %S))
+  (borg-build %S))" borg-build-shell-command clone)))
        'borg-build--process-filter)))
   (when activate
     (borg-activate clone)))
