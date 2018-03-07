@@ -30,7 +30,7 @@ General Public License for more details.
 @finalout
 @titlepage
 @title Borg User Manual
-@subtitle for version 2.0.0 (v2.0.0-42-g28abb4b+1)
+@subtitle for version 2.0.0 (v2.0.0-45-g4ad1c3f+1)
 @author Jonas Bernoulli
 @page
 @vskip 0pt plus 1filll
@@ -47,7 +47,7 @@ The Borg assimilate Emacs packages as Git submodules.  Borg is a
 bare-bones package manager for Emacs packages.
 
 @noindent
-This manual is for Borg version 2.0.0 (v2.0.0-42-g28abb4b+1).
+This manual is for Borg version 2.0.0 (v2.0.0-45-g4ad1c3f+1).
 
 @quotation
 Copyright (C) 2016-2018 Jonas Bernoulli <jonas@@bernoul.li>
@@ -619,6 +619,11 @@ returned value is a string, then that is used as described above.
 
 Finally the second function may execute the build step at its own
 discretion and return @code{nil} to indicate that it has done so.
+
+Notice that if the value of this variable is a function, this
+function must a) be defined in a drone; and b) be registered as an
+autoload.  This is because build happens in a separate Emacs process
+started with @code{-Q --batch}, which only receives the name of the function.
 @end defvar
 
 @defvar submodule.DRONE.load-path PATH

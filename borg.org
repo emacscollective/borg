@@ -7,7 +7,7 @@
 #+TEXINFO_DIR_CATEGORY: Emacs
 #+TEXINFO_DIR_TITLE: Borg: (borg).
 #+TEXINFO_DIR_DESC: Assimilate Emacs packages as Git submodules
-#+SUBTITLE: for version 2.0.0 (v2.0.0-42-g28abb4b+1)
+#+SUBTITLE: for version 2.0.0 (v2.0.0-45-g4ad1c3f+1)
 
 #+TEXINFO_DEFFN: t
 #+OPTIONS: H:4 num:4 toc:2
@@ -17,7 +17,7 @@ The Borg assimilate Emacs packages as Git submodules.  Borg is a
 bare-bones package manager for Emacs packages.
 
 #+TEXINFO: @noindent
-This manual is for Borg version 2.0.0 (v2.0.0-42-g28abb4b+1).
+This manual is for Borg version 2.0.0 (v2.0.0-45-g4ad1c3f+1).
 
 #+BEGIN_QUOTE
 Copyright (C) 2016-2018 Jonas Bernoulli <jonas@bernoul.li>
@@ -535,6 +535,11 @@ variables you can tell Borg how to build such packages.
 
   Finally the second function may execute the build step at its own
   discretion and return ~nil~ to indicate that it has done so.
+
+  Notice that if the value of this variable is a function, this
+  function must a) be defined in a drone; and b) be registered as an
+  autoload.  This is because build happens in a separate Emacs process
+  started with ~-Q --batch~, which only receives the name of the function.
 
 - Variable: submodule.DRONE.load-path PATH
 
