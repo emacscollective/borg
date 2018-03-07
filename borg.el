@@ -413,8 +413,8 @@ then also activate the clone using `borg-activate'."
                        (require 'format-spec)
                        (shell-command
                         (format-spec build-cmd
-                                     `((%s . ,cmd)
-                                       (%S . ,(shell-quote-argument cmd)))))))
+                                     `((?s . ,cmd)
+                                       (?S . ,(shell-quote-argument cmd)))))))
                     (t
                      (shell-command cmd)))
               (message "  Running '%s'...done" cmd))
