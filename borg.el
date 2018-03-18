@@ -836,6 +836,7 @@ Do you really want to %s it? "))))
     (when (and ask (not (yes-or-no-p (format ask action))))
       (user-error "Abort"))))
 
+;;; _
 (provide 'borg)
 ;; Local Variables:
 ;; indent-tabs-mode: nil
