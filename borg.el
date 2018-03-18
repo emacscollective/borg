@@ -483,8 +483,7 @@ then also activate the clone using `borg-activate'."
   "Keymap for `borg-build-mode'.")
 
 (define-derived-mode borg-build-mode compilation-mode
-  "Mode for the \"*Borg Build*\" buffer."
-  (setq buffer-read-only t))
+  "Mode for the \"*Borg Build*\" buffer.")
 
 (defconst borg-autoload-format "\
 ;;;\
