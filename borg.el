@@ -485,8 +485,8 @@ then also activate the clone using `borg-activate'."
 (defvar borg-build-mode-lighter "Borg-Build")
 
 (define-derived-mode borg-build-mode compilation-mode
-  "Mode for the \"*Borg Build*\" buffer."
-  :lighter borg-build-mode-lighter)
+  'borg-build-mode-lighter
+  "Mode for the \"*Borg Build*\" buffer.")
 
 (defconst borg-autoload-format "\
 ;;;\
