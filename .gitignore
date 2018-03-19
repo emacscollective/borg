@@ -1,7 +1,8 @@
-/borg
+/*.elc
+/*-autoloads.el
+/.config.mk
+/dir
+/borg/
 /borg.html
 /borg.info
 /borg.pdf
-/dir
-*.elc
-/borg-autoloads.el
