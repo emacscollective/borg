@@ -454,14 +454,14 @@ then also activate the clone using `borg-activate'."
                           (format-time-string "%H:%M:%S")
                           clone))))
       (set-process-filter
-       (start-process
-        (format "emacs ... --eval (borg-build %S)" clone)
-        buffer
-        (expand-file-name invocation-name invocation-directory)
-        "--batch" borg-emacs-arguments
-        "-L" (file-name-directory (locate-library "borg"))
-        "--eval" (if (featurep 'borg-elpa)
-                     (format "(progn
+       (apply #'start-process
+              (format "emacs ... --eval (borg-build %S)" clone)
+              buffer
+              (expand-file-name invocation-name invocation-directory)
+              `("--batch" ,@borg-emacs-arguments
+                "-L" ,(file-name-directory (locate-library "borg"))
+                "--eval" ,(if (featurep 'borg-elpa)
+                              (format "(progn
   (setq user-emacs-directory %S)
   (require 'package)
   (package-initialize 'no-activate)
@@ -474,7 +474,7 @@ then also activate the clone using `borg-activate'."
   (require 'borg)
   (borg-initialize)
   (setq borg-build-shell-command (quote %S))
-  (borg-build %S))" borg-build-shell-command clone)))
+  (borg-build %S))" borg-build-shell-command clone))))
        'borg-build--process-filter)))
   (when activate
     (borg-activate clone)))
