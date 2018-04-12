@@ -501,7 +501,10 @@ then also activate the clone using `borg-activate'."
 
 (define-derived-mode borg-build-mode compilation-mode
   'borg-build-mode-lighter
-  "Mode for the \"*Borg Build*\" buffer.")
+  "Mode for the \"*Borg Build*\" buffer."
+  (setq mode-line-process
+        '((:propertize ":%s" face compilation-mode-line-run)
+          compilation-mode-line-errors)))
 
 (defconst borg-autoload-format "\
 ;;;\
