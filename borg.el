@@ -823,7 +823,7 @@ Formatting is according to the commit message conventions."
     (goto-char (point-min))
     (re-search-forward "^\\[submodule")
     (sort-regexp-fields
-     nil "^\\[submodule \"\\([^\"]+\\)\"].*\n\\([\s\t].*\n\\)+"
+     nil "^\\(?:#.*\n\\)*\\[submodule \"\\([^\"]+\\)\"].*\\(?:[^[].*\n\\)+"
      "\\1" (line-beginning-position) (point-max))
     (save-buffer)))
 
