@@ -825,7 +825,8 @@ Formatting is according to the commit message conventions."
 
 (defun borg--maybe-confirm-unsafe-action (action package url)
   (require 'epkg nil t)
-  (let* ((pkg (epkg package))
+  (let* ((pkg (and (fboundp 'epkg)
+                   (epkg package)))
          (ask (cond ((and pkg
                           (fboundp 'epkg-wiki-package-p)
                           (epkg-wiki-package-p pkg)) "\
