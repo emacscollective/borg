@@ -281,12 +281,13 @@ is used when reading the package name."
 (defmacro borg-silencio (regexp &rest body)
   "Execute the forms in BODY while silencing messages that don't match REGEXP."
   (declare (indent 1))
-  `(let ((msg (symbol-function 'message)))
-     (cl-letf (((symbol-function 'message)
-                (lambda (format-string &rest args)
-                  (unless (string-match-p ,regexp format-string)
-                    (apply msg format-string args)))))
-       ,@body)))
+  (let ((msg (make-symbol "msg")))
+    `(let ((,msg (symbol-function 'message)))
+       (cl-letf (((symbol-function 'message)
+                  (lambda (format-string &rest args)
+                    (unless (string-match-p ,regexp format-string)
+                      (apply ,msg format-string args)))))
+         ,@body))))
 
 ;;; Activation
 
