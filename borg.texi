@@ -336,9 +336,10 @@ to "the" new version.
 
 To determine the drones with you @emph{might} want to update, visit the Magit
 status buffer of the @code{~/.emacs.d} repository and press @code{f m} to fetch
-inside all submodules.  After you have done so, and provided there
-actually are any modules with new upstream commits, a section titled
-"Modules unpulled from @@@{upstream@}" appears.
+inside all submodules. After you have done so, and provided there
+actually are any modules with new upstream commits and that you enabled
+the module status section (see the @url{magit manual} to enable it),
+a section titled "Modules unpulled from @@@{upstream@}" appears.
 
 Each subsection of that section represents a submodule with new
 upstream commits.  Expanding such a subsection lists the new upstream
