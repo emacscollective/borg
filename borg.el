@@ -137,16 +137,18 @@ inside the working tree."
 (defun borg-get (clone variable &optional all)
   "Return the value of `submodule.CLONE.VARIABLE' in `~/.emacs.d/.gitmodules'.
 If optional ALL is non-nil, then return all values as a list."
-  (if borg--gitmodule-cache
-      (let ((values (plist-get (cdr (assoc clone borg--gitmodule-cache))
-                               (intern variable))))
-        (if all values (car values)))
-    (ignore-errors
-      ;; If the variable has no value then the exit code is non-zero,
-      ;; but that isn't an error as far as we are concerned.
-      (apply #'process-lines "git" "config" "--file" borg-gitmodules-file
-             (nconc (and all (list "--get-all"))
-                    (list (concat "submodule." clone "." variable)))))))
+  (let ((values (if borg--gitmodule-cache
+                    (plist-get (cdr (assoc clone borg--gitmodule-cache))
+                               (intern variable))
+                  (ignore-errors
+                    ;; If the variable has no value then the exit code is
+                    ;; non-zero, but that isn't an error as far as we are
+                    ;; concerned.
+                    (apply #'process-lines "git" "config"
+                           "--file" borg-gitmodules-file
+                           `(,@(and all (list "--get-all"))
+                             ,(concat "submodule." clone "." variable)))))))
+    (if all values (car values))))
 
 (defun borg-get-all (clone variable)
   "Return all values of `submodule.CLONE.VARIABLE' in `~/.emacs.d/.gitmodules'.
