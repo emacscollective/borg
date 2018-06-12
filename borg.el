@@ -326,7 +326,7 @@ is skipped."
   "Activate the clone named CLONE.
 
 Add the appropriate directories to `load-path' and
-`Info-directory-alist', and load the autoloads file,
+`Info-directory-list', and load the autoloads file,
 if it exists."
   (interactive (list (borg-read-clone "Activate clone: ")))
   (dolist (dir (borg-load-path clone))
