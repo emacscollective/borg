@@ -17,7 +17,7 @@ later version.
 
 This document is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE@.  See the GNU
 General Public License for more details.
 @end quotation
 @end copying
@@ -30,7 +30,7 @@ General Public License for more details.
 @finalout
 @titlepage
 @title Borg User Manual
-@subtitle for version 2.0.0 (v2.0.0-45-g4ad1c3f+1)
+@subtitle for version 2.0.0 (v2.0.0-59-g89a9394+1)
 @author Jonas Bernoulli
 @page
 @vskip 0pt plus 1filll
@@ -47,7 +47,7 @@ The Borg assimilate Emacs packages as Git submodules.  Borg is a
 bare-bones package manager for Emacs packages.
 
 @noindent
-This manual is for Borg version 2.0.0 (v2.0.0-45-g4ad1c3f+1).
+This manual is for Borg version 2.0.0 (v2.0.0-59-g89a9394+1).
 
 @quotation
 Copyright (C) 2016-2018 Jonas Bernoulli <jonas@@bernoul.li>
@@ -59,7 +59,7 @@ later version.
 
 This document is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE@.  See the GNU
 General Public License for more details.
 @end quotation
 @end ifnottex
@@ -240,7 +240,7 @@ Magit status buffer of the @code{~/.emacs.d} repository.
 @cindex borg-assimilate package url &optional partially
 @deffn Command borg-assimilate package url &optional partially
 
-This command assimilates the package named PACKAGE from URL.
+This command assimilates the package named PACKAGE from URL@.
 
 If @code{epkg} is available, then only the name of the package is read in
 the minibuffer and the url stored in the Epkg database is used.  If
@@ -281,7 +281,7 @@ Git directory is not removed.
 @cindex borg-build clone &optional activate
 @deffn Command borg-build clone &optional activate
 
-This command builds the clone named CLONE.  Interactively, or when
+This command builds the clone named CLONE@.  Interactively, or when
 optional ACTIVATE is non-nil, then also activate the drone using
 @code{borg-activate}.
 @end deffn
@@ -289,7 +289,7 @@ optional ACTIVATE is non-nil, then also activate the drone using
 @defun borg-update-autoloads clone &optional path
 
 This function updates the autoload file for the libraries belonging
-to the clone named CLONE in the directories in PATH.  PATH can be
+to the clone named CLONE in the directories in PATH@.  PATH can be
 omitted or contain file-names that are relative to the top-level of
 CLONE's repository.
 @end defun
@@ -297,14 +297,14 @@ CLONE's repository.
 @defun borg-byte-compile clone &optional path
 
 This function compiles the libraries for the clone named CLONE in
-the directories in PATH.  PATH can be omitted or contain file-names
+the directories in PATH@.  PATH can be omitted or contain file-names
 that are relative to the top-level of CLONE's repository.
 @end defun
 
 @defun borg-makeinfo clone
 
 This function generates the Info manuals and the Info index for the
-clone named CLONE.
+clone named CLONE@.
 @end defun
 
 @defun borg-batch-rebuild &optional quick
@@ -406,7 +406,7 @@ remote in the super-repository by setting @code{submodule.DRONE.remote} in
 @defvar submodule.DRONE.remote "NAME URL"
 
 This variable specifies an additional remote named NAME that is
-fetched from URL.  This variable can be specified multiple times.
+fetched from URL@.  This variable can be specified multiple times.
 Note that "NAME URL" is a single value and that the two parts of
 that value are separated by a single space.
 
@@ -426,7 +426,7 @@ upstream repository (yet).  A good value may be your username.
 For all DRONES for which one value of @code{submodule.DRONE.remote}
 specifies a remote whose NAME matches FORK, @code{make bootstrap}
 automatically configures FORK to be used as the push-remote by
-setting @code{remote.pushDefault} to FORK.
+setting @code{remote.pushDefault} to FORK@.
 @end defvar
 
 @node Make targets
@@ -464,7 +464,7 @@ Also see @code{make build-init} below.
 @cindex make lib/DRONE
 @deffn Command make lib/DRONE
 
-This target builds the drone named DRONE.
+This target builds the drone named DRONE@.
 @end deffn
 
 @cindex make build-init
@@ -534,7 +534,7 @@ file @code{~/.emacs.d/.gitmodules}.  The variables @code{borg.pushDefault} and
 This variable specifies the name used for remotes that reference
 a repository that has been patched by the collective.  If a NAME
 matches REMOTE, then it is configured as the upstream of the
-current branch of the respective DRONE.
+current branch of the respective DRONE@.
 
 If the file ".hive-maint" exists, then this variable has the same
 effect as "borg.pushDefault".  This special case is only useful for
@@ -632,7 +632,7 @@ This variable instructs @code{borg-activate} to add PATH to the @code{load-path}
 instead of the directory it would otherwise have added.  Likewise it
 instructs @code{borg-byte-compile} to compile the libraries in that
 directory.  PATH has to be relative to the top-level of the
-repository of the drone named DRONE.  This variable can be specified
+repository of the drone named DRONE@.  This variable can be specified
 multiple times.
 
 Normally Borg uses @code{lisp/} as the drone's @code{load-path}, if that exists,
@@ -655,8 +655,8 @@ locaction.
 @defvar submodule.DRONE.no-byte-compile PATH
 
 This variable instructs @code{borg-byte-compile} to not compile the library
-at PATH.  PATH has to be relative to the top-level of the repository
-of the drone named DRONE.  This variable can be specified multiple
+at PATH@.  PATH has to be relative to the top-level of the repository
+of the drone named DRONE@.  This variable can be specified multiple
 times.
 
 Sometimes a drone comes with an optional library which adds support
@@ -671,18 +671,41 @@ to use the PostgreSQL back-end and assimilate @code{pg}, then you should
 undo that.)
 @end defvar
 
+@defvar submodule.DRONE.recursive-byte-compile BOOLEAN
+
+Setting this variable to @code{true} instructs @code{borg-byte-compile} to compile
+DRONE's directories recursively.  This isn't done by default because
+there are more repositories in which doing so would cause issues
+than there are repositories that would benefit from doing so.
+
+Unfortunately many packages put problematic test files or (usually
+outdated) copies of third-party libraries into subdirectories.  The
+latter is a highly questionable thing to do, but the former would be
+perfectly fine, if only the non-library elisp files did not provide
+a feature (which effectivly turns them into libraries) and/or if a
+file named @code{.nosearch} existed in the subdirectory.  That file tells
+functions such as @code{normal-top-level-add-subdirs-to-load-path} and
+@code{borg-byte-compile} to ignore the containing directory.
+@end defvar
+
+@defvar borg-byte-compile-recursive
+
+Setting this variable to a non-nil value instructs @code{borg-byte-compile}
+to compile all drones recursively.  Doing so is discouraged.
+@end defvar
+
 @defvar submodule.DRONE.info-path PATH
 
 This variable instructs @code{borg-initialize} to add PATH to
 @code{Info-directory-list}.  PATH has to be relative to the top-level of
-the repository of the drone named DRONE.
+the repository of the drone named DRONE@.
 @end defvar
 
 @defvar submodule.DRONE.no-makeinfo PATH
 
 This variable instructs @code{borg-makeinfo} to not create an Info file for
-the Texinfo file at PATH.  PATH has to be relative to the top-level
-of the repository of the drone named DRONE.  This variable can be
+the Texinfo file at PATH@.  PATH has to be relative to the top-level
+of the repository of the drone named DRONE@.  This variable can be
 specified multiple times.
 @end defvar
 
@@ -702,12 +725,12 @@ build your own tools on top of Borg.
 @defun borg-worktree clone
 
 This function returns the top-level of the working tree of the
-clone named CLONE.
+clone named CLONE@.
 @end defun
 
 @defun borg-gitdir clone
 
-This function returns the Git directory of the clone named CLONE.
+This function returns the Git directory of the clone named CLONE@.
 
 It always returns @code{BORG-USER-EMACS-DIRECTORY/.git/modules/CLONE}, even
 when CLONE's Git directory is actually located inside the working
@@ -730,13 +753,13 @@ list.
 
 @defun borg-load-path clone
 
-This function returns the @code{load-path} for the clone named CLONE.
+This function returns the @code{load-path} for the clone named CLONE@.
 @end defun
 
 @defun borg-info-path clone &optional setup
 
 This function returns the @code{Info-directory-list} for the clone named
-CLONE.
+CLONE@.
 
 If optional SETUP is non-nil, then it returns a list of directories
 containing @code{texi} and/or @code{info} files.  Otherwise it returns a list of

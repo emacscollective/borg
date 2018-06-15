@@ -44,10 +44,8 @@
 - A new make target ~tangle-init~ was added which recreates ~init.el~ from
   ~init.org~.
 
-- The new option ~borg-byte-compile-recursively~ allows compiling
-  recursively.  You probably don't want this because there are more
-  packages that have random crap in subdirectories than there are
-  packages that put actual libraries into subdirectories.
+- Added new variables ~submodule.DRONE.recursive-byte-compile~ and
+  ~borg-byte-compile-recursively~.
 
 - The user is asked to save relevant buffers before compiling.
 
