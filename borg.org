@@ -8,7 +8,7 @@
 #+TEXINFO_DIR_CATEGORY: Emacs
 #+TEXINFO_DIR_TITLE: Borg: (borg).
 #+TEXINFO_DIR_DESC: Assimilate Emacs packages as Git submodules
-#+SUBTITLE: for version 2.0.0 (v2.0.0-60-ga558324+1)
+#+SUBTITLE: for version 2.0.0 (v2.0.0-62-g032e9ca+1)
 
 #+TEXINFO_DEFFN: t
 #+OPTIONS: H:4 num:4 toc:2
@@ -18,7 +18,7 @@ The Borg assimilate Emacs packages as Git submodules.  Borg is a
 bare-bones package manager for Emacs packages.
 
 #+TEXINFO: @noindent
-This manual is for Borg version 2.0.0 (v2.0.0-60-ga558324+1).
+This manual is for Borg version 2.0.0 (v2.0.0-62-g032e9ca+1).
 
 #+BEGIN_QUOTE
 Copyright (C) 2016-2018 Jonas Bernoulli <jonas@bernoul.li>
@@ -512,6 +512,10 @@ variables you can tell Borg how to build such packages.
 
   Note that just because a package provides a ~Makefile~, you do not
   necessarily have to use it.
+
+  Even if ~make~ generates the Info file, you might still have add
+  ~borg-makeinfo~ as an additional build-step because the former might
+  not generate a Info index file (named ~dir~), which Borg relies on.
 
 - Variable: borg-build-shell-command
 
