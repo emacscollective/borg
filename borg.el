@@ -260,18 +260,21 @@ is used when reading the package name."
       (let* ((name (completing-read prompt (epkgs 'name)
                                     nil nil nil 'epkg-package-history))
              (pkg  (epkg name))
-             (url  (if pkg
-                       (if (or (epkg-git-package-p pkg)
-                               (epkg-github-package-p pkg)
-                               (epkg-orphaned-package-p pkg)
-                               (epkg-gitlab-package-p pkg))
-                           (eieio-oref pkg 'url)
-                         (eieio-oref pkg 'mirror-url))
-                     (and (require 'magit nil t)
-                          (magit-get "remote" (magit-get-some-remote) "url")))))
+             (url  (and pkg
+                        (if (or (epkg-git-package-p pkg)
+                                (epkg-github-package-p pkg)
+                                (epkg-orphaned-package-p pkg)
+                                (epkg-gitlab-package-p pkg))
+                            (eieio-oref pkg 'url)
+                          (eieio-oref pkg 'mirror-url)))))
         (list name
               (if (or (not url) edit-url)
-                  (read-string "Url: " url)
+                  (read-string
+                   "Url: "
+                   (or url
+                       (and (require 'magit nil t)
+                            (magit-get "remote"
+                                       (magit-get-some-remote) "url"))))
                 url)))
     (list (read-string prompt)
           (read-string "Url: "))))
