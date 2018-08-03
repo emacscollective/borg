@@ -30,7 +30,7 @@ General Public License for more details.
 @finalout
 @titlepage
 @title Borg User Manual
-@subtitle for version 2.0.0 (v2.0.0-62-g032e9ca+1)
+@subtitle for version 2.0.0 (v2.0.0-64-g738f749+1)
 @author Jonas Bernoulli
 @page
 @vskip 0pt plus 1filll
@@ -47,7 +47,7 @@ The Borg assimilate Emacs packages as Git submodules.  Borg is a
 bare-bones package manager for Emacs packages.
 
 @noindent
-This manual is for Borg version 2.0.0 (v2.0.0-62-g032e9ca+1).
+This manual is for Borg version 2.0.0 (v2.0.0-64-g738f749+1).
 
 @quotation
 Copyright (C) 2016-2018 Jonas Bernoulli <jonas@@bernoul.li>
@@ -140,6 +140,21 @@ cloning the super-repository.
 git config --global url.https://github.com/.insteadOf git@@github.com:
 git config --global url.https://gitlab.com/.insteadOf git@@gitlab.com:
 @end lisp
+
+During package compilation you may notice the submodules relating to
+those packages become dirty due to the compilation outputs not being
+ignored in those submodules.  For this reason it is useful to ignore
+these outputs globally, for example in your @code{~/.config/git/ignore}
+file:
+
+@example
+*.elc
+*-autoloads.el
+dir
+@end example
+
+You may discover more things that you'll want to ignore this way as you
+use @code{borg}.
 
 @node Startup
 @chapter Startup
