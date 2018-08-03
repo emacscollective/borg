@@ -141,6 +141,19 @@ git config --global url.https://github.com/.insteadOf git@@github.com:
 git config --global url.https://gitlab.com/.insteadOf git@@gitlab.com:
 @end lisp
 
+During package compilation you may notice the submodules relating to
+those packages become dirty due to the compilation outputs not being
+ignored in those submodules.  For this reason it is useful to ignore
+these outputs globally, for example in your @code{~/.config/git/ignore}
+file:
+@example
+*.elc
+*-autoloads.el
+dir
+@end example
+You may discover more things that you'll want to ignore this way as you
+use @code{borg}.
+
 @node Startup
 @chapter Startup
 
