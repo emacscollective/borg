@@ -8,7 +8,7 @@
 EMACS           ?= emacs
 EMACS_ARGUMENTS ?= -Q
 
-.PHONY: all help clean build build-init quick bootstrap
+.PHONY: all help clean build build-init quick bootstrap bootstrap-parallel
 .FORCE:
 
 all: build
@@ -77,3 +77,6 @@ bootstrap:
 	@lib/borg/borg.sh
 	@printf "\n=== Running 'make build' ===\n\n"
 	@make build
+
+bootstrap-parallel:
+	@lib/borg/borg-bootstrap-parallel

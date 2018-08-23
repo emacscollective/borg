@@ -1,0 +1,210 @@
+#!/usr/bin/env python3
+
+import shlex
+from time import time
+from re import match
+from subprocess import run, PIPE, STDOUT, CalledProcessError
+from multiprocessing import Pool, Lock, cpu_count
+from os import path
+from argparse import ArgumentParser
+
+
+LOCK = Lock()
+MAX_PROCESSES = None
+
+
+def parse_args():
+    """Add commandline arguments or default values to global variables."""
+    global MAX_PROCESSES
+    parser = ArgumentParser(
+        description='Multi-process borg collective bootstrapper.')
+    parser.add_argument('-m', metavar='N', type=int,
+                        default=get_process_count(),
+                        help='Max number of procceses to run in parallel. \
+                        Defaults to CPU count - 1')
+
+    args = vars(parser.parse_args())
+    MAX_PROCESSES = args['m']
+
+
+def get_process_count():
+    """Sets the default process count. Capping it at 10 to avoid hammering github
+    and computer from runnin low on memory during the builds."""
+    cpus = cpu_count()
+    if cpus > 10:
+        cpus = 10
+    if cpus < 1:
+        cpus = 1
+
+    return cpus
+
+
+def has_alnum(string):
+    """Checks if string contain any alphanumeric characters."""
+    return bool(match("[a-zA-Z0-9]", string))
+
+
+def send_cmd(cmd, **kwargs):
+    """Runs cmd in a subproccess and returns output."""
+    cmd = shlex.split(cmd)
+    result = run(cmd, stdout=PIPE, stderr=STDOUT,
+                 text=True, **kwargs)
+
+    return result.stdout.strip()
+
+
+def initialize_drones():
+    """Run git command to intialize drones."""
+    output = send_cmd("git submodule init")
+    print(output)
+
+
+def get_drones():
+    """Create and return a list of all drones."""
+    output = send_cmd("git submodule--helper list")
+
+    drones = []
+    for line in output.split('\n'):
+        drone = {'path': line.split()[3],
+                 'sha1': line.split()[1]}
+        drone['name'] = send_cmd("git submodule--helper name " + drone['path'])
+        drone['url'] = send_cmd("git config -f .gitmodules submodule." +
+                                drone['name'] + ".url")
+        drones.append(drone)
+
+    return drones
+
+
+def clone_drones(drones):
+    """Clones a list of drones in multiple processes-based threads."""
+    pool = Pool(MAX_PROCESSES)
+    return pool.map(clone_drone, drones)
+
+
+def clone_drone(drone):
+    """Clone and git reset. The lock is required to keep the processes from
+    printing to terminal at the same time."""
+    start = time()
+    log = ""
+
+    if not path.exists(drone['path'] + "/.git"):
+        log = send_cmd("git submodule--helper clone  --name {0} \
+        --path {1} --url {2}".format(drone["name"], drone["path"],
+                                     drone["url"])) + "\n"
+
+    remotes = send_cmd("git config -f .gitmodules --get-all \
+    submodule.{}.remote".format(drone['name']))
+    if has_alnum(remotes):
+        for line in remotes.split("\n"):
+            remote, url = line.split()
+            log += clone_drone_handle_remote(remote, url, drone)
+
+    if path.exists(drone['path'] + "/.git"):
+        try:
+            output = send_cmd("git reset --hard " + drone['sha1'],
+                              cwd=drone['path'], check=True)
+            log += output + "\n"
+        except CalledProcessError:
+            send_cmd("git reset --hard HEAD", cwd=drone['path'])
+            raise Exception("futile: Checkout of '{}' into submodule path '{}'\
+            failed".format(drone['sha1'], drone['path']))
+    else:
+        raise Exception("futile: Clone of any remote into submodule path '{}' \
+        failed".drone['path'])
+
+    drone['clone_time'] = time() - start
+    with LOCK:
+        print("--- [{}] ---\n".format(drone["name"]))
+        print(log)
+
+    return drone
+
+
+def clone_drone_handle_remote(remote, url, drone):
+    hive_remote = send_cmd("git config -f .gitmodules borg.collective")
+    push_remote = send_cmd("git config -f .gitmodules borg.pushDefault")
+    log = ""
+
+    if not path.exists(drone['path'] + "/.git"):
+        log += send_cmd("git submodule--helper clone  --name {0} --path {1} \
+--url {2}".format(drone["name"], drone["path"], url)) + "\n"
+
+        log += send_cmd("git remote rename origin {}".format(remote)) + "\n"
+    else:
+        log += send_cmd("git remote add {} {}".format(remote, url),
+                        cwd=drone['path']) + "\n"
+        log += send_cmd("git fetch {}".format(remote), cwd=drone['path'])
+
+    if path.exists(drone['path'] + "/.git" and remote == hive_remote):
+        if path.exists(".hive-maint"):
+            log += send_cmd("git config remote.pushDefault " + remote,
+                            cwd=drone['path']) + "\n"
+        else:
+            branch = send_cmd("git rev-parse --abbrev-ref HEAD",
+                              cwd=drone['path'])
+            if has_alnum(branch):
+                log += send_cmd("git config branch.master.remote " + remote,
+                                cwd=drone['path']) + "\n"
+    elif path.exists(drone['path'] + "/.git" and remote == push_remote):
+        log += send_cmd("git config remote.pushDefault " + remote,
+                        cwd=drone['path']) + "\n"
+
+    return log
+
+
+def compile_drones(drones):
+    """Compiles a list of drones in multiple processes-based threads."""
+    pool = Pool(MAX_PROCESSES)
+    return pool.map(compile_drone, drones)
+
+
+def compile_drone(drone):
+    """Compiles drone by using borg's make lib/drone command. The lock is
+    required to keep the processes from printing to terminal at the same
+    time."""
+    start = time()
+
+    output = send_cmd('make ' + drone['path'])
+
+    drone['build_time'] = time() - start
+    with LOCK:
+        print("\n---[{}]---\n".format(drone['name']))
+        print(output)
+
+    return drone
+
+
+def print_statistics(drones, start):
+    """Pretty-print statistic about the bootstrapping process."""
+    print("Bootstrapped {} drones in {:.3}s using {} parallel \
+processes\n".format(len(drones), time() - start, MAX_PROCESSES))
+    print("-" * 63)
+    print("| {:20} | {:10} | {:10} | {:10} |".format("Drone name",
+                                                     "Clone time",
+                                                     "Build time",
+                                                     "Total time"))
+    print("-" * 63)
+    for drone in drones:
+        print("| {:20} | {:9.3}s | {:9.3}s | {:9.3}s |".format(
+            drone['name'][:20], drone['clone_time'], drone['build_time'],
+            drone['clone_time'] + drone['build_time']))
+    print("-" * 63)
+
+
+def main():
+    start = time()
+
+    parse_args()
+    print("\n=== Running 'git submodule init' ===\n")
+    initialize_drones()
+    print("\n=== Running the equivlent of 'lib/borg/borg.sh' ===\n")
+    drones = get_drones()
+    drones = clone_drones(drones)
+    print("\n=== Running 'make lib/drone' ===\n")
+    drones = compile_drones(drones)
+    print("\n=== Running statistics ===\n")
+    print_statistics(drones, start)
+
+
+if __name__ == '__main__':
+    main()
