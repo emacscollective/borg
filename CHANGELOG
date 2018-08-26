@@ -58,6 +58,9 @@
   The buffer is automatically shown on every build but can easily be
   buried using ~C-q~.
 
+- The command ~borg-insert-update-message~ now also handles assimilations
+  and removals.
+
 * v2.0.0    2017/09/19
 
 - Added new command ~borg-clone~ to make it easier to review a package

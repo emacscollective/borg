@@ -730,32 +730,54 @@ The Git directory is not removed."
   (define-key git-commit-mode-map "\C-c\C-b" 'borg-insert-update-message))
 
 (defun borg-insert-update-message ()
-  "Insert information about drones that are updated in the index.
+  "Insert information about drones that are changed in the index.
 Formatting is according to the commit message conventions."
   (interactive)
-  (let* ((alist (borg-updated-drones))
-         (count (length alist))
+  (let* ((alist (borg--drone-states))
          (width (apply #'max (mapcar (lambda (e) (length (car e))) alist)))
-         (align (cl-member-if (lambda (e) (string-match-p "\\`v[0-9]" (cdr e)))
-                              alist))
-         (format (format "Update %%-%is to %%s%%s\n" width)))
-    (when (> count 1)
-      (insert (format "Update %-s drones\n\n" (length alist))))
-    (pcase-dolist (`(,drone . ,version) alist)
-      (insert (format
-               format drone
-               (if (and align (string-match-p "\\`[0-9]" version)) " " "")
-               version)))))
+         (align (cl-member-if (pcase-lambda (`(,_ ,_ ,version))
+                                (and version
+                                     (string-match-p "\\`v[0-9]" version)))
+                              alist)))
+    (when (> (length alist) 1)
+      (let ((a 0) (m 0) (d 0))
+        (pcase-dolist (`(,_ ,state ,_) alist)
+          (pcase state
+            ("A" (cl-incf a))
+            ("M" (cl-incf m))
+            ("D" (cl-incf d))))
+        (insert (format "%s %-s drones\n\n"
+                        (pcase (list a m d)
+                          (`(0 0 ,_) "Assimilate")
+                          (`(0 ,_ 0) "Update")
+                          (`(,_ 0 0) "Remove")
+                          (_         "CHANGE"))
+                        (length alist)))))
+    (pcase-dolist (`(,drone ,state ,version) alist)
+      (insert
+       (format
+        (pcase state
+          ("A" (format "Assimilate %%-%is %%s%%s\n" width))
+          ("M" (format "Update %%-%is to %%s%%s\n" width))
+          ("D" "Remove %s\n"))
+        drone
+        (if (and align version (string-match-p "\\`[0-9]" version)) " " "")
+        version)))))
 
-(defun borg-updated-drones ()
+(defun borg--drone-states ()
   (let ((default-directory borg-user-emacs-directory))
     (mapcar
-     (lambda (module)
-       (let ((default-directory (expand-file-name module)))
-         (cons (file-name-nondirectory module)
-               (car (process-lines "git" "describe" "--tags" "--always")))))
+     (lambda (line)
+       (pcase-let* ((`(,state ,module) (split-string line "\t")))
+         (list module state
+               (and (member state '("A" "M"))
+                    (let ((default-directory (expand-file-name module)))
+                      (if (file-directory-p default-directory)
+                          (car (process-lines
+                                "git" "describe" "--tags" "--always"))
+                        "REMOVED"))))))
      (process-lines
-      "git" "diff-index" "--name-only" "--cached" "HEAD" "--" "lib/"))))
+      "git" "diff-index" "--name-status" "--cached" "HEAD" "--" "lib/"))))
 
 ;;; Internal Utilities
 
