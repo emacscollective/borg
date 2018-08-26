@@ -51,6 +51,7 @@
 (require 'bytecomp)
 (require 'cl-lib)
 (require 'info)
+(require 'subr-x)
 
 (eval-when-compile
   (require 'epkg nil t))
