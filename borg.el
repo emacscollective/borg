@@ -749,9 +749,9 @@ Formatting is according to the commit message conventions."
             ("D" (cl-incf d))))
         (insert (format "%s %-s drones\n\n"
                         (pcase (list a m d)
-                          (`(0 0 ,_) "Assimilate")
+                          (`(,_ 0 0) "Assimilate")
                           (`(0 ,_ 0) "Update")
-                          (`(,_ 0 0) "Remove")
+                          (`(0 0 ,_) "Remove")
                           (_         "CHANGE"))
                         (length alist)))))
     (pcase-dolist (`(,drone ,state ,version) alist)
