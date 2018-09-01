@@ -734,36 +734,37 @@ The Git directory is not removed."
   "Insert information about drones that are changed in the index.
 Formatting is according to the commit message conventions."
   (interactive)
-  (let* ((alist (borg--drone-states))
-         (width (apply #'max (mapcar (lambda (e) (length (car e))) alist)))
-         (align (cl-member-if (pcase-lambda (`(,_ ,_ ,version))
-                                (and version
-                                     (string-match-p "\\`v[0-9]" version)))
-                              alist)))
-    (when (> (length alist) 1)
-      (let ((a 0) (m 0) (d 0))
-        (pcase-dolist (`(,_ ,state ,_) alist)
-          (pcase state
-            ("A" (cl-incf a))
-            ("M" (cl-incf m))
-            ("D" (cl-incf d))))
-        (insert (format "%s %-s drones\n\n"
-                        (pcase (list a m d)
-                          (`(,_ 0 0) "Assimilate")
-                          (`(0 ,_ 0) "Update")
-                          (`(0 0 ,_) "Remove")
-                          (_         "CHANGE"))
-                        (length alist)))))
-    (pcase-dolist (`(,drone ,state ,version) alist)
-      (insert
-       (format
-        (pcase state
-          ("A" (format "Assimilate %%-%is %%s%%s\n" width))
-          ("M" (format "Update %%-%is to %%s%%s\n" width))
-          ("D" "Remove %s\n"))
-        drone
-        (if (and align version (string-match-p "\\`[0-9]" version)) " " "")
-        version)))))
+  (let ((alist (borg--drone-states)))
+    (when alist
+      (let ((width (apply #'max (mapcar (lambda (e) (length (car e))) alist)))
+            (align (cl-member-if (pcase-lambda (`(,_ ,_ ,version))
+                                   (and version
+                                        (string-match-p "\\`v[0-9]" version)))
+                                 alist)))
+        (when (> (length alist) 1)
+          (let ((a 0) (m 0) (d 0))
+            (pcase-dolist (`(,_ ,state ,_) alist)
+              (pcase state
+                ("A" (cl-incf a))
+                ("M" (cl-incf m))
+                ("D" (cl-incf d))))
+            (insert (format "%s %-s drones\n\n"
+                            (pcase (list a m d)
+                              (`(,_ 0 0) "Assimilate")
+                              (`(0 ,_ 0) "Update")
+                              (`(0 0 ,_) "Remove")
+                              (_         "CHANGE"))
+                            (length alist)))))
+        (pcase-dolist (`(,drone ,state ,version) alist)
+          (insert
+           (format
+            (pcase state
+              ("A" (format "Assimilate %%-%is %%s%%s\n" width))
+              ("M" (format "Update %%-%is to %%s%%s\n" width))
+              ("D" "Remove %s\n"))
+            drone
+            (if (and align version (string-match-p "\\`[0-9]" version)) " " "")
+            version)))))))
 
 (defun borg--drone-states ()
   (let ((default-directory borg-user-emacs-directory))
