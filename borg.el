@@ -763,7 +763,10 @@ Formatting is according to the commit message conventions."
               ("M" (format "Update %%-%is to %%s%%s\n" width))
               ("D" "Remove %s\n"))
             drone
-            (if (and align version (string-match-p "\\`[0-9]" version)) " " "")
+            (if (and align version
+                     (string-match-p "\\`\\([0-9]\\|[0-9a-f]\\{7\\}\\)" version))
+                " "
+              "")
             version)))))))
 
 (defun borg--drone-states ()
