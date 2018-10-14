@@ -68,8 +68,8 @@
 (define-advice package-activate-1
     (:around (fn pkg-desc &optional reload deps) borg)
   "For a Borg-installed package, let Borg handle the activation."
-  (unless (package--borg-clone-p (package-desc-dir pkg-desc))
-    (funcall fn pkg-desc reload deps)))
+  (or (package--borg-clone-p (package-desc-dir pkg-desc))
+      (funcall fn pkg-desc reload deps)))
 
 (define-advice package-load-descriptor
     (:around (fn pkg-dir) borg)
