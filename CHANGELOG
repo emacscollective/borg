@@ -13,7 +13,7 @@
   unsafe.  Note that this does not imply that other packages are safe,
   and also that the ~epkg~ package has to be available for this to kick
   in for the most dangerous packages — those from the Emacswiki, into
-  which anyone could trivially inject malicious.
+  which anyone could trivially inject malicious code.
 
 - The new files ~borg.mk~ and ~borg.sh~ were added, replacing files that
   were previously located directly in the super-repository.
