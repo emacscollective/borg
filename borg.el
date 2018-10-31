@@ -7,7 +7,7 @@
 ;; Keywords: tools
 
 ;; Package-Version: 3.0.0
-;; Package-Requires: ((emacs "26") (dash "2.13") (epkg "3.0") (magit "2.11"))
+;; Package-Requires: ((emacs "26") (dash "2.14.1") (epkg "3.1.1") (magit "2.13.0"))
 
 ;;   Borg itself does no actually require Emacs 26 and has no
 ;;   other dependencies but when it is installed from Melpa,

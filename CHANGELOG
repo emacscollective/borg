@@ -1,6 +1,6 @@
 # -*- mode: org -*-
 
-* v3.0.0    UNRELEASED
+* v3.0.0    2018/10/31
 
 - Borg can now be used as a secondary package manager alongside
   ~package.el~.  When used like this, then Borg itself should be
