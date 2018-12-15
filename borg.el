@@ -775,7 +775,8 @@ Formatting is according to the commit message conventions."
     (mapcar
      (lambda (line)
        (pcase-let* ((`(,state ,module) (split-string line "\t")))
-         (list module state
+         (list (file-name-nondirectory module)
+               state
                (and (member state '("A" "M"))
                     (let ((default-directory (expand-file-name module)))
                       (if (file-directory-p default-directory)
