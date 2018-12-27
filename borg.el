@@ -408,69 +408,77 @@ Interactively, or when optional ACTIVATE is non-nil,
 then also activate the clone using `borg-activate'."
   (interactive (list (borg-read-clone "Build drone: ") t))
   (if noninteractive
-      (let ((default-directory (borg-worktree clone))
-            (build-cmd (if (functionp borg-build-shell-command)
-                           (funcall borg-build-shell-command clone)
-                         borg-build-shell-command))
-            (build (borg-get-all clone "build-step")))
-        (if  build
-            (dolist (cmd build)
-              (message "  Running '%s'..." cmd)
-              (cond ((member cmd '("borg-update-autoloads"
-                                   "borg-byte-compile"
-                                   "borg-makeinfo"))
-                     (funcall (intern cmd) clone))
-                    ((string-match-p "\\`(" cmd)
-                     (eval (read cmd)))
-                    (build-cmd
-                     (when (or (stringp build-cmd)
-                               (setq build-cmd (funcall build-cmd clone cmd)))
-                       (require 'format-spec)
-                       (shell-command
-                        (format-spec build-cmd
-                                     `((?s . ,cmd)
-                                       (?S . ,(shell-quote-argument cmd)))))))
-                    (t
-                     (shell-command cmd)))
-              (message "  Running '%s'...done" cmd))
-          (let ((path (mapcar #'file-name-as-directory (borg-load-path clone))))
-            (borg-update-autoloads clone path)
-            (borg-byte-compile clone path)
-            (borg-makeinfo clone))))
-    (save-some-buffers
-     nil (let ((top default-directory))
-           (lambda ()
-             (let ((file (buffer-file-name)))
-               (and file
-                    (string-match-p emacs-lisp-file-regexp file)
-                    (file-in-directory-p file top))))))
-    (let ((buffer (get-buffer-create "*Borg Build*"))
-          (config (expand-file-name
-                   (convert-standard-filename "etc/borg/config.el")
-                   user-emacs-directory))
-          (process-connection-type nil))
-      (switch-to-buffer buffer)
-      (with-current-buffer buffer
-        (borg-build-mode)
-        (goto-char (point-max))
-        (let ((inhibit-read-only t))
-          (when (file-exists-p config)
-            (insert (format "\n(%s) Loading %s\n\n"
-                            (format-time-string "%H:%M:%S")
-                            config))
-            (load-file config))
-          (insert (format "\n(%s) Building %s\n\n"
+      (borg--build-noninteractive clone)
+    (borg--build-interactive clone))
+  (when activate
+    (borg-activate clone)))
+
+(defun borg--build-noninteractive (clone)
+  (let ((default-directory (borg-worktree clone))
+        (build-cmd (if (functionp borg-build-shell-command)
+                       (funcall borg-build-shell-command clone)
+                     borg-build-shell-command))
+        (build (borg-get-all clone "build-step")))
+    (if  build
+        (dolist (cmd build)
+          (message "  Running '%s'..." cmd)
+          (cond ((member cmd '("borg-update-autoloads"
+                               "borg-byte-compile"
+                               "borg-makeinfo"))
+                 (funcall (intern cmd) clone))
+                ((string-match-p "\\`(" cmd)
+                 (eval (read cmd)))
+                (build-cmd
+                 (when (or (stringp build-cmd)
+                           (setq build-cmd (funcall build-cmd clone cmd)))
+                   (require 'format-spec)
+                   (shell-command
+                    (format-spec build-cmd
+                                 `((?s . ,cmd)
+                                   (?S . ,(shell-quote-argument cmd)))))))
+                (t
+                 (shell-command cmd)))
+          (message "  Running '%s'...done" cmd))
+      (let ((path (mapcar #'file-name-as-directory (borg-load-path clone))))
+        (borg-update-autoloads clone path)
+        (borg-byte-compile clone path)
+        (borg-makeinfo clone)))))
+
+(defun borg--build-interactive (clone)
+  (save-some-buffers
+   nil (let ((top default-directory))
+         (lambda ()
+           (let ((file (buffer-file-name)))
+             (and file
+                  (string-match-p emacs-lisp-file-regexp file)
+                  (file-in-directory-p file top))))))
+  (let ((buffer (get-buffer-create "*Borg Build*"))
+        (config (expand-file-name
+                 (convert-standard-filename "etc/borg/config.el")
+                 user-emacs-directory))
+        (process-connection-type nil))
+    (switch-to-buffer buffer)
+    (with-current-buffer buffer
+      (borg-build-mode)
+      (goto-char (point-max))
+      (let ((inhibit-read-only t))
+        (when (file-exists-p config)
+          (insert (format "\n(%s) Loading %s\n\n"
                           (format-time-string "%H:%M:%S")
-                          clone))))
-      (set-process-filter
-       (apply #'start-process
-              (format "emacs ... --eval (borg-build %S)" clone)
-              buffer
-              (expand-file-name invocation-name invocation-directory)
-              `("--batch" ,@borg-emacs-arguments
-                "-L" ,(file-name-directory (locate-library "borg"))
-                "--eval" ,(if (featurep 'borg-elpa)
-                              (format "(progn
+                          config))
+          (load-file config))
+        (insert (format "\n(%s) Building %s\n\n"
+                        (format-time-string "%H:%M:%S")
+                        clone))))
+    (set-process-filter
+     (apply #'start-process
+            (format "emacs ... --eval (borg-build %S)" clone)
+            buffer
+            (expand-file-name invocation-name invocation-directory)
+            `("--batch" ,@borg-emacs-arguments
+              "-L" ,(file-name-directory (locate-library "borg"))
+              "--eval" ,(if (featurep 'borg-elpa)
+                            (format "(progn
   (setq user-emacs-directory %S)
   (require 'package)
   (package-initialize 'no-activate)
@@ -479,14 +487,12 @@ then also activate the clone using `borg-activate'."
   (borg-elpa-initialize)
   (setq borg-build-shell-command (quote %S))
   (borg-build %S))" user-emacs-directory borg-build-shell-command clone)
-                   (format "(progn
+                          (format "(progn
   (require 'borg)
   (borg-initialize)
   (setq borg-build-shell-command (quote %S))
   (borg-build %S))" borg-build-shell-command clone))))
-       'borg-build--process-filter)))
-  (when activate
-    (borg-activate clone)))
+     'borg-build--process-filter)))
 
 (defun borg-build--process-filter (process string)
   (when (buffer-live-p (process-buffer process))
