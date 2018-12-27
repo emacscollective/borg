@@ -308,7 +308,16 @@ load the autoloads file, if it exists.
 
 If the value of a Git variable named `submodule.DRONE.disabled'
 is true in \"~/.emacs.d/.gitmodules\", then the drone named DRONE
-is skipped."
+is skipped.
+
+If Emacs is running without an interactive terminal, then first
+load \"`user-emacs-directory'/etc/borg/init.el\", if that exists."
+  (when noninteractive
+    (let ((init (expand-file-name
+                 (convert-standard-filename "etc/borg/init.el")
+                 user-emacs-directory)))
+      (when (file-exists-p init)
+        (load-file init))))
   (info-initialize)
   (let ((start (current-time))
         (skipped 0)
