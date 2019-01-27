@@ -1,12 +1,12 @@
 ;;; borg.el --- assimilate Emacs packages as Git submodules  -*- lexical-binding: t -*-
 
-;; Copyright (C) 2016-2018  Jonas Bernoulli
+;; Copyright (C) 2016-2019  Jonas Bernoulli
 
 ;; Author: Jonas Bernoulli <jonas@bernoul.li>
 ;; Homepage: https://github.com/emacscollective/borg
 ;; Keywords: tools
 
-;; Package-Version: 3.0.0
+;; Package-Version: 3.1.0
 ;; Package-Requires: ((emacs "26") (dash "2.14.1") (epkg "3.1.1") (magit "2.13.0"))
 
 ;;   Borg itself does no actually require Emacs 26 and has no

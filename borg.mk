@@ -1,4 +1,4 @@
-# Copyright (C) 2016-2018  Jonas Bernoulli
+# Copyright (C) 2016-2019  Jonas Bernoulli
 #
 # Author: Jonas Bernoulli <jonas@bernoul.li>
 # License: GPL v3 <https://www.gnu.org/licenses/gpl-3.0.txt>

@@ -1,6 +1,6 @@
 # -*- mode: org -*-
 
-* v3.1.0    UNRELEASED
+* v3.1.0    2019/01/28
 
 - The new user configuration file ~~/.emacs.d/etc/borg/init.el~ is
   loaded by ~borg-initialize~ if Emacs is running without an interactive
