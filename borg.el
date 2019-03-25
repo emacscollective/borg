@@ -430,7 +430,7 @@ then also activate the clone using `borg-activate'."
         (build (borg-get-all clone "build-step")))
     (if  build
         (dolist (cmd build)
-          (message "  Running '%s'..." cmd)
+          (message "  Running `%s'..." cmd)
           (cond ((member cmd '("borg-update-autoloads"
                                "borg-byte-compile"
                                "borg-makeinfo"))
@@ -447,7 +447,7 @@ then also activate the clone using `borg-activate'."
                                    (?S . ,(shell-quote-argument cmd)))))))
                 (t
                  (shell-command cmd)))
-          (message "  Running '%s'...done" cmd))
+          (message "  Running `%s'...done" cmd))
       (let ((path (mapcar #'file-name-as-directory (borg-load-path clone))))
         (borg-update-autoloads clone path)
         (borg-byte-compile clone path)
@@ -652,16 +652,16 @@ then also activate the clone using `borg-activate'."
                                           "ls-files" "--error-unmatch" info)
                             1)))
             (let ((cmd (format "makeinfo --no-split %s -o %s" texi info)))
-              (message "  Running '%s'..." cmd)
+              (message "  Running `%s'..." cmd)
               (borg-silencio "\\`(Shell command succeeded with %s)\\'"
                 (shell-command cmd))
-              (message "  Running '%s'...done" cmd))))))
+              (message "  Running `%s'...done" cmd))))))
     (dolist (info (directory-files default-directory nil "\\.info\\'"))
       (let ((cmd (format "install-info %s --dir=dir" info)))
-        (message "  Running '%s'..." cmd)
+        (message "  Running `%s'..." cmd)
         (borg-silencio "\\`(Shell command succeeded with %s)\\'"
           (shell-command cmd))
-        (message "  Running '%s'...done" cmd)))))
+        (message "  Running `%s'...done" cmd)))))
 
 ;;; Assimilation
 
