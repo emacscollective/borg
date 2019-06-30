@@ -19,7 +19,9 @@ SILENCIO += --eval "(put 'when-let 'byte-obsolete-info nil)"
 SILENCIO += --eval "(fset 'original-message (symbol-function 'message))"
 SILENCIO += --eval "(fset 'message\
 (lambda (format &rest args)\
-  (unless (equal format \"pcase-memoize: equal first branch, yet different\")\
+  (unless (or (equal format \"pcase-memoize: equal first branch, yet different\")\
+              (and (stringp (car args))\
+                   (string-match-p \"Scraping files for autoloads\" (car args))))\
     (apply 'original-message format args))))"
 
 help:
