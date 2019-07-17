@@ -51,11 +51,10 @@
 (require 'bytecomp)
 (require 'cl-lib)
 (require 'info)
+(require 'subr-x)
 
 (eval-when-compile
-  (require 'subr-x)
   (require 'epkg nil t))
-
 (declare-function eieio-oref        "eieio-core" (obj slot))
 (declare-function epkg                    "epkg" (name))
 (declare-function epkgs                   "epkg" (&optional select predicates))
