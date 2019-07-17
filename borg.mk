@@ -14,8 +14,6 @@ EMACS_ARGUMENTS ?= -Q
 all: build
 
 SILENCIO  = --load subr-x
-SILENCIO += --eval "(put 'if-let   'byte-obsolete-info nil)"
-SILENCIO += --eval "(put 'when-let 'byte-obsolete-info nil)"
 SILENCIO += --eval "(fset 'original-message (symbol-function 'message))"
 SILENCIO += --eval "(fset 'message\
 (lambda (format &rest args)\
