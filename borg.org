@@ -8,7 +8,7 @@
 #+TEXINFO_DIR_CATEGORY: Emacs
 #+TEXINFO_DIR_TITLE: Borg: (borg).
 #+TEXINFO_DIR_DESC: Assimilate Emacs packages as Git submodules
-#+SUBTITLE: for version 3.1.1
+#+SUBTITLE: for version 3.1.1 (v3.1.1-4-gb693d14+1)
 
 #+TEXINFO_DEFFN: t
 #+OPTIONS: H:4 num:4 toc:2
@@ -20,7 +20,7 @@ The Borg assimilate Emacs packages as Git submodules.  Borg is a
 bare-bones package manager for Emacs packages.
 
 #+TEXINFO: @noindent
-This manual is for Borg version 3.1.1.
+This manual is for Borg version 3.1.1 (v3.1.1-4-gb693d14+1).
 
 #+BEGIN_QUOTE
 Copyright (C) 2016-2019 Jonas Bernoulli <jonas@bernoul.li>
@@ -134,7 +134,7 @@ unless you really want to use both ~borg~ and ~package~ at the same time.
 
   This function activates the clone named CLONE by adding the
   appropriate directories to the ~load-path~ and to ~Info-directory-list~,
-  and by loading the autoloads file, if it exits.
+  and by loading the autoloads file, if it exists.
 
   Unlike ~borg-initialize~, this function ignores the Git variable
   ~submodule.DRONE.disabled~ and can be used to activate clones that
@@ -218,7 +218,7 @@ Magit status buffer of the ~~/.emacs.d~ repository.
 
   If a negative prefix argument is used, then the submodule is added
   but the build and activation steps are skipped.  This is useful when
-  assimilating a package that require special build steps.  After
+  assimilating a package that requires special build steps.  After
   configuring the build steps use ~borg-build~ to complete the
   assimilation.
 
@@ -290,7 +290,7 @@ Borg does not provide an update command.  By not doing so, it empowers
 you to update to exactly the commit you wish to update to, instead of
 to "the" new version.
 
-To determine the drones with you /might/ want to update, visit the Magit
+To determine the drones which you /might/ want to update, visit the Magit
 status buffer of the ~~/.emacs.d~ repository and press ~f m~ to fetch
 inside all submodules.  After you have done so, and provided there
 actually are any modules with new upstream commits, a section titled
@@ -350,7 +350,7 @@ commits for such drones, then you have to create a fork and push there
 instead.  You should configure that remote as the push-remote using
 ~git config remote.pushDefault FORK~, or pressing ~b C M-p~ in Magit.
 After you have done that you can continue to pull from the upstream
-using ~P u~ in Magit and you can also push to your fork using ~P p~.
+using ~F u~ in Magit and you can also push to your fork using ~P p~.
 
 Of course you should also occasionally record the changes in the
 ~~/.emacs.d~ repository.  Additionally, and ideally when you first
@@ -430,7 +430,7 @@ To use them you have to be in ~~/.emacs.d~ in a shell.
   ~git submodule init~, ~borg.sh~ (which see), and ~make build~.
 
   If an error occurs during the ~borg.sh~ phase, then you can just run
-  that command again to process the remaining drones.  The drone that
+  that command again to process the remaining drones.  The drones that
   have already been bootstrapped or that have previously failed will
   be skipped.  If a drone cannot be cloned from any of the known
   remotes, then you should temporarily remove it using ~git submodule
@@ -530,9 +530,9 @@ variables you can tell Borg how to build such packages.
   Note that just because a package provides a ~Makefile~, you do not
   necessarily have to use it.
 
-  Even if ~make~ generates the Info file, you might still have add
+  Even if ~make~ generates the Info file, you might still have to add
   ~borg-makeinfo~ as an additional build-step because the former might
-  not generate a Info index file (named ~dir~), which Borg relies on.
+  not generate an Info index file (named ~dir~), which Borg relies on.
 
 - Variable: borg-build-shell-command
 
@@ -576,7 +576,7 @@ variables you can tell Borg how to build such packages.
   or else the top-level directory.  If this variable is set, then it
   /overrides/ the default location.  Therefore, to /add/ an additional
   directory, you also have to explicitly specify the default
-  locaction.
+  location.
 
   #+BEGIN_SRC undefined
     [submodule "org"]
@@ -617,7 +617,7 @@ variables you can tell Borg how to build such packages.
   outdated) copies of third-party libraries into subdirectories.  The
   latter is a highly questionable thing to do, but the former would be
   perfectly fine, if only the non-library elisp files did not provide
-  a feature (which effectivly turns them into libraries) and/or if a
+  a feature (which effectively turns them into libraries) and/or if a
   file named ~.nosearch~ existed in the subdirectory.  That file tells
   functions such as ~normal-top-level-add-subdirs-to-load-path~ and
   ~borg-byte-compile~ to ignore the containing directory.
@@ -737,7 +737,7 @@ build your own tools on top of Borg.
 
 There exist a few more functions, but those are considered to be
 internal and might therefore change in incompatible ways without that
-being noted in the changelog.
+being noted in the change log.
 
 - Function: borg--maybe-absorb-gitdir pkg
 - Function: borg--maybe-reuse-gitdir pkg
