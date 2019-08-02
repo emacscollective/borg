@@ -19,7 +19,7 @@ SILENCIO += --eval "(fset 'message\
 (lambda (format &rest args)\
   (unless (or (equal format \"pcase-memoize: equal first branch, yet different\")\
               (and (stringp (car args))\
-                   (string-match-p \"Scraping files for autoloads\" (car args))))\
+                   (string-match-p \"Scraping files for\" (car args))))\
     (apply 'original-message format args))))"
 
 help:
