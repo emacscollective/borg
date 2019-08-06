@@ -25,12 +25,12 @@ INSTALL_INFO     ?= $(shell command -v ginstall-info || printf install-info)
 MAKEINFO         ?= makeinfo
 MANUAL_HTML_ARGS ?= --css-ref /assets/the.css
 
-all: lisp info
-doc: info html html-dir pdf
+all:  lisp info
+docs: info html html-dir pdf
 
 help:
 	$(info make all          - generate lisp and manual)
-	$(info make doc          - generate most manual formats)
+	$(info make docs         - generate most manual formats)
 	$(info make lisp         - generate byte-code and autoloads)
 	$(info make texi         - generate texi manual (see comments))
 	$(info make info         - generate info manual)
