@@ -31,7 +31,7 @@ General Public License for more details.
 @finalout
 @titlepage
 @title Borg User Manual
-@subtitle for version 3.1.1 (v3.1.1-4-gb693d14+1)
+@subtitle for version 3.1.1 (v3.1.1-7-gb338e13+1)
 @author Jonas Bernoulli
 @page
 @vskip 0pt plus 1filll
@@ -48,7 +48,7 @@ The Borg assimilate Emacs packages as Git submodules.  Borg is a
 bare-bones package manager for Emacs packages.
 
 @noindent
-This manual is for Borg version 3.1.1 (v3.1.1-4-gb693d14+1).
+This manual is for Borg version 3.1.1 (v3.1.1-7-gb338e13+1).
 
 @quotation
 Copyright (C) 2016-2019 Jonas Bernoulli <jonas@@bernoul.li>
@@ -76,6 +76,15 @@ General Public License for more details.
 * Make targets::
 * Variables::
 * Low-level functions::
+
+@detailmenu
+--- The Detailed Node Listing ---
+
+Installation
+
+* Using https URLs::
+
+@end detailmenu
 @end menu
 
 @node Introduction
@@ -132,16 +141,10 @@ make bootstrap
 If you cloned to somewhere else than @code{~/.emacs.d}, then you can use that
 configuration using @code{emacs -Q --load /path/to/emacs.g/init.elc}.
 
-For drones whose upstreams are on Github or Gitlab the @code{emacs.g}
-collective uses the @code{ssh} protocol by default, which is a problem if you
-don't have accounts there and have not properly setup your keys.
-Luckily this can easily be fixed using the following right after
-cloning the super-repository.
-
-@lisp
-git config --global url.https://github.com/.insteadOf git@@github.com:
-git config --global url.https://gitlab.com/.insteadOf git@@gitlab.com:
-@end lisp
+For drones whose upstream repositories are located on Github or Gitlab
+the @code{emacs.g} collective uses the @code{ssh} protocol by default, which is a
+problem if you don't have accounts there and have not properly setup
+your keys.  See @ref{Using https URLs}.
 
 During package compilation you may notice the submodules relating to
 those packages become dirty due to the compilation outputs not being
@@ -157,6 +160,54 @@ dir
 
 You may discover more things that you'll want to ignore this way as you
 use @code{borg}.
+
+@menu
+* Using https URLs::
+@end menu
+
+@node Using https URLs
+@section Using https URLs
+
+For drones whose upstream repositories are located on Github or Gitlab
+the @code{emacs.g} collective uses the @code{ssh} protocol by default, which is a
+problem if you don't have accounts there and have not properly setup
+your keys.
+
+Luckily this can easily be fixed using the following global rules.
+
+@lisp
+git config --global url.https://github.com/.insteadOf git@@github.com:
+git config --global url.https://gitlab.com/.insteadOf git@@gitlab.com:
+@end lisp
+
+If you don't want to configure this globally, then you can also configure
+Borg itself to prefer the https URLS@.
+
+@lisp
+(setq borg-rewrite-urls-alist
+      '(("git@@github.com:" . "https://github.com/")
+        ("git@@gitlab.com:" . "https://gitlab.com/")))
+@end lisp
+
+This does not affect packages that have already been assimilated.
+During bootstrapping you have to change the URLs for packages that
+are assimilated by default.
+
+@example
+cd ~/.emacs.d
+sed -i "s|git@@github.com:|https://github.com/|g" .gitmodules
+sed -i "s|git@@gitlab.com:|https://gitlab.com/|g" .gitmodules
+git commit -m "Use https URLs for Github and Gitlab"
+@end example
+
+If you have already run @code{make bootstrap}, then you also have to edit
+@code{.git/config}.
+
+@example
+cd ~/.emacs.d
+sed -i "s|git@@github.com:|https://github.com/|g" .git/config
+sed -i "s|git@@gitlab.com:|https://gitlab.com/|g" .git/config
+@end example
 
 @node Startup
 @chapter Startup
@@ -734,6 +785,13 @@ specified multiple times.
 
 If the value of this variable is @code{true}, then it is skipped by
 @code{borg-initialize}.
+@end defvar
+
+@defvar borg-rewrite-urls-alist
+
+An alist that can optionally be used to rewrite certain URLs.  Each
+element has the form @code{(ORIG . BASE)}.  Each URL that starts with ORIG
+is rewritten to start with BASE instead.  See @ref{Using https URLs}.
 @end defvar
 
 @node Low-level functions

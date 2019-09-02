@@ -1,4 +1,10 @@
 # -*- mode: org -*-
+* v3.1.2    UNRELEASED
+
+- The new option ~borg-rewrite-urls-alist~ allows rewriting certain urls
+  when a package repository is cloned.  This is mostly intended to
+  replace Github and Gitlab ssh URLs with https urls.
+
 * v3.1.1    2019/05/05
 
 - Cosmetics and improvements to maintenance tools.

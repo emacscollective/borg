@@ -51,6 +51,7 @@
 (require 'bytecomp)
 (require 'cl-lib)
 (require 'info)
+(require 'pcase)
 (require 'subr-x)
 
 (eval-when-compile
@@ -114,6 +115,12 @@ needs it.")
 (defvar borg-build-shell-command nil
   "Optional command used to run shell command build steps.
 This variable is documented in the manual (which see).")
+
+(defvar borg-rewrite-urls-alist nil
+  "An alist used to optionally rewrite certain URLs.
+Each element has the form (ORIG . BASE).  Each URL that starts
+with ORIG is rewritten to start with BASE instead.  See info
+node `(borg)Using https URLs'.")
 
 ;;; Utilities
 
@@ -250,13 +257,20 @@ not been assimilated yet."
              (directory-files borg-drone-directory t "\\`[^.]")))
 
 (defun borg-read-package (prompt &optional edit-url)
-  "Read a package name and url, and return them as a list.
+  "Read a package name and URL, and return them as a list.
 
-When the `epkg' package is available, then read the name in the
-minibuffer and use the url stored in the Epkg database.  If
-`epkg' is unavailable, the package is unknown, or when EDIT-URL
-is non-nil, then also read the url in the minibuffer.  PROMPT
-is used when reading the package name."
+If the `epkg' package is available, then read a package name
+in the minibuffer and use the URL stored in the Epkg database.
+
+Otherwise if `epkg' is unavailable, the package is unknown,
+or when EDIT-URL is non-nil, then also read the URL in the
+minibuffer.
+
+PROMPT is used when reading the package name.
+
+Return a list of the form (NAME URL).  Unless the URL was
+explicitly provided by the user, it may be modified according
+to variable `borg-rewrite-urls-alist' (which see)."
   (if (require 'epkg nil t)
       (let* ((name (completing-read prompt (epkgs 'name)
                                     nil nil nil 'epkg-package-history))
@@ -268,6 +282,10 @@ is used when reading the package name."
                                 (epkg-gitlab-package-p pkg))
                             (eieio-oref pkg 'url)
                           (eieio-oref pkg 'mirror-url)))))
+        (when url
+          (pcase-dolist (`(,orig . ,base) borg-rewrite-urls-alist)
+            (when (string-prefix-p orig url)
+              (setq url (concat base (substring url (length orig)))))))
         (list name
               (if (or (not url) edit-url)
                   (read-string
