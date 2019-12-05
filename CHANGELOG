@@ -1,5 +1,5 @@
 # -*- mode: org -*-
-* v3.1.2    UNRELEASED
+* v3.1.2    2019/12/05
 
 - The new option ~borg-rewrite-urls-alist~ allows rewriting certain urls
   when a package repository is cloned.  This is mostly intended to
