@@ -23,7 +23,7 @@ endif
 
 INSTALL_INFO     ?= $(shell command -v ginstall-info || printf install-info)
 MAKEINFO         ?= makeinfo
-MANUAL_HTML_ARGS ?= --css-ref /assets/the.css
+MANUAL_HTML_ARGS ?= --css-ref /assets/page.css
 
 all:  lisp info
 docs: info html html-dir pdf
