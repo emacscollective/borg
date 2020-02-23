@@ -2,13 +2,13 @@
 :PREAMBLE:
 #+AUTHOR: Jonas Bernoulli
 #+EMAIL: jonas@bernoul.li
-#+DATE: 2018-2019
+#+DATE: 2018-2020
 #+LANGUAGE: en
 
 #+TEXINFO_DIR_CATEGORY: Emacs
 #+TEXINFO_DIR_TITLE: Borg: (borg).
 #+TEXINFO_DIR_DESC: Assimilate Emacs packages as Git submodules
-#+SUBTITLE: for version 3.1.2
+#+SUBTITLE: for version 3.1.2 (v3.1.2-1-g7efd982+1)
 
 #+TEXINFO_DEFFN: t
 #+OPTIONS: H:4 num:4 toc:2
@@ -20,10 +20,10 @@ The Borg assimilate Emacs packages as Git submodules.  Borg is a
 bare-bones package manager for Emacs packages.
 
 #+TEXINFO: @noindent
-This manual is for Borg version 3.1.2.
+This manual is for Borg version 3.1.2 (v3.1.2-1-g7efd982+1).
 
 #+BEGIN_QUOTE
-Copyright (C) 2016-2019 Jonas Bernoulli <jonas@bernoul.li>
+Copyright (C) 2016-2020 Jonas Bernoulli <jonas@bernoul.li>
 
 You can redistribute this document and/or modify it under the terms
 of the GNU General Public License as published by the Free Software
@@ -795,7 +795,7 @@ being noted in the change log.
 :END:
 
 #+BEGIN_QUOTE
-Copyright (C) 2016-2019 Jonas Bernoulli <jonas@bernoul.li>
+Copyright (C) 2016-2020 Jonas Bernoulli <jonas@bernoul.li>
 
 You can redistribute this document and/or modify it under the terms
 of the GNU General Public License as published by the Free Software
