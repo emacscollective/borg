@@ -8,7 +8,7 @@
 #+TEXINFO_DIR_CATEGORY: Emacs
 #+TEXINFO_DIR_TITLE: Borg: (borg).
 #+TEXINFO_DIR_DESC: Assimilate Emacs packages as Git submodules
-#+SUBTITLE: for version 3.1.2 (v3.1.2-2-gb5826bd+1)
+#+SUBTITLE: for version 3.1.2 (v3.1.2-3-g73c10dc+1)
 
 #+TEXINFO_DEFFN: t
 #+OPTIONS: H:4 num:4 toc:2
@@ -20,7 +20,7 @@ The Borg assimilate Emacs packages as Git submodules.  Borg is a
 bare-bones package manager for Emacs packages.
 
 #+TEXINFO: @noindent
-This manual is for Borg version 3.1.2 (v3.1.2-2-gb5826bd+1).
+This manual is for Borg version 3.1.2 (v3.1.2-3-g73c10dc+1).
 
 #+BEGIN_QUOTE
 Copyright (C) 2016-2020 Jonas Bernoulli <jonas@bernoul.li>
@@ -609,11 +609,11 @@ variables you can tell Borg how to build such packages.
   repository of the drone named DRONE.  This variable can be specified
   multiple times.
 
-  Normally Borg uses ~lisp/~ as the drone's ~load-path~, if that exists,
-  or else the top-level directory.  If this variable is set, then it
-  /overrides/ the default location.  Therefore, to /add/ an additional
-  directory, you also have to explicitly specify the default
-  location.
+  Normally Borg uses ~elisp/~ as the drone's ~load-path~, if that exists;
+  otherwise ~lisp/~, if that exists; or else the top-level directory.
+  If this variable is set, then it /overrides/ the default location.
+  Therefore, to /add/ an additional directory, you also have to
+  explicitly specify the default location.
 
   #+BEGIN_SRC undefined
     [submodule "org"]

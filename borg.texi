@@ -31,7 +31,7 @@ General Public License for more details.
 @finalout
 @titlepage
 @title Borg User Manual
-@subtitle for version 3.1.2 (v3.1.2-2-gb5826bd+1)
+@subtitle for version 3.1.2 (v3.1.2-3-g73c10dc+1)
 @author Jonas Bernoulli
 @page
 @vskip 0pt plus 1filll
@@ -48,7 +48,7 @@ The Borg assimilate Emacs packages as Git submodules.  Borg is a
 bare-bones package manager for Emacs packages.
 
 @noindent
-This manual is for Borg version 3.1.2 (v3.1.2-2-gb5826bd+1).
+This manual is for Borg version 3.1.2 (v3.1.2-3-g73c10dc+1).
 
 @quotation
 Copyright (C) 2016-2020 Jonas Bernoulli <jonas@@bernoul.li>
@@ -707,11 +707,11 @@ directory.  PATH has to be relative to the top-level of the
 repository of the drone named DRONE@.  This variable can be specified
 multiple times.
 
-Normally Borg uses @code{lisp/} as the drone's @code{load-path}, if that exists,
-or else the top-level directory.  If this variable is set, then it
-@emph{overrides} the default location.  Therefore, to @emph{add} an additional
-directory, you also have to explicitly specify the default
-location.
+Normally Borg uses @code{elisp/} as the drone's @code{load-path}, if that exists;
+otherwise @code{lisp/}, if that exists; or else the top-level directory.
+If this variable is set, then it @emph{overrides} the default location.
+Therefore, to @emph{add} an additional directory, you also have to
+explicitly specify the default location.
 
 @example
 [submodule "org"]

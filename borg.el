@@ -170,8 +170,11 @@ Return the values as a list."
         (path (borg-get-all clone "load-path")))
     (if  path
         (mapcar (lambda (d) (expand-file-name d repo)) path)
-      (let ((lisp (expand-file-name "lisp" repo)))
-        (list (if (file-exists-p lisp) lisp repo))))))
+      (let ((elisp (expand-file-name "elisp" repo))
+            (lisp (expand-file-name "lisp" repo)))
+        (list (cond ((file-exists-p elisp) elisp)
+                    ((file-exists-p lisp) lisp)
+                    (t repo)))))))
 
 (defun borg-info-path (clone &optional setup)
   "Return the `Info-directory-list' for the clone named CLONE.
