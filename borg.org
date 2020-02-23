@@ -8,7 +8,7 @@
 #+TEXINFO_DIR_CATEGORY: Emacs
 #+TEXINFO_DIR_TITLE: Borg: (borg).
 #+TEXINFO_DIR_DESC: Assimilate Emacs packages as Git submodules
-#+SUBTITLE: for version 3.1.2 (v3.1.2-3-g73c10dc+1)
+#+SUBTITLE: for version 3.1.2 (v3.1.2-4-ga8bce40+1)
 
 #+TEXINFO_DEFFN: t
 #+OPTIONS: H:4 num:4 toc:2
@@ -20,7 +20,7 @@ The Borg assimilate Emacs packages as Git submodules.  Borg is a
 bare-bones package manager for Emacs packages.
 
 #+TEXINFO: @noindent
-This manual is for Borg version 3.1.2 (v3.1.2-3-g73c10dc+1).
+This manual is for Borg version 3.1.2 (v3.1.2-4-ga8bce40+1).
 
 #+BEGIN_QUOTE
 Copyright (C) 2016-2020 Jonas Bernoulli <jonas@bernoul.li>
@@ -87,8 +87,8 @@ run ~make bootstrap~ to get and configure all submodules (including the
   make bootstrap
 #+END_SRC
 
-If you cloned to somewhere else than ~~/.emacs.d~, then you can use that
-configuration using ~emacs -Q --load /path/to/emacs.g/init.elc~.
+If you cloned to somewhere other than ~~/.emacs.d~, then you can use
+that configuration using ~emacs -Q --load /path/to/emacs.g/init.elc~.
 
 For drones whose upstream repositories are located on Github or Gitlab
 the ~emacs.g~ collective uses the ~ssh~ protocol by default, which is a
@@ -125,7 +125,7 @@ Luckily this can easily be fixed using the following global rules.
 #+END_SRC
 
 If you don't want to configure this globally, then you can also configure
-Borg itself to prefer the https URLS.
+Borg itself to prefer the ~https~ URLS.
 
 #+BEGIN_SRC emacs-lisp
   (setq borg-rewrite-urls-alist
@@ -385,7 +385,7 @@ repository.  To do so proceed as described in [[*Updating drones]].
 But for most packages you are not the maintainer and if you create
 commits for such drones, then you have to create a fork and push there
 instead.  You should configure that remote as the push-remote using
-~git config remote.pushDefault FORK~, or pressing ~b C M-p~ in Magit.
+~git config remote.pushDefault FORK~, or by pressing ~b C M-p~ in Magit.
 After you have done that you can continue to pull from the upstream
 using ~F u~ in Magit and you can also push to your fork using ~P p~.
 
@@ -406,7 +406,7 @@ remote in the super-repository by setting ~submodule.DRONE.remote~ in
   like this to the DRONE repository by setting ~remote.NAME.url~ to
   URL and using the standard value for ~remote.NAME.fetch~.
 
-- Variable: borg.pushDefault = FORK
+- Variable: borg.pushDefault FORK
 
   This variable specifies a name used for push-remotes.  Because this
   variable can only have one value it is recommended that you use the
@@ -495,24 +495,24 @@ not be changed by the user.
 
 - Variable: borg-gitmodules-file
 
-  The value of this constant is the ".gitmodules" file of the
+  The value of this constant is the ~.gitmodules~ file of the
   super-repository.
 
 The values of the borg-specific Git variables have to be set in the
 file ~~/.emacs.d/.gitmodules~.  The variables ~borg.pushDefault~ and
 ~submodule.DRONE.remote~ are described in [[*Patching drones]].
 
-- Variable: borg.collective = REMOTE
+- Variable: borg.collective REMOTE
 
   This variable specifies the name used for remotes that reference
   a repository that has been patched by the collective.  If a NAME
   matches REMOTE, then it is configured as the upstream of the
   current branch of the respective DRONE.
 
-  If the file ".hive-maint" exists, then this variable has the same
-  effect as "borg.pushDefault".  This special case is only useful for
-  maintainers of the collective (but not for maintainers of
-  individual drones).
+  If the file ~.hive-maint~ exists, then this variable has the same
+  effect as ~borg.pushDefault~.  This special case is only useful for
+  maintainers of the collective (but not for maintainers of individual
+  drones).
 
 Because most repositories used to maintain Emacs packages follow some
 common-sense conventions, Borg usually does not have to be told how to
