@@ -8,7 +8,7 @@
 #+TEXINFO_DIR_CATEGORY: Emacs
 #+TEXINFO_DIR_TITLE: Borg: (borg).
 #+TEXINFO_DIR_DESC: Assimilate Emacs packages as Git submodules
-#+SUBTITLE: for version 3.1.2 (v3.1.2-1-g7efd982+1)
+#+SUBTITLE: for version 3.1.2 (v3.1.2-2-gb5826bd+1)
 
 #+TEXINFO_DEFFN: t
 #+OPTIONS: H:4 num:4 toc:2
@@ -20,7 +20,7 @@ The Borg assimilate Emacs packages as Git submodules.  Borg is a
 bare-bones package manager for Emacs packages.
 
 #+TEXINFO: @noindent
-This manual is for Borg version 3.1.2 (v3.1.2-1-g7efd982+1).
+This manual is for Borg version 3.1.2 (v3.1.2-2-gb5826bd+1).
 
 #+BEGIN_QUOTE
 Copyright (C) 2016-2020 Jonas Bernoulli <jonas@bernoul.li>
@@ -537,7 +537,7 @@ variables you can tell Borg how to build such packages.
 
   If a COMMAND matches one of default steps, then it is evaluated with
   the appropriate arguments.  Otherwise if the COMMAND begins with a
-  parenthesis, then it is evaluated as an Elisp expression.  Otherwise
+  parenthesis, then it is evaluated as a lisp expression.  Otherwise
   it is assumed to be a shell command and executed with ~shell-command~.
 
   #+BEGIN_SRC undefined
@@ -653,7 +653,7 @@ variables you can tell Borg how to build such packages.
   Unfortunately many packages put problematic test files or (usually
   outdated) copies of third-party libraries into subdirectories.  The
   latter is a highly questionable thing to do, but the former would be
-  perfectly fine, if only the non-library elisp files did not provide
+  perfectly fine, if only the non-library lisp files did not provide
   a feature (which effectively turns them into libraries) and/or if a
   file named ~.nosearch~ existed in the subdirectory.  That file tells
   functions such as ~normal-top-level-add-subdirs-to-load-path~ and

@@ -31,7 +31,7 @@ General Public License for more details.
 @finalout
 @titlepage
 @title Borg User Manual
-@subtitle for version 3.1.2 (v3.1.2-1-g7efd982+1)
+@subtitle for version 3.1.2 (v3.1.2-2-gb5826bd+1)
 @author Jonas Bernoulli
 @page
 @vskip 0pt plus 1filll
@@ -48,7 +48,7 @@ The Borg assimilate Emacs packages as Git submodules.  Borg is a
 bare-bones package manager for Emacs packages.
 
 @noindent
-This manual is for Borg version 3.1.2 (v3.1.2-1-g7efd982+1).
+This manual is for Borg version 3.1.2 (v3.1.2-2-gb5826bd+1).
 
 @quotation
 Copyright (C) 2016-2020 Jonas Bernoulli <jonas@@bernoul.li>
@@ -633,7 +633,7 @@ a shell command.  The COMMANDs are executed in the specified order.
 
 If a COMMAND matches one of default steps, then it is evaluated with
 the appropriate arguments.  Otherwise if the COMMAND begins with a
-parenthesis, then it is evaluated as an Elisp expression.  Otherwise
+parenthesis, then it is evaluated as a lisp expression.  Otherwise
 it is assumed to be a shell command and executed with @code{shell-command}.
 
 @example
@@ -753,7 +753,7 @@ than there are repositories that would benefit from doing so.
 Unfortunately many packages put problematic test files or (usually
 outdated) copies of third-party libraries into subdirectories.  The
 latter is a highly questionable thing to do, but the former would be
-perfectly fine, if only the non-library elisp files did not provide
+perfectly fine, if only the non-library lisp files did not provide
 a feature (which effectively turns them into libraries) and/or if a
 file named @code{.nosearch} existed in the subdirectory.  That file tells
 functions such as @code{normal-top-level-add-subdirs-to-load-path} and
