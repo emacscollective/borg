@@ -22,8 +22,7 @@ SILENCIO += --eval "(fset 'message\
                    (string-match-p \"Scraping files for\" (car args))))\
     (apply 'original-message format args))))"
 
-help:
-	$(info )
+help::
 	$(info make [all|build]     = rebuild all drones and init files)
 	$(info make quick           = rebuild most drones and init files)
 	$(info make lib/DRONE       = rebuild DRONE)
@@ -31,7 +30,7 @@ help:
 	$(info make tangle-init     = recreate init.el from init.org)
 	$(info make bootstrap-borg  = bootstrap borg itself)
 	$(info make bootstrap       = bootstrap collective or new drones)
-	@printf "\n"
+	@true
 
 clean:
 	@find . -name '*.elc' -exec rm '{}' ';'
