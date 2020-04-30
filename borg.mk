@@ -8,7 +8,7 @@
 EMACS           ?= emacs
 EMACS_ARGUMENTS ?= -Q
 
-.PHONY: all help clean build build-init quick bootstrap
+.PHONY: all help clean clean-init build build-init quick bootstrap
 .FORCE:
 
 all: build
@@ -29,6 +29,7 @@ help::
 	$(info make build-init      = rebuild init files)
 	$(info make tangle-init     = recreate init.el from init.org)
 	$(info make clean           = remove all byte-code files)
+	$(info make clean-init      = remove init files)
 	$(info make bootstrap-borg  = bootstrap borg itself)
 	$(info make bootstrap       = bootstrap collective or new drones)
 	@true
@@ -36,19 +37,20 @@ help::
 clean:
 	@find . -name '*.elc' -exec rm '{}' ';'
 
-build:
-	@rm -f init.elc
+clean-init:
+	@rm -f init.elc $(INIT_FILES:.el=.elc)
+
+build: clean-init
 	@$(EMACS) $(EMACS_ARGUMENTS) \
 	--batch -L lib/borg --load borg $(SILENCIO) \
 	--funcall borg-initialize \
-	--funcall borg-batch-rebuild 2>&1
+	--funcall borg-batch-rebuild $(INIT_FILES) 2>&1
 
-build-init:
-	@rm -f init.elc
+build-init: clean-init
 	@$(EMACS) $(EMACS_ARGUMENTS) \
 	--batch -L lib/borg --load borg \
 	--funcall borg-initialize \
-	--funcall borg-batch-rebuild-init 2>&1
+	--funcall borg-batch-rebuild-init $(INIT_FILES) 2>&1
 
 tangle-init: init.el
 init.el: init.org
@@ -56,8 +58,7 @@ init.el: init.org
 	--batch --load org \
 	--eval '(org-babel-tangle-file "init.org")' 2>&1
 
-quick:
-	@rm -f init.elc
+quick: clean-init
 	@$(EMACS) $(EMACS_ARGUMENTS) \
 	--batch -L lib/borg --load borg $(SILENCIO) \
 	--funcall borg-initialize \

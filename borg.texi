@@ -31,7 +31,7 @@ General Public License for more details.
 @finalout
 @titlepage
 @title Borg User Manual
-@subtitle for version 3.1.2 (v3.1.2-10-g68c8feb+1)
+@subtitle for version 3.1.2 (v3.1.2-11-g640b1c5+1)
 @author Jonas Bernoulli
 @page
 @vskip 0pt plus 1filll
@@ -48,7 +48,7 @@ The Borg assimilate Emacs packages as Git submodules.  Borg is a
 bare-bones package manager for Emacs packages.
 
 @noindent
-This manual is for Borg version 3.1.2 (v3.1.2-10-g68c8feb+1).
+This manual is for Borg version 3.1.2 (v3.1.2-11-g640b1c5+1).
 
 @quotation
 Copyright (C) 2016-2020 Jonas Bernoulli <jonas@@bernoul.li>
@@ -378,21 +378,27 @@ clone named CLONE@.
 @defun borg-batch-rebuild &optional quick
 
 This function rebuilds all assimilated drones in alphabetic order,
-except for Org which is rebuilt first.  It also rebuilds @code{init.el} and
-@code{USER-REAL-LOGIN-NAME.el}.
+except for Org which is rebuilt first.  After that it also builds
+the user init files using @code{borg-batch-rebuild-init}.
 
-This function is not intended for interactive use, but used to
-implement the @code{make} targets described in the following section.
+This function is not intended for interactive use; instead it is
+used by the Make target @code{build} described in the following section.
 
-When optional QUICK is non-nil, then do not build drones for which
-@code{submodule.DRONE.build-step} is set, assuming that those are the drones
-that take longer to be built.
+When optional QUICK is non-nil, then this function does not build
+drones for which @code{submodule.DRONE.build-step} is set, assuming that
+those are the drones that take longer to be built.
 @end defun
 
 @defun borg-batch-rebuild-init
 
-This function rebuilds @code{init.el} and @code{USER-REAL-LOGIN-NAME.el}.  It is
-not intended for interactive use.
+This function builds the init files specified by the Make variable
+@code{INIT_FILES}, or if that is unspecified @code{init.el} and @code{LOGIN.el}, where
+@code{LOGIN} is the value of the variable @code{user-real-login-name}.  If a file
+does not exist, then it is silently ignored.
+
+This function is not intended for interactive use; instead it is
+used by the Make targets @code{build-init} and (indirectly) @code{build}, which
+are described in @ref{Make targets}.
 @end defun
 
 @node Updating drones
@@ -512,10 +518,24 @@ This target prints information about the following targets.
 @cindex make build
 @deffn Command make build
 
-This target builds all drones.
+This target rebuilds all assimilated drones in alphabetic order,
+except for Org which is rebuilt first.  After that it also builds
+the user init files, like @code{build-init} does.
+@end deffn
 
-It also builds @code{init.el} and @code{USER-REAL-LOGIN-NAME.el}, if that exists.
-Also see @code{make build-init} below.
+@cindex make build-init
+@deffn Command make build-init
+
+This target builds the init files specified by the Make variable
+@code{INIT_FILES}, or if that is unspecified @code{init.el} and @code{LOGIN.el}, where
+@code{LOGIN} is the value of the variable @code{user-real-login-name}.  If a file
+does not exist, then it is silently ignored.
+
+If you publish your @code{~/.emacs.d} repository but would like to keep
+some settings private, then you can do so by putting them in a file
+@code{~/.emacs.d/LOGIN.el}.  The downside of this approach is that you will
+have to somehow synchronize that file between your machines without
+checking it into Git.
 @end deffn
 
 @cindex make quick
@@ -525,29 +545,13 @@ This target builds @emph{most} drones.  Excluded are all drones for which
 the Git variable @code{submodule.DRONE.build-step} is set, assuming that those
 are the drones that take longer to build.
 
-It also builds @code{init.el} and @code{USER-REAL-LOGIN-NAME.el}, if that exists.
-Also see @code{make build-init} below.
+It also builds the init files as described above.
 @end deffn
 
 @cindex make lib/DRONE
 @deffn Command make lib/DRONE
 
 This target builds the drone named DRONE@.
-@end deffn
-
-@cindex make build-init
-@deffn Command make build-init
-
-This target builds @code{init.el} and @code{USER-REAL-LOGIN-NAME.el}, if that
-exists.
-
-If you publish your @code{~/.emacs.d} repository but would like to keep
-some settings private, then you can do so by putting these in a file
-@code{~/.emacs.d/FILE-NAME.el}.  If FILE-NAME matches the value of the
-variable @code{user-real-login-name}, then the @code{init.el} of the emacs.g
-collective automatically loads it.  The downside of this approach
-is that you will have to somehow synchronize that file between your
-machines without checking it into Git.
 @end deffn
 
 @cindex make tangle-init
@@ -604,6 +608,14 @@ when Emacs is started with @code{emacs -q -l /path/to/init.el}.
 
 The value of this constant is the @code{.gitmodules} file of the
 super-repository.
+@end defvar
+
+The value of this Make variable has to be set in @code{~/.emacs.d/Makefile}.
+
+@defvar INIT@math{_FILES}
+
+A list of init files to be build by the Make targets @code{build} and
+@code{build-init}.  See @ref{Make targets}.
 @end defvar
 
 The values of the borg-specific Git variables have to be set in the

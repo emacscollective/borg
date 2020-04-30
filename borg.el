@@ -423,13 +423,14 @@ This function is to be used only with `--batch'."
     (error "borg-batch-recompile-init is to be used only with --batch"))
   (borg-silencio "\\`%s\\.\\.\\.\\(done\\)?" ; silence use-package
     (let ((default-directory borg-user-emacs-directory))
-      (message "\n--- [init.el] ---\n")
-      (load-file "init.el")
-      (byte-recompile-file (expand-file-name "init.el") t 0)
-      (let ((f (concat (user-real-login-name) ".el")))
-        (when (file-exists-p f)
-          (message "\n--- [%s] ---\n" f)
-          (byte-recompile-file (expand-file-name f) t 0))))))
+      (dolist (file (or command-line-args-left
+                        (list "init.el"
+                              (concat (user-real-login-name) ".el"))))
+        (when (file-exists-p file)
+          (message "\n--- [%s] ---\n" file)
+          (when (equal file "init.el")
+            (load-file file))
+          (byte-recompile-file (expand-file-name file) t 0))))))
 
 (defun borg-build (clone &optional activate)
   "Build the clone named CLONE.

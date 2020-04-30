@@ -8,7 +8,7 @@
 #+TEXINFO_DIR_CATEGORY: Emacs
 #+TEXINFO_DIR_TITLE: Borg: (borg).
 #+TEXINFO_DIR_DESC: Assimilate Emacs packages as Git submodules
-#+SUBTITLE: for version 3.1.2 (v3.1.2-10-g68c8feb+1)
+#+SUBTITLE: for version 3.1.2 (v3.1.2-11-g640b1c5+1)
 
 #+TEXINFO_DEFFN: t
 #+OPTIONS: H:4 num:4 toc:2
@@ -20,7 +20,7 @@ The Borg assimilate Emacs packages as Git submodules.  Borg is a
 bare-bones package manager for Emacs packages.
 
 #+TEXINFO: @noindent
-This manual is for Borg version 3.1.2 (v3.1.2-10-g68c8feb+1).
+This manual is for Borg version 3.1.2 (v3.1.2-11-g640b1c5+1).
 
 #+BEGIN_QUOTE
 Copyright (C) 2016-2020 Jonas Bernoulli <jonas@bernoul.li>
@@ -306,20 +306,26 @@ Magit status buffer of the ~~/.emacs.d~ repository.
 - Function: borg-batch-rebuild &optional quick
 
   This function rebuilds all assimilated drones in alphabetic order,
-  except for Org which is rebuilt first.  It also rebuilds ~init.el~ and
-  ~USER-REAL-LOGIN-NAME.el~.
+  except for Org which is rebuilt first.  After that it also builds
+  the user init files using ~borg-batch-rebuild-init~.
 
-  This function is not intended for interactive use, but used to
-  implement the ~make~ targets described in the following section.
+  This function is not intended for interactive use; instead it is
+  used by the Make target ~build~ described in the following section.
 
-  When optional QUICK is non-nil, then do not build drones for which
-  ~submodule.DRONE.build-step~ is set, assuming that those are the drones
-  that take longer to be built.
+  When optional QUICK is non-nil, then this function does not build
+  drones for which ~submodule.DRONE.build-step~ is set, assuming that
+  those are the drones that take longer to be built.
 
 - Function: borg-batch-rebuild-init
 
-  This function rebuilds ~init.el~ and ~USER-REAL-LOGIN-NAME.el~.  It is
-  not intended for interactive use.
+  This function builds the init files specified by the Make variable
+  ~INIT_FILES~, or if that is unspecified ~init.el~ and ~LOGIN.el~, where
+  ~LOGIN~ is the value of the variable ~user-real-login-name~.  If a file
+  does not exist, then it is silently ignored.
+
+  This function is not intended for interactive use; instead it is
+  used by the Make targets ~build-init~ and (indirectly) ~build~, which
+  are described in [[*Make targets]].
 
 * Updating drones
 
@@ -430,10 +436,22 @@ To use them you have to be in ~~/.emacs.d~ in a shell.
 
 - Command: make build
 
-  This target builds all drones.
+  This target rebuilds all assimilated drones in alphabetic order,
+  except for Org which is rebuilt first.  After that it also builds
+  the user init files, like ~build-init~ does.
 
-  It also builds ~init.el~ and ~USER-REAL-LOGIN-NAME.el~, if that exists.
-  Also see ~make build-init~ below.
+- Command: make build-init
+
+  This target builds the init files specified by the Make variable
+  ~INIT_FILES~, or if that is unspecified ~init.el~ and ~LOGIN.el~, where
+  ~LOGIN~ is the value of the variable ~user-real-login-name~.  If a file
+  does not exist, then it is silently ignored.
+
+  If you publish your ~~/.emacs.d~ repository but would like to keep
+  some settings private, then you can do so by putting them in a file
+  ~~/.emacs.d/LOGIN.el~.  The downside of this approach is that you will
+  have to somehow synchronize that file between your machines without
+  checking it into Git.
 
 - Command: make quick
 
@@ -441,25 +459,11 @@ To use them you have to be in ~~/.emacs.d~ in a shell.
   the Git variable ~submodule.DRONE.build-step~ is set, assuming that those
   are the drones that take longer to build.
 
-  It also builds ~init.el~ and ~USER-REAL-LOGIN-NAME.el~, if that exists.
-  Also see ~make build-init~ below.
+  It also builds the init files as described above.
 
 - Command: make lib/DRONE
 
   This target builds the drone named DRONE.
-
-- Command: make build-init
-
-  This target builds ~init.el~ and ~USER-REAL-LOGIN-NAME.el~, if that
-  exists.
-
-  If you publish your ~~/.emacs.d~ repository but would like to keep
-  some settings private, then you can do so by putting these in a file
-  ~~/.emacs.d/FILE-NAME.el~.  If FILE-NAME matches the value of the
-  variable ~user-real-login-name~, then the ~init.el~ of the emacs.g
-  collective automatically loads it.  The downside of this approach
-  is that you will have to somehow synchronize that file between your
-  machines without checking it into Git.
 
 - Command: make tangle-init
 
@@ -506,6 +510,13 @@ not be changed by the user.
 
   The value of this constant is the ~.gitmodules~ file of the
   super-repository.
+
+The value of this Make variable has to be set in ~~/.emacs.d/Makefile~.
+
+- Variable: INIT_FILES
+
+  A list of init files to be build by the Make targets ~build~ and
+  ~build-init~.  See [[*Make targets]].
 
 The values of the borg-specific Git variables have to be set in the
 file ~~/.emacs.d/.gitmodules~.  The variables ~borg.pushDefault~ and
