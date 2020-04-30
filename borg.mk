@@ -28,6 +28,7 @@ help::
 	$(info make lib/DRONE       = rebuild DRONE)
 	$(info make build-init      = rebuild init files)
 	$(info make tangle-init     = recreate init.el from init.org)
+	$(info make clean           = remove all byte-code files)
 	$(info make bootstrap-borg  = bootstrap borg itself)
 	$(info make bootstrap       = bootstrap collective or new drones)
 	@true
