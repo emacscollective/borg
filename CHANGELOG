@@ -10,6 +10,9 @@
   that is not specified, then the same files as before are compiled
   (~init.el~ and ~<username>.el~).
 
+- Each init file is now loaded before it is compiled.  Previously
+  this was only done for ~init.el~.
+
 * v3.1.2    2019/12/05
 
 - The new option ~borg-rewrite-urls-alist~ allows rewriting certain urls
