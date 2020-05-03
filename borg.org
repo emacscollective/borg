@@ -8,7 +8,7 @@
 #+TEXINFO_DIR_CATEGORY: Emacs
 #+TEXINFO_DIR_TITLE: Borg: (borg).
 #+TEXINFO_DIR_DESC: Assimilate Emacs packages as Git submodules
-#+SUBTITLE: for version 3.1.2 (v3.1.2-9-g374f130+1)
+#+SUBTITLE: for version 3.1.2 (v3.1.2-10-g68c8feb+1)
 
 #+TEXINFO_DEFFN: t
 #+OPTIONS: H:4 num:4 toc:2
@@ -20,7 +20,7 @@ The Borg assimilate Emacs packages as Git submodules.  Borg is a
 bare-bones package manager for Emacs packages.
 
 #+TEXINFO: @noindent
-This manual is for Borg version 3.1.2 (v3.1.2-9-g374f130+1).
+This manual is for Borg version 3.1.2 (v3.1.2-10-g68c8feb+1).
 
 #+BEGIN_QUOTE
 Copyright (C) 2016-2020 Jonas Bernoulli <jonas@bernoul.li>
@@ -460,6 +460,11 @@ To use them you have to be in ~~/.emacs.d~ in a shell.
   collective automatically loads it.  The downside of this approach
   is that you will have to somehow synchronize that file between your
   machines without checking it into Git.
+
+- Command: make tangle-init
+
+  This target tangles (creates) ~init.el~ from ~init.org~.  You obviously
+  don't have to use such a file if you don't want to.
 
 - Command: make clean
 
