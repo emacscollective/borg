@@ -1,4 +1,10 @@
 # -*- mode: org -*-
+* v3.2.0    UNRELEASED
+
+- Taught ~borg-load-path~ to use the ~elisp/~ directory automatically
+  like it already uses the ~lisp/~ directory or the top-level.  The
+  ~elisp/~ directory takes precedence over the other two directories.
+
 * v3.1.2    2019/12/05
 
 - The new option ~borg-rewrite-urls-alist~ allows rewriting certain urls
