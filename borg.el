@@ -411,9 +411,12 @@ drones that take longer to be built."
             (ignore-errors (delete-file f))))))
     (dolist (drone drones)
       (message "\n--- [%s] ---\n" drone)
-      (if (and quick (borg-get-all drone "build-step"))
-          (message "Skipping...")
-        (borg-build drone))))
+      (cond
+       ((equal (borg-get drone "disabled") "true")
+        (message "Skipped (Disabled)"))
+       ((and quick (borg-get-all drone "build-step"))
+        (message "Skipped (Expensive to build)"))
+       (t (borg-build drone)))))
   (borg-batch-rebuild-init))
 
 (defun borg-batch-rebuild-init ()
