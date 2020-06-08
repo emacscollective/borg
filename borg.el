@@ -598,7 +598,9 @@ then also activate the clone using `borg-activate'."
            (filename (file-name-nondirectory generated-autoload-file)))
       (write-region (format borg-autoload-format filename filename)
                     nil generated-autoload-file nil 'silent)
-      (apply #'update-directory-autoloads path))
+      (cl-letf (((symbol-function 'progress-reporter-do-update) (lambda (&rest _)))
+                ((symbol-function 'progress-reporter-done) (lambda (_))))
+        (apply #'update-directory-autoloads path)))
     (let ((buf (find-buffer-visiting generated-autoload-file)))
       (when buf
         (kill-buffer buf)))))
