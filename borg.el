@@ -602,11 +602,8 @@ then also activate the clone using `borg-activate'."
   (let ((exclude (borg-get-all clone "no-byte-compile"))
         (topdir (borg-worktree clone)))
     (dolist (path-dir path)
-      (with-temp-buffer
-        (setq default-directory     borg-user-emacs-directory)
-        (setq byte-compile-root-dir borg-user-emacs-directory)
-        (unless (eq major-mode 'compilation-mode)
-          (compilation-mode))
+      (let ((default-directory     borg-user-emacs-directory)
+            (byte-compile-root-dir borg-user-emacs-directory))
         (let ((skip-count 0)
               (fail-count 0)
               (file-count 0)
