@@ -69,6 +69,7 @@
 (declare-function magit-get-some-remote "magit-git" (&optional branch))
 
 (defvar git-commit-mode-map)
+(defvar compilation-mode-font-lock-keywords)
 
 (defvar borg-drone-directory
   (expand-file-name (file-name-as-directory "lib")
@@ -548,7 +549,13 @@ then also activate the clone using `borg-activate'."
   "Mode for the \"*Borg Build*\" buffer."
   (setq mode-line-process
         '((:propertize ":%s" face compilation-mode-line-run)
-          compilation-mode-line-errors)))
+          compilation-mode-line-errors))
+  (setq font-lock-defaults '(borg-build-mode-font-lock-keywords t)))
+
+(defun borg-build-mode-font-lock-keywords ()
+  (append '((compilation--ensure-parse))
+          (remove '(" --?o\\(?:utfile\\|utput\\)?[= ]\\(\\S +\\)" . 1)
+                  compilation-mode-font-lock-keywords)))
 
 (defconst borg-autoload-format "\
 ;;;\
