@@ -643,7 +643,9 @@ then also activate the clone using `borg-activate'."
                               (member file-relative exclude))
                           (progn (message " Skipping %s...skipped" file)
                                  skip-count)
-                        (pcase (byte-recompile-file file t 0)
+                        (unless byte-compile-verbose
+                          (message "Compiling %s..." file))
+                        (pcase (byte-compile-file file)
                           ('no-byte-compile
                            (message "Compiling %s...skipped" file)
                            skip-count)
