@@ -605,8 +605,6 @@ then also activate the clone using `borg-activate'."
       (with-temp-buffer
         (setq default-directory     borg-user-emacs-directory)
         (setq byte-compile-root-dir borg-user-emacs-directory)
-        (when (> (length path) 1)
-          (message "\n Building %s..." (expand-file-name path-dir topdir)))
         (unless (eq major-mode 'compilation-mode)
           (compilation-mode))
         (let ((skip-count 0)
