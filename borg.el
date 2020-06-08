@@ -488,6 +488,7 @@ then also activate the clone using `borg-activate'."
         (process-connection-type nil))
     (switch-to-buffer buffer)
     (with-current-buffer buffer
+      (setq default-directory borg-user-emacs-directory)
       (borg-build-mode)
       (goto-char (point-max))
       (let ((inhibit-read-only t))
@@ -601,10 +602,11 @@ then also activate the clone using `borg-activate'."
   (let ((exclude (borg-get-all clone "no-byte-compile"))
         (topdir (borg-worktree clone)))
     (dolist (path-dir path)
-      (with-current-buffer (get-buffer-create byte-compile-log-buffer)
-        (setq default-directory (expand-file-name path-dir topdir))
+      (with-temp-buffer
+        (setq default-directory     borg-user-emacs-directory)
+        (setq byte-compile-root-dir borg-user-emacs-directory)
         (when (> (length path) 1)
-          (message "\n Building %s..." default-directory))
+          (message "\n Building %s..." (expand-file-name path-dir topdir)))
         (unless (eq major-mode 'compilation-mode)
           (compilation-mode))
         (let ((skip-count 0)
