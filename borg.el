@@ -598,8 +598,8 @@ then also activate the clone using `borg-activate'."
 
 (defun borg-byte-compile (clone &optional path)
   "Compile libraries for the clone named CLONE in the directories in PATH."
-  (setq path (borg--expand-load-path clone path))
-  (let ((exclude (borg-get-all clone "no-byte-compile"))
+  (let ((dirs (borg--expand-load-path clone path))
+        (exclude (borg-get-all clone "no-byte-compile"))
         (topdir (borg-worktree clone))
         (default-directory     borg-user-emacs-directory)
         (byte-compile-root-dir borg-user-emacs-directory)
@@ -607,7 +607,6 @@ then also activate the clone using `borg-activate'."
         (fail-count 0)
         (file-count 0)
         (dir-count  0)
-        (dirs path)
         dir last-dir)
     (displaying-byte-compile-warnings
      (while (setq dir (pop dirs))
