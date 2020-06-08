@@ -619,13 +619,13 @@ then also activate the clone using `borg-activate'."
                (let ((file-relative (file-relative-name file topdir))
                      (name (file-name-nondirectory file)))
                  (if (file-directory-p file)
-		     (when (and (if-let ((v (borg-get
+                     (when (and (if-let ((v (borg-get
                                              clone "recursive-byte-compile")))
                                     (member v '("yes" "on" "true" "1"))
                                   borg-byte-compile-recursively)
                                 (not (file-symlink-p file))
-		                (not (string-prefix-p "." name))
-		                (not (member name '("RCS" "CVS"))))
+                                (not (string-prefix-p "." name))
+                                (not (member name '("RCS" "CVS"))))
                        (if (or (file-exists-p (expand-file-name ".nosearch" file))
                                (member file-relative exclude))
                            (message " Skipping %s...skipped" file)
