@@ -31,7 +31,7 @@ General Public License for more details.
 @finalout
 @titlepage
 @title Borg User Manual
-@subtitle for version 3.1.2 (v3.1.2-11-g640b1c5+1)
+@subtitle for version 3.1.2 (v3.1.2-23-gbde5d4c+1)
 @author Jonas Bernoulli
 @page
 @vskip 0pt plus 1filll
@@ -48,7 +48,7 @@ The Borg assimilate Emacs packages as Git submodules.  Borg is a
 bare-bones package manager for Emacs packages.
 
 @noindent
-This manual is for Borg version 3.1.2 (v3.1.2-11-g640b1c5+1).
+This manual is for Borg version 3.1.2 (v3.1.2-23-gbde5d4c+1).
 
 @quotation
 Copyright (C) 2016-2020 Jonas Bernoulli <jonas@@bernoul.li>
@@ -76,6 +76,9 @@ General Public License for more details.
 * Make targets::
 * Variables::
 * Low-level functions::
+* Command Index::
+* Function Index::
+* Variable Index::
 
 @detailmenu
 --- The Detailed Node Listing ---
@@ -936,5 +939,20 @@ being noted in the change log.
 @end defun
 @defun borg--sort-submodule-sections
 @end defun
+
+@node Command Index
+@appendix Command Index
+
+@printindex cp
+
+@node Function Index
+@appendix Function Index
+
+@printindex fn
+
+@node Variable Index
+@appendix Variable Index
+
+@printindex vr
 
 @bye
