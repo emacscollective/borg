@@ -31,7 +31,7 @@ General Public License for more details.
 @finalout
 @titlepage
 @title Borg User Manual
-@subtitle for version 3.1.2 (v3.1.2-24-gf2ce9d2+1)
+@subtitle for version 3.1.2 (v3.1.2-25-g129df1d+1)
 @author Jonas Bernoulli
 @page
 @vskip 0pt plus 1filll
@@ -48,7 +48,7 @@ The Borg assimilate Emacs packages as Git submodules.  Borg is a
 bare-bones package manager for Emacs packages.
 
 @noindent
-This manual is for Borg version 3.1.2 (v3.1.2-24-gf2ce9d2+1).
+This manual is for Borg version 3.1.2 (v3.1.2-25-g129df1d+1).
 
 @quotation
 Copyright (C) 2016-2020 Jonas Bernoulli <jonas@@bernoul.li>
@@ -509,8 +509,9 @@ setting @code{remote.pushDefault} to FORK@.
 @node Make targets
 @chapter Make targets
 
-The following @code{make} targets are available in @code{~/.emacs.d/Makefile}.
-To use them you have to be in @code{~/.emacs.d} in a shell.
+The following @code{make} targets are available by default.  To use them you
+have to be in @code{~/.emacs.d} in a shell.  They are implemented in @code{borg.mk},
+which is part of the @code{borg} package.
 
 @cindex help
 @deffn Command help

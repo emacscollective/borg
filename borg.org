@@ -8,7 +8,7 @@
 #+TEXINFO_DIR_CATEGORY: Emacs
 #+TEXINFO_DIR_TITLE: Borg: (borg).
 #+TEXINFO_DIR_DESC: Assimilate Emacs packages as Git submodules
-#+SUBTITLE: for version 3.1.2 (v3.1.2-24-gf2ce9d2+1)
+#+SUBTITLE: for version 3.1.2 (v3.1.2-25-g129df1d+1)
 
 #+TEXINFO_DEFFN: t
 #+OPTIONS: H:4 num:4 toc:2
@@ -20,7 +20,7 @@ The Borg assimilate Emacs packages as Git submodules.  Borg is a
 bare-bones package manager for Emacs packages.
 
 #+TEXINFO: @noindent
-This manual is for Borg version 3.1.2 (v3.1.2-24-gf2ce9d2+1).
+This manual is for Borg version 3.1.2 (v3.1.2-25-g129df1d+1).
 
 #+BEGIN_QUOTE
 Copyright (C) 2016-2020 Jonas Bernoulli <jonas@bernoul.li>
@@ -427,8 +427,9 @@ remote in the super-repository by setting ~submodule.DRONE.remote~ in
 
 * Make targets
 
-The following ~make~ targets are available in ~~/.emacs.d/Makefile~.
-To use them you have to be in ~~/.emacs.d~ in a shell.
+The following ~make~ targets are available by default.  To use them you
+have to be in ~~/.emacs.d~ in a shell.  They are implemented in ~borg.mk~,
+which is part of the ~borg~ package.
 
 - Command: help
 
