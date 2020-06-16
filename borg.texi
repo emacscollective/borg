@@ -31,7 +31,7 @@ General Public License for more details.
 @finalout
 @titlepage
 @title Borg User Manual
-@subtitle for version 3.1.2 (v3.1.2-23-gbde5d4c+1)
+@subtitle for version 3.1.2 (v3.1.2-24-gf2ce9d2+1)
 @author Jonas Bernoulli
 @page
 @vskip 0pt plus 1filll
@@ -48,7 +48,7 @@ The Borg assimilate Emacs packages as Git submodules.  Borg is a
 bare-bones package manager for Emacs packages.
 
 @noindent
-This manual is for Borg version 3.1.2 (v3.1.2-23-gbde5d4c+1).
+This manual is for Borg version 3.1.2 (v3.1.2-24-gf2ce9d2+1).
 
 @quotation
 Copyright (C) 2016-2020 Jonas Bernoulli <jonas@@bernoul.li>
@@ -512,22 +512,22 @@ setting @code{remote.pushDefault} to FORK@.
 The following @code{make} targets are available in @code{~/.emacs.d/Makefile}.
 To use them you have to be in @code{~/.emacs.d} in a shell.
 
-@cindex make help
-@deffn Command make help
+@cindex help
+@deffn Command help
 
 This target prints information about the following targets.
 @end deffn
 
-@cindex make build
-@deffn Command make build
+@cindex build
+@deffn Command build
 
 This target rebuilds all assimilated drones in alphabetic order,
 except for Org which is rebuilt first.  After that it also builds
 the user init files, like @code{build-init} does.
 @end deffn
 
-@cindex make build-init
-@deffn Command make build-init
+@cindex build-init
+@deffn Command build-init
 
 This target builds the init files specified by the Make variable
 @code{INIT_FILES}, or if that is unspecified @code{init.el} and @code{LOGIN.el}, where
@@ -541,8 +541,8 @@ have to somehow synchronize that file between your machines without
 checking it into Git.
 @end deffn
 
-@cindex make quick
-@deffn Command make quick
+@cindex quick
+@deffn Command quick
 
 This target builds @emph{most} drones.  Excluded are all drones for which
 the Git variable @code{submodule.DRONE.build-step} is set, assuming that those
@@ -551,27 +551,27 @@ are the drones that take longer to build.
 It also builds the init files as described above.
 @end deffn
 
-@cindex make lib/DRONE
-@deffn Command make lib/DRONE
+@cindex lib/DRONE
+@deffn Command lib/DRONE
 
 This target builds the drone named DRONE@.
 @end deffn
 
-@cindex make tangle-init
-@deffn Command make tangle-init
+@cindex tangle-init
+@deffn Command tangle-init
 
 This target tangles (creates) @code{init.el} from @code{init.org}.  You obviously
 don't have to use such a file if you don't want to.
 @end deffn
 
-@cindex make clean
-@deffn Command make clean
+@cindex clean
+@deffn Command clean
 
 This target removes all byte-code files inside @code{~/.emacs.d}.
 @end deffn
 
-@cindex make bootstrap
-@deffn Command make bootstrap
+@cindex bootstrap
+@deffn Command bootstrap
 
 This target attempts to bootstrap the drones.  To do so it runs
 @code{git submodule init}, @code{borg.sh} (which see), and @code{make build}.

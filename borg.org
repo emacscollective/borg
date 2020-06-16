@@ -8,7 +8,7 @@
 #+TEXINFO_DIR_CATEGORY: Emacs
 #+TEXINFO_DIR_TITLE: Borg: (borg).
 #+TEXINFO_DIR_DESC: Assimilate Emacs packages as Git submodules
-#+SUBTITLE: for version 3.1.2 (v3.1.2-23-gbde5d4c+1)
+#+SUBTITLE: for version 3.1.2 (v3.1.2-24-gf2ce9d2+1)
 
 #+TEXINFO_DEFFN: t
 #+OPTIONS: H:4 num:4 toc:2
@@ -20,7 +20,7 @@ The Borg assimilate Emacs packages as Git submodules.  Borg is a
 bare-bones package manager for Emacs packages.
 
 #+TEXINFO: @noindent
-This manual is for Borg version 3.1.2 (v3.1.2-23-gbde5d4c+1).
+This manual is for Borg version 3.1.2 (v3.1.2-24-gf2ce9d2+1).
 
 #+BEGIN_QUOTE
 Copyright (C) 2016-2020 Jonas Bernoulli <jonas@bernoul.li>
@@ -430,17 +430,17 @@ remote in the super-repository by setting ~submodule.DRONE.remote~ in
 The following ~make~ targets are available in ~~/.emacs.d/Makefile~.
 To use them you have to be in ~~/.emacs.d~ in a shell.
 
-- Command: make help
+- Command: help
 
   This target prints information about the following targets.
 
-- Command: make build
+- Command: build
 
   This target rebuilds all assimilated drones in alphabetic order,
   except for Org which is rebuilt first.  After that it also builds
   the user init files, like ~build-init~ does.
 
-- Command: make build-init
+- Command: build-init
 
   This target builds the init files specified by the Make variable
   ~INIT_FILES~, or if that is unspecified ~init.el~ and ~LOGIN.el~, where
@@ -453,7 +453,7 @@ To use them you have to be in ~~/.emacs.d~ in a shell.
   have to somehow synchronize that file between your machines without
   checking it into Git.
 
-- Command: make quick
+- Command: quick
 
   This target builds /most/ drones.  Excluded are all drones for which
   the Git variable ~submodule.DRONE.build-step~ is set, assuming that those
@@ -461,20 +461,20 @@ To use them you have to be in ~~/.emacs.d~ in a shell.
 
   It also builds the init files as described above.
 
-- Command: make lib/DRONE
+- Command: lib/DRONE
 
   This target builds the drone named DRONE.
 
-- Command: make tangle-init
+- Command: tangle-init
 
   This target tangles (creates) ~init.el~ from ~init.org~.  You obviously
   don't have to use such a file if you don't want to.
 
-- Command: make clean
+- Command: clean
 
   This target removes all byte-code files inside ~~/.emacs.d~.
 
-- Command: make bootstrap
+- Command: bootstrap
 
   This target attempts to bootstrap the drones.  To do so it runs
   ~git submodule init~, ~borg.sh~ (which see), and ~make build~.
