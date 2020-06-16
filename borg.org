@@ -8,7 +8,7 @@
 #+TEXINFO_DIR_CATEGORY: Emacs
 #+TEXINFO_DIR_TITLE: Borg: (borg).
 #+TEXINFO_DIR_DESC: Assimilate Emacs packages as Git submodules
-#+SUBTITLE: for version 3.1.2 (v3.1.2-26-g51a8634+1)
+#+SUBTITLE: for version 3.1.2 (v3.1.2-27-gc0f6cf9+1)
 
 #+TEXINFO_DEFFN: t
 #+OPTIONS: H:4 num:4 toc:2
@@ -20,7 +20,7 @@ The Borg assimilate Emacs packages as Git submodules.  Borg is a
 bare-bones package manager for Emacs packages.
 
 #+TEXINFO: @noindent
-This manual is for Borg version 3.1.2 (v3.1.2-26-g51a8634+1).
+This manual is for Borg version 3.1.2 (v3.1.2-27-gc0f6cf9+1).
 
 #+BEGIN_QUOTE
 Copyright (C) 2016-2020 Jonas Bernoulli <jonas@bernoul.li>
@@ -240,9 +240,14 @@ same commit, but something like this might make sense:
   Assimilate smex               3.0-13-g55aaebe
 #+END_SRC
 
-Version strings as those shown above can be obtained using ~git
-describe --tags~, or by looking inside the "Modules" section of the
-Magit status buffer of the ~~/.emacs.d~ repository.
+The command ~borg-insert-update-message~ can be used to generate such
+commit messages.
+
+- Key: C-c C-b [in git-commit-mode buffer], borg-insert-update-message
+
+  This command insert information about drones that are changed in the
+  index.  Formatting is according to the commit message conventions
+  described above.
 
 - Command: borg-assimilate package url &optional partially
 
@@ -373,6 +378,9 @@ Or for multiple packages:
   Update foo to v1.1.0
   Update bar to v1.2.1
 #+END_SRC
+
+The command ~borg-insert-update-message~ can be used to generate such
+commit messages.
 
 To update the Epkg package database use the command ~epkg-update~.
 

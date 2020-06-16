@@ -31,7 +31,7 @@ General Public License for more details.
 @finalout
 @titlepage
 @title Borg User Manual
-@subtitle for version 3.1.2 (v3.1.2-26-g51a8634+1)
+@subtitle for version 3.1.2 (v3.1.2-27-gc0f6cf9+1)
 @author Jonas Bernoulli
 @page
 @vskip 0pt plus 1filll
@@ -48,7 +48,7 @@ The Borg assimilate Emacs packages as Git submodules.  Borg is a
 bare-bones package manager for Emacs packages.
 
 @noindent
-This manual is for Borg version 3.1.2 (v3.1.2-26-g51a8634+1).
+This manual is for Borg version 3.1.2 (v3.1.2-27-gc0f6cf9+1).
 
 @quotation
 Copyright (C) 2016-2020 Jonas Bernoulli <jonas@@bernoul.li>
@@ -304,9 +304,19 @@ Assimilate ido-vertical-mode v0.1.6-33-gb42e422
 Assimilate smex               3.0-13-g55aaebe
 @end example
 
-Version strings as those shown above can be obtained using @code{git
-describe --tags}, or by looking inside the "Modules" section of the
-Magit status buffer of the @code{~/.emacs.d} repository.
+The command @code{borg-insert-update-message} can be used to generate such
+commit messages.
+
+@table @asis
+@kindex C-c C-b [in git-commit-mode buffer]
+@cindex borg-insert-update-message
+@item @kbd{C-c C-b [in git-commit-mode buffer]} @tie{}@tie{}@tie{}@tie{}(@code{borg-insert-update-message})
+
+This command insert information about drones that are changed in the
+index.  Formatting is according to the commit message conventions
+described above.
+
+@end table
 
 @cindex borg-assimilate package url &optional partially
 @deffn Command borg-assimilate package url &optional partially
@@ -451,6 +461,9 @@ Update 2 drones
 Update foo to v1.1.0
 Update bar to v1.2.1
 @end example
+
+The command @code{borg-insert-update-message} can be used to generate such
+commit messages.
 
 To update the Epkg package database use the command @code{epkg-update}.
 
