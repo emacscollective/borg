@@ -18,6 +18,7 @@ SILENCIO += --eval "(fset 'original-message (symbol-function 'message))"
 SILENCIO += --eval "(fset 'message\
 (lambda (format &rest args)\
   (unless (or (equal format \"pcase-memoize: equal first branch, yet different\")\
+              (equal format \"Not registering prefix \\\"%s\\\" from %s.  Affects: %S\")\
               (and (stringp (car args))\
                    (string-match-p \"Scraping files for\" (car args))))\
     (apply 'original-message format args))))"
