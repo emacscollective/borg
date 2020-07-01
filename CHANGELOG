@@ -21,6 +21,8 @@
 
 - It is now possible to place the drones in a directory that is named
   something other than ~lib~ using the ~borg.drones-directory~ variable.
+  The default is still ~lib~, except when using Borg alongside Package;
+  then the new default is ~borg~.
 
 - The ~borg-user-emacs-directory~ no longer has to be the top-level
   directory of the containing repository.
