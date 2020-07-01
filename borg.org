@@ -8,7 +8,7 @@
 #+TEXINFO_DIR_CATEGORY: Emacs
 #+TEXINFO_DIR_TITLE: Borg: (borg).
 #+TEXINFO_DIR_DESC: Assimilate Emacs packages as Git submodules
-#+SUBTITLE: for version 3.1.2 (v3.1.2-39-g5d87d34+1)
+#+SUBTITLE: for version 3.1.2 (v3.1.2-40-g100dad8+1)
 
 #+TEXINFO_DEFFN: t
 #+OPTIONS: H:4 num:4 toc:2
@@ -20,7 +20,7 @@ The Borg assimilate Emacs packages as Git submodules.  Borg is a
 bare-bones package manager for Emacs packages.
 
 #+TEXINFO: @noindent
-This manual is for Borg version 3.1.2 (v3.1.2-39-g5d87d34+1).
+This manual is for Borg version 3.1.2 (v3.1.2-40-g100dad8+1).
 
 #+BEGIN_QUOTE
 Copyright (C) 2016-2020 Jonas Bernoulli <jonas@bernoul.li>
@@ -113,19 +113,17 @@ relevant even when Borg was installed the way we just did.  Just
 saying.
 
 ** Bootstrapping
-*** _ :ignore:
+*** Bootstrapping using a seed
 
-To get started clone the repository of the ~emacs.g~ collective.
-Currently this is the only available collective and, for the time
-being this manual assume that you use that.
+To get started clone the repository of the ~emacs.g~ collective.  A
+"collective" is a starter-kit and/or configuration seed that relies on
+Borg as the package manager.  Most users end up using ~emacs.g~ merely
+as a bootstrapping seed and do not merge upstream changes after that.
 
-This collective already assimilated a few drones in addition to ~borg~
-itself, namely ~magit~, ~epkg~, ~use-package~, ~auto-compile~, ~git-modes~,
-~diff-hl~, and their dependencies.  These drones are not required by
-~borg~ but their use is highly recommended.
-
-Instructions on how to bootstrap a configuration without basing it on
-the ~emacs.g~ collective will be added in the near future.
+This collective already assimilats a few drones in addition to ~borg~
+itself, namely ~magit~, ~epkg~, ~use-package~, ~auto-compile~, ~git-modes~ and
+~diff-hl~, as well as their dependencies.  These drones are not required
+by ~borg~ but their use is highly recommended.
 
 Clone the ~emacs.g~ repository to either ~~/.emacs.d~, or for testing
 purposes to any other location.  This repository contains a ~Makefile~
@@ -145,7 +143,7 @@ run ~make bootstrap~ to get and configure all submodules (including the
 #+END_SRC
 
 If you cloned to somewhere other than ~~/.emacs.d~, then you can use
-that configuration using ~emacs -Q --load /path/to/emacs.g/init.elc~.
+that configuration using ~emacs -Q --load /path/to/emacs.g/init.el~.
 
 For drones whose upstream repositories are located on Github or Gitlab
 the ~emacs.g~ collective uses the ~ssh~ protocol by default, which is a
@@ -164,8 +162,115 @@ file:
   dir
 #+END_SRC
 
-You may discover more things that you'll want to ignore this way as you
-use ~borg~.
+You may discover more things that you'll want to ignore this way as
+you use ~borg~.
+
+*** Bootstrapping from scratch
+
+If you don't want to base your configuration on the ~emacs.g~
+starter-kit described in the previous section, then you have
+to do a few things manually.
+
+#+BEGIN_SRC sh
+  git init ~/.emacs.d
+  cd ~/.emacs.d
+#+END_SRC
+
+By default Borg installs packages inside the ~lib/~ subdirectory, but
+since you are starting from scratch, you may choose something else
+by setting the Git variable ~borg.drones-directory~ locally for this
+repository.
+
+Then you should add a ~Makefile~ containing at least:
+
+#+BEGIN_SRC makefile
+  DRONES_DIR = $(shell git config "borg.drones-directory" || echo "lib")
+
+  -include $(DRONES_DIR)/borg/borg.mk
+
+  bootstrap-borg:
+          @git submodule--helper clone --name borg --path $(DRONES_DIR)/borg \
+          --url git@github.com:emacscollective/borg.git
+          @cd $(DRONES_DIR)/borg; git symbolic-ref HEAD refs/heads/master
+          @cd $(DRONES_DIR)/borg; git reset --hard HEAD
+#+END_SRC
+
+Now you are probably tempted to run ~make bootstrap-borg~, but that is
+for bootstrapping /from a seed/, and what we are doing right now is to
+bootstrap /from scratch/.  In the process we are creating a seed but we
+are not there yet.  Instead run this:
+
+#+BEGIN_SRC sh
+  git submodule add --name borg git@github.com:emacscollective/borg.git lib/borg
+#+END_SRC
+
+Now that ~borg~ is available we can build all the assimilated packages (currently
+just ~borg~ itself) using ~make bootstrap~.
+
+The final obligatory step is to tell Emacs to initialize Borg by
+adding a simple ~init.el~ file containing at least:
+
+#+BEGIN_SRC emacs-lisp
+  (add-to-list 'load-path (expand-file-name "lib/borg" user-emacs-directory))
+  (require 'borg)
+  (borg-initialize)
+#+END_SRC
+
+Now you could create the initial commit but you could also delay that.
+
+#+BEGIN_SRC sh
+  git commit -m "Assimilate borg"
+#+END_SRC
+
+Now it is time to assimilate some other essential packages.  You could
+do so using ~M-x borg-assimilate~, but you would quickly notice that
+doing so without the help of the ~epkg~ package is quite cumbersome,
+so lets manually install that and its dependency first:
+
+#+BEGIN_SRC sh
+  git submodule add --name closql git@github.com:emacscollective/closql.git lib/closql
+  git submodule add --name emacsql git@github.com:skeeto/emacsql.git lib/emacsql
+  git submodule add --name epkg git@github.com:emacscollective/epkg.git lib/epkg
+  git config -f .gitmodules submodule.emacsql.no-byte-compile emacsql-pg.el
+  echo /epkgs/ >> .gitignore
+  git add .gitignore .gitmodules
+  make all
+  git commit -m "Assimilate epkg and dependencies"
+#+END_SRC
+
+Once you have done that and restarted Emacs, then you can Magit using
+Borg as described in [[*Assimilation]].  As part of that you should tell
+Magit status buffers to display submodules:
+
+#+BEGIN_SRC emacs-lisp
+  (with-eval-after-load 'magit
+    (magit-add-section-hook 'magit-status-sections-hook
+                            'magit-insert-modules
+                            'magit-insert-stashes
+                            'append))
+#+END_SRC
+
+Finally (look, nobody forced you to do this from scratch ;-) I
+strongly suggest that you make yourself familiar with my ~auto-compile~
+package.
+
+*** Migrating a legacy configuration
+
+If you are currently using Package and want to gently ease into using
+Borg alongside that, then you can proceed as described in [[*Use as
+secondary package manager]].
+
+If on the other hand you are already manually using Git modules,
+then you should proceed as described in [[*Bootstrapping from scratch]].
+Obviously "from scratch" does not apply this time around, so just skip
+steps like ~git init~.
+
+*** Using your configuration on another machine
+
+Getting started using your existing configuration on another machine
+works the same way as described in [[*Bootstrapping using a seed]].  The
+only difference is that instead of starting by cloning someone else's
+repository you start by cloning your own repository.
 
 *** Using https URLs
 
@@ -564,6 +669,15 @@ which is part of the ~borg~ package.
 
 * Variables
 
+- Variable: borg.drones-directory DIRECTORY
+
+  This Git variable can be used to override the name of the directory
+  that contains the drone submodules.  If specified, the value has to
+  be relative to the top-level directory of the repository.
+
+  Note that if you change the value of this variable, then you might
+  have to additionally edit ~~/.emacs.d/Makefile~.
+
 The values of the following variables are set at startup and should
 not be changed by the user.
 
@@ -571,7 +685,8 @@ not be changed by the user.
 
   The value of this constant is the directory beneath which drone
   submodules are placed.  The value is set based on the location of
-  the ~borg~ library and should not be changed.
+  the ~borg~ library and the Git variable ~borg.drones-directory~ if set,
+  and should not be changed.
 
 - Variable: borg-user-emacs-directory
 
@@ -593,7 +708,7 @@ The value of this Make variable has to be set in ~~/.emacs.d/Makefile~.
   A list of init files to be build by the Make targets ~build~ and
   ~build-init~.  See [[*Make targets]].
 
-The values of the borg-specific Git variables have to be set in the
+The values of these borg-specific Git variables have to be set in the
 file ~~/.emacs.d/.gitmodules~.  The variables ~borg.pushDefault~ and
 ~submodule.DRONE.remote~ are described in [[*Patching drones]].
 
