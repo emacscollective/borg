@@ -52,17 +52,17 @@
 (defun borg-elpa-initialize ()
   "Initialize Borg and Elpa in the correct order."
   (add-to-list 'package-directory-list borg-drones-directory)
-  (or (featurep 'epkg)
-      (let ((load-path
-             (nconc (cl-mapcan
-                     (lambda (name)
-                       (let ((dir (expand-file-name name borg-drones-directory)))
-                         (if (file-directory-p dir)
-                             (list dir)
-                           nil))) ; Hope that it is installed using package.el.
-                     '("emacsql" "closql" "epkg"))
-                    load-path)))
-        (require (quote epkg))))
+  (unless (featurep 'epkg)
+    (let ((load-path
+           (nconc (cl-mapcan
+                   (lambda (name)
+                     (let ((dir (expand-file-name name borg-drones-directory)))
+                       (if (file-directory-p dir)
+                           (list dir)
+                         nil))) ; Just hope that it is installed using elpa.
+                   '("emacsql" "closql" "epkg"))
+                  load-path)))
+      (require (quote epkg))))
   (borg-initialize)
   (package-initialize))
 
