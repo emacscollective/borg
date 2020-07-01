@@ -59,7 +59,7 @@
                          (if (file-directory-p dir)
                              (list dir)
                            nil))) ; Hope that it is installed using package.el.
-                     '("dash" "finalize" "emacsql" "closql" "epkg"))
+                     '("emacsql" "closql" "epkg"))
                     load-path)))
         (require (quote epkg))))
   (borg-initialize)
