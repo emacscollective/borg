@@ -4,14 +4,20 @@
 - Taught ~borg-load-path~ to use the ~elisp/~ directory automatically
   like it already uses the ~lisp/~ directory or the top-level.  The
   ~elisp/~ directory takes precedence over the other two directories.
+  a8bce40
 
 - Users can now specify the init files that should be compiled by
   setting the ~INIT_FILES~ variable in the top-level ~Makefile~.  If
   that is not specified, then the same files as before are compiled
-  (~init.el~ and ~<username>.el~).
+  (~init.el~ and ~<username>.el~).  35b63df
 
 - Each init file is now loaded before it is compiled.  Previously
-  this was only done for ~init.el~.
+  this was only done for ~init.el~.  f6a2e0c
+
+- The ~default-directory~ used during compilation and when presenting
+  the results did not always match, leading to broken links.  41b4494
+
+- Disabled clones are now being skipped when rebuilding.  bde5d4c
 
 * v3.1.2    2019/12/05
 
