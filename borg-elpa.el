@@ -38,6 +38,7 @@
 (require 'cl-lib)
 (require 'eieio)
 (require 'seq)
+(require 'subr-x)
 
 (require 'borg)
 (require 'package)
@@ -74,21 +75,20 @@
 (define-advice package-load-descriptor
     (:around (fn pkg-dir) borg)
   "For a Borg-installed package, use information from the Epkgs database."
-  (let ((dir (package--borg-clone-p pkg-dir)))
-    (if dir
-        (let* ((name (file-name-nondirectory (directory-file-name dir)))
-               (epkg (epkg name))
-               (desc (package-process-define-package
-                      (list 'define-package
-                            name
-                            (borg--package-version name)
-                            (if epkg
-                                (or (oref epkg summary)
-                                    "[No summary]")
-                              "[Installed using Borg, but not in Epkgs database]")
-                            ()))))
-          (setf (package-desc-dir desc) pkg-dir)
-          desc))
+  (if-let ((dir (package--borg-clone-p pkg-dir)))
+      (let* ((name (file-name-nondirectory (directory-file-name dir)))
+             (epkg (epkg name))
+             (desc (package-process-define-package
+                    (list 'define-package
+                          name
+                          (borg--package-version name)
+                          (if epkg
+                              (or (oref epkg summary)
+                                  "[No summary]")
+                            "[Installed using Borg, but not in Epkgs database]")
+                          ()))))
+        (setf (package-desc-dir desc) pkg-dir)
+        desc)
     (funcall fn pkg-dir)))
 
 (defun package--borg-clone-p (pkg-dir)
