@@ -31,7 +31,7 @@ General Public License for more details.
 @finalout
 @titlepage
 @title Borg User Manual
-@subtitle for version 3.1.2 (v3.1.2-27-gc0f6cf9+1)
+@subtitle for version 3.1.2 (v3.1.2-32-gbbea37f+1)
 @author Jonas Bernoulli
 @page
 @vskip 0pt plus 1filll
@@ -48,7 +48,7 @@ The Borg assimilate Emacs packages as Git submodules.  Borg is a
 bare-bones package manager for Emacs packages.
 
 @noindent
-This manual is for Borg version 3.1.2 (v3.1.2-27-gc0f6cf9+1).
+This manual is for Borg version 3.1.2 (v3.1.2-32-gbbea37f+1).
 
 @quotation
 Copyright (C) 2016-2020 Jonas Bernoulli <jonas@@bernoul.li>
@@ -353,7 +353,7 @@ minibuffer.
 @deffn Command borg-remove clone
 
 This command removes the cloned or assimilated package named CLONE,
-by removing the working tree from @code{borg-drone-directory}, regardless
+by removing the working tree from @code{borg-drones-directory}, regardless
 of whether that repository belongs to an assimilated package or a
 package that has only been cloned for review using @code{borg-clone}.  The
 Git directory is not removed.
@@ -620,7 +620,7 @@ remotes, then you should temporarily remove it using @code{git submodule
 The values of the following variables are set at startup and should
 not be changed by the user.
 
-@defvar borg-drone-directory
+@defvar borg-drones-directory
 
 The value of this constant is the directory beneath which drone
 submodules are placed.  The value is set based on the location of
@@ -929,7 +929,7 @@ This function returns a list of all cloned packages.
 
 The returned value includes the names of all drones, as well as the
 names of all other repositories that are located directly inside
-@code{borg-drone-directory} but aren't tracked as submodules.
+@code{borg-drones-directory} but aren't tracked as submodules.
 @end defun
 
 @defun borg-read-package prompt &optional edit-url

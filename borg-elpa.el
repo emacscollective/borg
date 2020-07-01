@@ -50,12 +50,12 @@
 
 (defun borg-elpa-initialize ()
   "Initialize Borg and Elpa in the correct order."
-  (add-to-list 'package-directory-list borg-drone-directory)
+  (add-to-list 'package-directory-list borg-drones-directory)
   (or (featurep 'epkg)
       (let ((load-path
              (nconc (cl-mapcan
                      (lambda (name)
-                       (let ((dir (expand-file-name name borg-drone-directory)))
+                       (let ((dir (expand-file-name name borg-drones-directory)))
                          (if (file-directory-p dir)
                              (list dir)
                            nil))) ; Hope that it is installed using package.el.
@@ -95,7 +95,7 @@
   ;; Currently `pkg-dir' is a `directory-file-name', but that might change.
   (setq pkg-dir (file-name-as-directory pkg-dir))
   (and (equal (file-name-directory (directory-file-name pkg-dir))
-              borg-drone-directory)
+              borg-drones-directory)
        pkg-dir))
 
 (defvar borg--version-tag-glob "*[0-9]*")

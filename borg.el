@@ -71,7 +71,10 @@
 (defvar git-commit-mode-map)
 (defvar compilation-mode-font-lock-keywords)
 
-(defvar borg-drone-directory
+(define-obsolete-variable-alias 'borg-drone-directory
+  'borg-drones-directory "Borg 3.2.0")
+
+(defvar borg-drones-directory
   (let* ((libdir (file-name-directory (directory-file-name
                                        (file-name-directory
                                         (or load-file-name buffer-file-name)))))
@@ -88,7 +91,7 @@
 If you need to change this, then do so before loading `borg'.")
 
 (defconst borg-user-emacs-directory
-  (file-name-directory (directory-file-name borg-drone-directory))
+  (file-name-directory (directory-file-name borg-drones-directory))
   "Directory beneath which additional per-user Emacs-specific files are placed.
 
 The value of this variable is usually the same as that of
@@ -135,7 +138,7 @@ node `(borg)Using https URLs'.")
 
 (defun borg-worktree (clone)
   "Return the top-level of the working tree of the package named CLONE."
-  (expand-file-name (file-name-as-directory clone) borg-drone-directory))
+  (expand-file-name (file-name-as-directory clone) borg-drones-directory))
 
 (defun borg-gitdir (clone)
   "Return the Git directory of the package named CLONE.
@@ -252,7 +255,7 @@ included in the returned value."
               (setcdr elt plist))))
         (cl-sort alist #'string< :key #'car))
     (let* ((default-directory borg-top-level-directory)
-           (prefix (file-relative-name borg-drone-directory))
+           (prefix (file-relative-name borg-drones-directory))
            (offset (+ (length prefix) 50)))
       (cl-mapcan (lambda (line)
                    (and (string-equal (substring line 50 offset) prefix)
@@ -263,12 +266,12 @@ included in the returned value."
   "Return a list of cloned packages.
 
 The returned value includes the names of all packages that were
-cloned into `borg-drone-directory', including clones that have
+cloned into `borg-drones-directory', including clones that have
 not been assimilated yet."
   (cl-mapcan (lambda (file)
                (and (file-directory-p file)
                     (list (file-name-nondirectory file))))
-             (directory-files borg-drone-directory t "\\`[^.]")))
+             (directory-files borg-drones-directory t "\\`[^.]")))
 
 (defun borg-read-package (prompt &optional edit-url)
   "Read a package name and URL, and return them as a list.
@@ -759,7 +762,7 @@ with a prefix argument, then also read the url in the minibuffer."
 (defun borg-remove (clone)
   "Remove the cloned or assimilated package named CLONE.
 
-Remove the working tree from `borg-drone-directory', regardless
+Remove the working tree from `borg-drones-directory', regardless
 of whether that repository belongs to an assimilated package or a
 package that has only been cloned for review using `borg-clone'.
 The Git directory is not removed."
@@ -836,7 +839,7 @@ Formatting is according to the commit message conventions."
                                 "git" "describe" "--tags" "--always"))
                         "REMOVED"))))))
      (process-lines "git" "diff-index" "--name-status" "--cached" "HEAD"
-                    "--" (file-relative-name borg-drone-directory)))))
+                    "--" (file-relative-name borg-drones-directory)))))
 
 ;;; Internal Utilities
 

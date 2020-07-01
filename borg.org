@@ -8,7 +8,7 @@
 #+TEXINFO_DIR_CATEGORY: Emacs
 #+TEXINFO_DIR_TITLE: Borg: (borg).
 #+TEXINFO_DIR_DESC: Assimilate Emacs packages as Git submodules
-#+SUBTITLE: for version 3.1.2 (v3.1.2-27-gc0f6cf9+1)
+#+SUBTITLE: for version 3.1.2 (v3.1.2-32-gbbea37f+1)
 
 #+TEXINFO_DEFFN: t
 #+OPTIONS: H:4 num:4 toc:2
@@ -20,7 +20,7 @@ The Borg assimilate Emacs packages as Git submodules.  Borg is a
 bare-bones package manager for Emacs packages.
 
 #+TEXINFO: @noindent
-This manual is for Borg version 3.1.2 (v3.1.2-27-gc0f6cf9+1).
+This manual is for Borg version 3.1.2 (v3.1.2-32-gbbea37f+1).
 
 #+BEGIN_QUOTE
 Copyright (C) 2016-2020 Jonas Bernoulli <jonas@bernoul.li>
@@ -279,7 +279,7 @@ commit messages.
 - Command: borg-remove clone
 
   This command removes the cloned or assimilated package named CLONE,
-  by removing the working tree from ~borg-drone-directory~, regardless
+  by removing the working tree from ~borg-drones-directory~, regardless
   of whether that repository belongs to an assimilated package or a
   package that has only been cloned for review using ~borg-clone~.  The
   Git directory is not removed.
@@ -510,7 +510,7 @@ which is part of the ~borg~ package.
 The values of the following variables are set at startup and should
 not be changed by the user.
 
-- Variable: borg-drone-directory
+- Variable: borg-drones-directory
 
   The value of this constant is the directory beneath which drone
   submodules are placed.  The value is set based on the location of
@@ -796,7 +796,7 @@ build your own tools on top of Borg.
 
   The returned value includes the names of all drones, as well as the
   names of all other repositories that are located directly inside
-  ~borg-drone-directory~ but aren't tracked as submodules.
+  ~borg-drones-directory~ but aren't tracked as submodules.
 
 - Function: borg-read-package prompt &optional edit-url
 
