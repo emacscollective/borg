@@ -66,14 +66,16 @@
   (borg-initialize)
   (package-initialize))
 
-(define-advice package-activate-1
-    (:around (fn pkg-desc &optional reload deps) borg)
+(defun package-activate-1--borg-handle-activation
+    (fn pkg-desc &optional reload deps)
   "For a Borg-installed package, let Borg handle the activation."
   (or (package--borg-clone-p (package-desc-dir pkg-desc))
       (funcall fn pkg-desc reload deps)))
 
-(define-advice package-load-descriptor
-    (:around (fn pkg-dir) borg)
+(advice-add 'package-activate-1 :around
+            'package-activate-1--borg-handle-activation)
+
+(defun package-load-descriptor--borg-use-database (fn pkg-dir)
   "For a Borg-installed package, use information from the Epkgs database."
   (if-let ((dir (package--borg-clone-p pkg-dir)))
       (let* ((name (file-name-nondirectory (directory-file-name dir)))
@@ -90,6 +92,9 @@
         (setf (package-desc-dir desc) pkg-dir)
         desc)
     (funcall fn pkg-dir)))
+
+(advice-add 'package-load-descriptor :around
+            'package-load-descriptor--borg-use-database)
 
 (defun package--borg-clone-p (pkg-dir)
   ;; Currently `pkg-dir' is a `directory-file-name', but that might change.
