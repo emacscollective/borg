@@ -31,7 +31,7 @@ General Public License for more details.
 @finalout
 @titlepage
 @title Borg User Manual
-@subtitle for version 3.1.2 (v3.1.2-32-gbbea37f+1)
+@subtitle for version 3.1.2 (v3.1.2-39-g5d87d34+1)
 @author Jonas Bernoulli
 @page
 @vskip 0pt plus 1filll
@@ -48,7 +48,7 @@ The Borg assimilate Emacs packages as Git submodules.  Borg is a
 bare-bones package manager for Emacs packages.
 
 @noindent
-This manual is for Borg version 3.1.2 (v3.1.2-32-gbbea37f+1).
+This manual is for Borg version 3.1.2 (v3.1.2-39-g5d87d34+1).
 
 @quotation
 Copyright (C) 2016-2020 Jonas Bernoulli <jonas@@bernoul.li>
@@ -85,7 +85,13 @@ General Public License for more details.
 
 Installation
 
+* Use as secondary package manager::
+* Bootstrapping::
+
+Bootstrapping
+
 * Using https URLs::
+
 
 @end detailmenu
 @end menu
@@ -111,6 +117,68 @@ which it was announced.
 
 @node Installation
 @chapter Installation
+
+Borg can be used by itself, in which case it has to be bootstrapped.
+This is how Borg originally was intended to be used exclusively but
+nowadays you may also choose to use it merely as a secondary package
+manager, in which case Borg itself is installed using Package.
+
+@menu
+* Use as secondary package manager::
+* Bootstrapping::
+@end menu
+
+@node Use as secondary package manager
+@section Use as secondary package manager
+
+To use Borg as a secondary package manager alongside Package, begin by
+installing the former using the latter.  Borg is only available from
+Melpa, so you have to add that first.
+
+@lisp
+(add-to-list 'package-archives
+             (cons "melpa" "https://melpa.org/packages/")
+             t)
+@end lisp
+
+Then you have to @code{M-x package-refresh-contents RET} before you can @code{M-x
+package-install RET borg RET}.  Doing that should add a verbose variant
+of this to your init file:
+
+@lisp
+(custom-set-variables
+ '(package-selected-packages '(borg)))
+@end lisp
+
+Then you have to make the two package managers aware of one another by
+replacing the call to @code{package-initialize} in your init file with this:
+
+@lisp
+(if (require 'borg-elpa nil t)
+    (borg-elpa-initialize)
+  (package-initialize))
+@end lisp
+
+Just like Package (aka Elpa) defaults to installing packages in @code{elpa/},
+Borg defaults to installing them in @code{borg/}.  (When using both package
+managers, that is.  If used by itself, then Borg defaults to using
+@code{lib/}.)  If you want to use another directory, then you can do so by
+setting the Git variable @code{borg.drones-directory}.
+
+You should also add a @code{Makefile} containing:
+
+@example
+BORG_SECONDARY_P = true
+include $(shell find -L elpa -maxdepth 1 -regex '.*/borg-[.0-9]*' |\
+  sort | tail -n 1)/borg.mk
+@end example
+
+Despite its title, many things mentioned in the next section are
+relevant even when Borg was installed the way we just did.  Just
+saying.
+
+@node Bootstrapping
+@section Bootstrapping
 
 To get started clone the repository of the @code{emacs.g} collective.
 Currently this is the only available collective and, for the time
@@ -169,7 +237,7 @@ use @code{borg}.
 @end menu
 
 @node Using https URLs
-@section Using https URLs
+@subsection Using https URLs
 
 For drones whose upstream repositories are located on Github or Gitlab
 the @code{emacs.g} collective uses the @code{ssh} protocol by default, which is a

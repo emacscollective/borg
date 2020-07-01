@@ -8,7 +8,7 @@
 #+TEXINFO_DIR_CATEGORY: Emacs
 #+TEXINFO_DIR_TITLE: Borg: (borg).
 #+TEXINFO_DIR_DESC: Assimilate Emacs packages as Git submodules
-#+SUBTITLE: for version 3.1.2 (v3.1.2-32-gbbea37f+1)
+#+SUBTITLE: for version 3.1.2 (v3.1.2-39-g5d87d34+1)
 
 #+TEXINFO_DEFFN: t
 #+OPTIONS: H:4 num:4 toc:2
@@ -20,7 +20,7 @@ The Borg assimilate Emacs packages as Git submodules.  Borg is a
 bare-bones package manager for Emacs packages.
 
 #+TEXINFO: @noindent
-This manual is for Borg version 3.1.2 (v3.1.2-32-gbbea37f+1).
+This manual is for Borg version 3.1.2 (v3.1.2-39-g5d87d34+1).
 
 #+BEGIN_QUOTE
 Copyright (C) 2016-2020 Jonas Bernoulli <jonas@bernoul.li>
@@ -57,6 +57,63 @@ which it was announced.
 [fn:1] https://emacsair.me/2016/05/17/assimilate-emacs-packages-as-git-submodules.
 
 * Installation
+*** _ :ignore:
+
+Borg can be used by itself, in which case it has to be bootstrapped.
+This is how Borg originally was intended to be used exclusively but
+nowadays you may also choose to use it merely as a secondary package
+manager, in which case Borg itself is installed using Package.
+
+** Use as secondary package manager
+
+To use Borg as a secondary package manager alongside Package, begin by
+installing the former using the latter.  Borg is only available from
+Melpa, so you have to add that first.
+
+#+BEGIN_SRC emacs-lisp
+  (add-to-list 'package-archives
+               (cons "melpa" "https://melpa.org/packages/")
+               t)
+#+END_SRC
+
+Then you have to ~M-x package-refresh-contents RET~ before you can ~M-x
+package-install RET borg RET~.  Doing that should add a verbose variant
+of this to your init file:
+
+#+BEGIN_SRC emacs-lisp
+  (custom-set-variables
+   '(package-selected-packages '(borg)))
+#+END_SRC
+
+Then you have to make the two package managers aware of one another by
+replacing the call to ~package-initialize~ in your init file with this:
+
+#+BEGIN_SRC emacs-lisp
+  (if (require 'borg-elpa nil t)
+      (borg-elpa-initialize)
+    (package-initialize))
+#+END_SRC
+
+Just like Package (aka Elpa) defaults to installing packages in ~elpa/~,
+Borg defaults to installing them in ~borg/~.  (When using both package
+managers, that is.  If used by itself, then Borg defaults to using
+~lib/~.)  If you want to use another directory, then you can do so by
+setting the Git variable ~borg.drones-directory~.
+
+You should also add a ~Makefile~ containing:
+
+#+BEGIN_SRC makefile
+  BORG_SECONDARY_P = true
+  include $(shell find -L elpa -maxdepth 1 -regex '.*/borg-[.0-9]*' |\
+    sort | tail -n 1)/borg.mk
+#+END_SRC
+
+Despite its title, many things mentioned in the next section are
+relevant even when Borg was installed the way we just did.  Just
+saying.
+
+** Bootstrapping
+*** _ :ignore:
 
 To get started clone the repository of the ~emacs.g~ collective.
 Currently this is the only available collective and, for the time
@@ -110,7 +167,7 @@ file:
 You may discover more things that you'll want to ignore this way as you
 use ~borg~.
 
-** Using https URLs
+*** Using https URLs
 
 For drones whose upstream repositories are located on Github or Gitlab
 the ~emacs.g~ collective uses the ~ssh~ protocol by default, which is a
