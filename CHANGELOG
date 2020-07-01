@@ -30,6 +30,9 @@
 - The variable ~borg-drones-directory~ was previously known as
   ~borg-drone-directory~.
 
+- When Borg is used as secondary package manager, then ~borg.mk~ is now
+  usable as well.
+
 * v3.1.2    2019/12/05
 
 - The new option ~borg-rewrite-urls-alist~ allows rewriting certain urls

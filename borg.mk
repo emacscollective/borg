@@ -3,12 +3,22 @@
 # Author: Jonas Bernoulli <jonas@bernoul.li>
 # License: GPL v3 <https://www.gnu.org/licenses/gpl-3.0.txt>
 
+BORG_DIR := $(dir $(lastword $(MAKEFILE_LIST)))
+
 -include ../../etc/borg/config.mk
 
-DRONES_DIR ?= $(shell git config "borg.drones-directory" || echo "lib")
+ifeq "$(BORG_SECONDARY_P)" "true"
+  DRONES_DIR ?= $(shell git config "borg.drones-directory" || echo "elpa")
+  BORG_ARGUMENTS = -L $(BORG_DIR) --load borg-elpa \
+  --funcall borg-elpa-initialize
+else
+  DRONES_DIR ?= $(shell git config "borg.drones-directory" || echo "lib")
+  BORG_ARGUMENTS = -L $(BORG_DIR) --load borg \
+  --funcall borg-initialize
+endif
 
 EMACS           ?= emacs
-EMACS_ARGUMENTS ?= -Q
+EMACS_ARGUMENTS ?= -Q --batch
 
 .PHONY: all help clean clean-init build build-init quick bootstrap
 .FORCE:
@@ -28,12 +38,18 @@ SILENCIO += --eval "(fset 'message\
 help::
 	$(info make [all|build]     = rebuild all drones and init files)
 	$(info make quick           = rebuild most drones and init files)
+ifeq "$(BORG_SECONDARY_P)" "true"
+	$(info make $(DRONES_DIR)/DRONE      = rebuild DRONE)
+else
 	$(info make $(DRONES_DIR)/DRONE       = rebuild DRONE)
+endif
 	$(info make build-init      = rebuild init files)
 	$(info make tangle-init     = recreate init.el from init.org)
 	$(info make clean           = remove all byte-code files)
 	$(info make clean-init      = remove init files)
+ifneq "$(BORG_SECONDARY_P)" "true"
 	$(info make bootstrap-borg  = bootstrap borg itself)
+endif
 	$(info make bootstrap       = bootstrap collective or new drones)
 	@true
 
@@ -44,40 +60,36 @@ clean-init:
 	@rm -f init.elc $(INIT_FILES:.el=.elc)
 
 build: clean-init
-	@$(EMACS) $(EMACS_ARGUMENTS) \
-	--batch -L $(DRONES_DIR)/borg --load borg $(SILENCIO) \
-	--funcall borg-initialize \
+	@$(EMACS) $(EMACS_ARGUMENTS) $(SILENCIO) \
+	$(BORG_ARGUMENTS) \
 	--funcall borg-batch-rebuild $(INIT_FILES) 2>&1
 
 build-init: clean-init
 	@$(EMACS) $(EMACS_ARGUMENTS) \
-	--batch -L $(DRONES_DIR)/borg --load borg \
-	--funcall borg-initialize \
+	$(BORG_ARGUMENTS) \
 	--funcall borg-batch-rebuild-init $(INIT_FILES) 2>&1
 
 tangle-init: init.el
 init.el: init.org
 	@$(EMACS) $(EMACS_ARGUMENTS) \
-	--batch --load org \
+	--load org \
 	--eval '(org-babel-tangle-file "init.org")' 2>&1
 
 quick: clean-init
-	@$(EMACS) $(EMACS_ARGUMENTS) \
-	--batch -L $(DRONES_DIR)/borg --load borg $(SILENCIO) \
-	--funcall borg-initialize \
-	--eval  '(borg-batch-rebuild t)' 2>&1
+	@$(EMACS) $(EMACS_ARGUMENTS) $(SILENCIO) \
+	$(BORG_ARGUMENTS) \
+	--eval '(borg-batch-rebuild t)' 2>&1
 
-$(DRONES_DIR)/borg/borg.mk: ;
+$(BORG_DIR)/borg.mk: ;
 lib/%: .FORCE
-	@$(EMACS) $(EMACS_ARGUMENTS) \
-	--batch -L $(DRONES_DIR)/borg --load borg $(SILENCIO) \
-	--funcall borg-initialize \
-	--eval  '(borg-build "$*")' 2>&1
+	@$(EMACS) $(EMACS_ARGUMENTS) $(SILENCIO) \
+	$(BORG_ARGUMENTS) \
+	--eval '(borg-build "$*")' 2>&1
 
 bootstrap:
 	@printf "\n=== Running 'git submodule init' ===\n\n"
 	@git submodule init
-	@printf "\n=== Running '$(DRONES_DIR)/borg/borg.sh' ===\n"
-	@$(DRONES_DIR)/borg/borg.sh
+	@printf "\n=== Running '$(BORG_DIR)/borg.sh' ===\n"
+	@$(BORG_DIR)/borg.sh
 	@printf "\n=== Running 'make build' ===\n\n"
 	@make build
