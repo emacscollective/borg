@@ -72,16 +72,18 @@
 (defvar compilation-mode-font-lock-keywords)
 
 (defvar borg-drone-directory
-  (expand-file-name (file-name-as-directory "lib")
-                    (file-name-directory
-                     (directory-file-name
-                      ;; If Borg was used to install Borg,
-                      ;; then the above is redundant, but
-                      ;; maybe Elpa was used instead.
-                      (file-name-directory
-                       (directory-file-name
-                        (file-name-directory
-                         (or load-file-name buffer-file-name)))))))
+  (let* ((libdir (file-name-directory (directory-file-name
+                                       (file-name-directory
+                                        (or load-file-name buffer-file-name)))))
+         (topdir (file-name-directory (directory-file-name libdir))))
+    (or (ignore-errors
+          (let ((default-directory topdir))
+            (expand-file-name
+             (car (process-lines "git" "config" "borg.drones-directory")))))
+        (if (ignore-errors
+              (file-equal-p libdir (bound-and-true-p 'package-user-dir)))
+            (expand-file-name (file-name-as-directory "lib") topdir)
+          libdir)))
   "Directory beneath which drone submodules are placed.
 If you need to change this, then do so before loading `borg'.")
 
@@ -243,10 +245,12 @@ included in the returned value."
                                  value)))
               (setcdr elt plist))))
         (cl-sort alist #'string< :key #'car))
-    (cl-mapcan (lambda (line)
-                 (and (string-equal (substring line 50 54) "lib/")
-                      (list (substring line 54))))
-               (let ((default-directory borg-user-emacs-directory))
+    (let* ((default-directory borg-user-emacs-directory)
+           (prefix (file-relative-name borg-drone-directory))
+           (offset (+ (length prefix) 50)))
+      (cl-mapcan (lambda (line)
+                   (and (string-equal (substring line 50 offset) prefix)
+                        (list (substring line offset))))
                  (process-lines "git" "submodule--helper" "list")))))
 
 (defun borg-clones ()
@@ -763,7 +767,7 @@ The Git directory is not removed."
       (borg--maybe-absorb-gitdir clone))
     (if (member clone (borg-drones))
         (let ((default-directory borg-user-emacs-directory))
-          (borg--call-git nil "rm" "--force" topdir))
+          (borg--call-git nil "rm" "--force" (file-relative-name topdir)))
       (delete-directory topdir t t)))
   (borg--refresh-magit)
   (message "Removing %s...done" clone))
@@ -825,8 +829,8 @@ Formatting is according to the commit message conventions."
                           (car (process-lines
                                 "git" "describe" "--tags" "--always"))
                         "REMOVED"))))))
-     (process-lines
-      "git" "diff-index" "--name-status" "--cached" "HEAD" "--" "lib/"))))
+     (process-lines "git" "diff-index" "--name-status" "--cached" "HEAD"
+                    "--" (file-relative-name borg-drone-directory)))))
 
 ;;; Internal Utilities
 

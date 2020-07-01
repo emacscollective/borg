@@ -19,6 +19,9 @@
 
 - Disabled clones are now being skipped when rebuilding.  bde5d4c
 
+- It is now possible to place the drones in a directory that is named
+  something other than ~lib~ using the ~borg.drones-directory~ variable.
+
 * v3.1.2    2019/12/05
 
 - The new option ~borg-rewrite-urls-alist~ allows rewriting certain urls

@@ -5,6 +5,8 @@
 
 -include ../../etc/borg/config.mk
 
+DRONES_DIR ?= $(shell git config "borg.drones-directory" || echo "lib")
+
 EMACS           ?= emacs
 EMACS_ARGUMENTS ?= -Q
 
@@ -26,7 +28,7 @@ SILENCIO += --eval "(fset 'message\
 help::
 	$(info make [all|build]     = rebuild all drones and init files)
 	$(info make quick           = rebuild most drones and init files)
-	$(info make lib/DRONE       = rebuild DRONE)
+	$(info make $(DRONES_DIR)/DRONE       = rebuild DRONE)
 	$(info make build-init      = rebuild init files)
 	$(info make tangle-init     = recreate init.el from init.org)
 	$(info make clean           = remove all byte-code files)
@@ -43,13 +45,13 @@ clean-init:
 
 build: clean-init
 	@$(EMACS) $(EMACS_ARGUMENTS) \
-	--batch -L lib/borg --load borg $(SILENCIO) \
+	--batch -L $(DRONES_DIR)/borg --load borg $(SILENCIO) \
 	--funcall borg-initialize \
 	--funcall borg-batch-rebuild $(INIT_FILES) 2>&1
 
 build-init: clean-init
 	@$(EMACS) $(EMACS_ARGUMENTS) \
-	--batch -L lib/borg --load borg \
+	--batch -L $(DRONES_DIR)/borg --load borg \
 	--funcall borg-initialize \
 	--funcall borg-batch-rebuild-init $(INIT_FILES) 2>&1
 
@@ -61,21 +63,21 @@ init.el: init.org
 
 quick: clean-init
 	@$(EMACS) $(EMACS_ARGUMENTS) \
-	--batch -L lib/borg --load borg $(SILENCIO) \
+	--batch -L $(DRONES_DIR)/borg --load borg $(SILENCIO) \
 	--funcall borg-initialize \
 	--eval  '(borg-batch-rebuild t)' 2>&1
 
-lib/borg/borg.mk: ;
+$(DRONES_DIR)/borg/borg.mk: ;
 lib/%: .FORCE
 	@$(EMACS) $(EMACS_ARGUMENTS) \
-	--batch -L lib/borg --load borg $(SILENCIO) \
+	--batch -L $(DRONES_DIR)/borg --load borg $(SILENCIO) \
 	--funcall borg-initialize \
 	--eval  '(borg-build "$*")' 2>&1
 
 bootstrap:
 	@printf "\n=== Running 'git submodule init' ===\n\n"
 	@git submodule init
-	@printf "\n=== Running 'lib/borg/borg.sh' ===\n"
-	@lib/borg/borg.sh
+	@printf "\n=== Running '$(DRONES_DIR)/borg/borg.sh' ===\n"
+	@$(DRONES_DIR)/borg/borg.sh
 	@printf "\n=== Running 'make build' ===\n\n"
 	@make build
