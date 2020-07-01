@@ -95,8 +95,14 @@ The value of this variable is usually the same as that of
 `user-emacs-directory', except when Emacs is started with
 `emacs -q -l /path/to/init.el'.")
 
+(defconst borg-top-level-directory
+  (let ((default-directory borg-user-emacs-directory))
+    (file-name-as-directory
+     (car (process-lines "git" "rev-parse" "--show-toplevel"))))
+  "The top-level of repository containing `borg-user-emacs-directory'.")
+
 (defconst borg-gitmodules-file
-  (expand-file-name ".gitmodules" borg-user-emacs-directory)
+  (expand-file-name ".gitmodules" borg-top-level-directory)
   "The \".gitmodules\" file of the drone repository.")
 
 ;;; Variables
@@ -137,7 +143,7 @@ node `(borg)Using https URLs'.")
 Always return `<borg-user-emacs-directory>/.git/modules/<CLONE>',
 even when this repository's Git directory is actually located
 inside the working tree."
-  (let* ((default-directory borg-user-emacs-directory)
+  (let* ((default-directory borg-top-level-directory)
          (super (ignore-errors
                   (car (process-lines "git" "rev-parse" "--git-dir")))))
     (if super
@@ -245,7 +251,7 @@ included in the returned value."
                                  value)))
               (setcdr elt plist))))
         (cl-sort alist #'string< :key #'car))
-    (let* ((default-directory borg-user-emacs-directory)
+    (let* ((default-directory borg-top-level-directory)
            (prefix (file-relative-name borg-drone-directory))
            (offset (+ (length prefix) 50)))
       (cl-mapcan (lambda (line)
@@ -711,7 +717,7 @@ build and activate the drone."
           (list (< (prefix-numeric-value current-prefix-arg) 0))))
   (borg--maybe-confirm-unsafe-action "assimilate" package url)
   (message "Assimilating %s..." package)
-  (let ((default-directory borg-user-emacs-directory))
+  (let ((default-directory borg-top-level-directory))
     (borg--maybe-reuse-gitdir package)
     (borg--call-git package "submodule" "add" "--name" package url
                     (file-relative-name (borg-worktree package)))
@@ -738,7 +744,7 @@ with a prefix argument, then also read the url in the minibuffer."
         (topdir (borg-worktree package)))
     (when (file-exists-p topdir)
       (user-error "%s already exists" topdir))
-    (let ((default-directory borg-user-emacs-directory))
+    (let ((default-directory borg-top-level-directory))
       (borg--maybe-reuse-gitdir package)
       (unless (file-exists-p topdir)
         (borg--call-git package "clone"
@@ -766,7 +772,7 @@ The Git directory is not removed."
         (user-error "%s contains uncommitted changes" topdir))
       (borg--maybe-absorb-gitdir clone))
     (if (member clone (borg-drones))
-        (let ((default-directory borg-user-emacs-directory))
+        (let ((default-directory borg-top-level-directory))
           (borg--call-git nil "rm" "--force" (file-relative-name topdir)))
       (delete-directory topdir t t)))
   (borg--refresh-magit)
