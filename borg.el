@@ -357,8 +357,7 @@ load \"`user-emacs-directory'/etc/borg/init.el\", if that exists."
         (skipped 0)
         (initialized 0)
         (borg--gitmodule-cache (borg-drones 'raw)))
-    (dolist (drone borg--gitmodule-cache)
-      (setq  drone (car drone))
+    (pcase-dolist (`(,drone) borg--gitmodule-cache)
       (cond
        ((equal (borg-get drone "disabled") "true")
         (cl-incf skipped))
