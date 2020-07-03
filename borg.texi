@@ -31,7 +31,7 @@ General Public License for more details.
 @finalout
 @titlepage
 @title Borg User Manual
-@subtitle for version 3.1.2 (v3.1.2-40-g100dad8+1)
+@subtitle for version 3.1.2 (v3.1.2-45-g53ae5cc+1)
 @author Jonas Bernoulli
 @page
 @vskip 0pt plus 1filll
@@ -48,7 +48,7 @@ The Borg assimilate Emacs packages as Git submodules.  Borg is a
 bare-bones package manager for Emacs packages.
 
 @noindent
-This manual is for Borg version 3.1.2 (v3.1.2-40-g100dad8+1).
+This manual is for Borg version 3.1.2 (v3.1.2-45-g53ae5cc+1).
 
 @quotation
 Copyright (C) 2016-2020 Jonas Bernoulli <jonas@@bernoul.li>
@@ -95,6 +95,7 @@ Bootstrapping
 * Migrating a legacy configuration::
 * Using your configuration on another machine::
 * Using https URLs::
+* Missing commits and repositories::
 
 
 @end detailmenu
@@ -190,6 +191,7 @@ saying.
 * Migrating a legacy configuration::
 * Using your configuration on another machine::
 * Using https URLs::
+* Missing commits and repositories::
 @end menu
 
 @node Bootstrapping using a seed
@@ -229,6 +231,9 @@ For drones whose upstream repositories are located on Github or Gitlab
 the @code{emacs.g} collective uses the @code{ssh} protocol by default, which is a
 problem if you don't have accounts there and have not properly setup
 your keys.  See @ref{Using https URLs}.
+
+When running the @code{bootstrap} target you might get errors about certain
+commits not being available, but fear not!  In @ref{Missing commits and repositories} we discuss these complications.
 
 During package compilation you may notice the submodules relating to
 those packages become dirty due to the compilation outputs not being
@@ -396,6 +401,132 @@ If you have already run @code{make bootstrap}, then you also have to edit
 cd ~/.emacs.d
 sed -i "s|git@@github.com:|https://github.com/|g" .git/config
 sed -i "s|git@@gitlab.com:|https://gitlab.com/|g" .git/config
+@end example
+
+@node Missing commits and repositories
+@subsection Missing commits and repositories
+
+While bootstrapping it can happen that a commit or even a complete
+repository is missing.  That can be scary but understanding what is
+going on and how to deal with it goes a long way.
+
+So what does it look like when that happens? Here are two typical
+examples that you might see when run @code{make bootstrap}.
+
+Some commit is missing:
+
+@example
+--- [hl-todo] ---
+
+Cloning into '/home/you/.emacs.d/lib/hl-todo'...
+remote: Enumerating objects: 44, done.
+remote: Counting objects: 100% (44/44), done.
+remote: Compressing objects: 100% (29/29), done.
+remote: Total 367 (delta 23), reused 36 (delta 15), pack-reused 323
+Receiving objects: 100% (367/367), 71.98 KiB | 837.00 KiB/s, done.
+Resolving deltas: 100% (158/158), done.
+fatal: Could not parse object '02bda39bf2d2b77168255d9e49c78b95b0bd314a'.
+futile: Checkout of '02bda39bf2d2b77168255d9e49c78b95b0bd314a' into submodule path 'lib/hl-todo' failed
+HEAD is now at 3bba459 README.md: Cosmetics
+@end example
+
+Some repository is missing:
+
+@example
+--- [paren-face] ---
+
+Cloning into '/home/you/.emacs.d/lib/paren-face'...
+ERROR: Repository not found.
+fatal: Could not read from remote repository.
+
+Please make sure you have the correct access rights
+and the repository exists.
+fatal: clone of 'git@@github.com:tarsius/broken-url.git' into submodule path '/home/you/.emacs.d/lib/paren-face' failed
+futile: Clone of any remote into submodule path 'lib/paren-face' failed
+@end example
+
+Both of these packages are not essential and I recommend that you
+delay figuring out what is going on exactly and that you instead
+proceed bootstrapping the rest of your configuration.  Once you are
+done with, then you have an Emacs setup that allows you to be
+efficiently investigate the above issues.
+
+To skip a package you have to "deinit" the submodule and also remove
+the empty directory that represents the no longer initialized module:
+
+@example
+$ git submodule deinit lib/paren-face/
+Cleared directory 'lib/paren-face'
+error: could not lock config file .git/modules/paren-face/config: No such file or directory
+warning: Could not unset core.worktree setting in submodule 'lib/paren-face'
+Submodule 'paren-face' (git@@github.com:tarsius/broken-url.git) unregistered for path 'lib/paren-face'
+$ rm -r lib/paren-face
+$ git status
+On branch master
+Your branch is up to date with 'origin/master'.
+
+Changes not staged for commit:
+        deleted:    lib/paren-face
+
+no changes added to commit
+@end example
+
+Ignore the irrelevant warnings and that the package is now considered deleted.
+
+Now @code{make bootstrap} has to resume where it left of, more or less.  This
+make target is equal to these three commands:
+
+@example
+$ git submodule init
+$ lib/borg/borg.sh
+$ make build
+@end example
+
+The first already succeeded at this point and the second failed
+somewhere along the way, so lets run that again.  It will make some
+noise about the packages that is has already dealt with, but you can
+just ignore that.  Then it should silently skip over the package that
+you have just disabled and proceed with the rest, proceeding towards
+the end of the alphabet.
+
+So now that everything is peachy you can start Emacs and look into
+what went wrong.  Here are some things that could have happened and
+how to deal with them.
+
+The commit that you have referenced was removed from the upstream
+epository.  Pick another commit instead and resume the bootstrap.
+
+@example
+$ git submodule update --init lib/hl-todo
+Submodule 'hl-todo' (git@@github.com:tarsius/hl-todo.git) registered for path 'lib/hl-todo'
+fatal: remote error: upload-pack: not our ref 02bda39bf2d2b77168255d9e49c78b95b0bd314a
+Fetched in submodule path 'lib/hl-todo', but it did not contain 02bda39bf2d2b77168255d9e49c78b95b0bd314a. Direct fetching of that commit failed.
+$ cd lib/hl-todo
+$ git reset --hard
+$ cd ../..
+$ git add lib/hl-todo
+$ git commit -m '"Update" hl-todo'
+@end example
+
+The repository was moved.  Update the url and resume the bootstrap.
+
+@example
+$ git config --file .gitmodules submodule.paren-face.url git@@github.com:tarsius/paren-face.git
+$ git submodule update --init lib/paren-face
+Submodule 'paren-face' (git@@github.com:tarsius/paren-face.git) registered for path 'lib/paren-face'
+Cloning into '/home/you/.emacs.d/lib/paren-face'...
+Submodule path 'lib/paren-face': checked out 'eb4a51b8ef455e0914108105e7c0008d675457cc'
+$ git add .gitmodules
+$ git commit -m "paren-face: Update url"
+@end example
+
+The repository was removed and no copy remains available anywhere.
+This is the worst case scenario and unlikely to become a reality.
+Remove the package for good.
+
+@example
+$ git rm lib/goner
+$ git commit -m "Remove goner"
 @end example
 
 @node Startup
