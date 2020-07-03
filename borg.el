@@ -416,7 +416,9 @@ drones that take longer to be built."
       ;; not being so, and other more confusing warnings too.
       (setq drones (cons "org" (delete "org" drones))))
     (dolist (drone drones)
-      (unless (and quick (borg-get-all drone "build-step"))
+      (unless (or (equal (borg-get drone "disabled") "true")
+                  (not (file-exists-p (borg-worktree drone)))
+                  (and quick (borg-get-all drone "build-step")))
         (dolist (d (borg-load-path drone))
           (dolist (f (directory-files
                       d t "\\(\\.elc\\|-autoloads\\.el\\|-loaddefs\\.el\\)\\'"
@@ -427,6 +429,8 @@ drones that take longer to be built."
       (cond
        ((equal (borg-get drone "disabled") "true")
         (message "Skipped (Disabled)"))
+       ((not (file-exists-p (borg-worktree drone)))
+        (message "Skipped (Missing)"))
        ((and quick (borg-get-all drone "build-step"))
         (message "Skipped (Expensive to build)"))
        (t (borg-build drone)))))
