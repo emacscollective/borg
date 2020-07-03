@@ -80,7 +80,7 @@ quick: clean-init
 	$(BORG_ARGUMENTS) \
 	--eval '(borg-batch-rebuild t)' 2>&1
 
-$(BORG_DIR)/borg.mk: ;
+$(BORG_DIR)borg.mk: ;
 lib/%: .FORCE
 	@$(EMACS) $(EMACS_ARGUMENTS) $(SILENCIO) \
 	$(BORG_ARGUMENTS) \
@@ -89,7 +89,7 @@ lib/%: .FORCE
 bootstrap:
 	@printf "\n=== Running 'git submodule init' ===\n\n"
 	@git submodule init
-	@printf "\n=== Running '$(BORG_DIR)/borg.sh' ===\n"
-	@$(BORG_DIR)/borg.sh
+	@printf "\n=== Running '$(BORG_DIR)borg.sh' ===\n"
+	@$(BORG_DIR)borg.sh
 	@printf "\n=== Running 'make build' ===\n\n"
 	@make build
