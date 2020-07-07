@@ -77,7 +77,9 @@
 (defvar borg-drones-directory
   (let* ((libdir (file-name-directory (directory-file-name
                                        (file-name-directory
-                                        (or load-file-name buffer-file-name)))))
+                                        (file-truename
+                                         (or load-file-name
+                                             buffer-file-name))))))
          (topdir (file-name-directory (directory-file-name libdir))))
     (or (ignore-errors
           (let ((default-directory topdir))
