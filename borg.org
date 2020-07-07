@@ -113,6 +113,15 @@ relevant even when Borg was installed the way we just did.  Just
 saying.
 
 ** Bootstrapping
+*** _ :ignore:
+
+(As mentioned in the next section you can use a location other than
+~~/.emacs.d~.  Never-the-less most of the subsequent examples just talk
+about ~~/.emacs.d~ and if you use something else, then obviously have to
+substitute that.  The same for the string ~lib~ and the variables
+~user-init-file~ and ~user-emacs-directory~, which also might not be
+appropriate depending on your choices.)
+
 *** Bootstrapping using a seed
 
 To get started clone the repository of the ~emacs.g~ collective.  A
