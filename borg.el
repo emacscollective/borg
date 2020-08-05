@@ -901,6 +901,8 @@ Formatting is according to the commit message conventions."
                  (concat " *Borg Git" (and pkg (concat " " pkg)) "*"))))
     (if (eq (apply #'call-process "git" nil buffer nil args) 0)
         (kill-buffer buffer)
+      (with-current-buffer buffer
+        (special-mode))
       (pop-to-buffer buffer)
       (error "Git failed"))))
 
