@@ -8,7 +8,7 @@
 #+TEXINFO_DIR_CATEGORY: Emacs
 #+TEXINFO_DIR_TITLE: Borg: (borg).
 #+TEXINFO_DIR_DESC: Assimilate Emacs packages as Git submodules
-#+SUBTITLE: for version 3.1.2 (v3.1.2-45-g53ae5cc+1)
+#+SUBTITLE: for version 3.1.2 (v3.1.2-49-g1fe1d2b+1)
 
 #+TEXINFO_DEFFN: t
 #+OPTIONS: H:4 num:4 toc:2
@@ -20,7 +20,7 @@ The Borg assimilate Emacs packages as Git submodules.  Borg is a
 bare-bones package manager for Emacs packages.
 
 #+TEXINFO: @noindent
-This manual is for Borg version 3.1.2 (v3.1.2-45-g53ae5cc+1).
+This manual is for Borg version 3.1.2 (v3.1.2-49-g1fe1d2b+1).
 
 #+BEGIN_QUOTE
 Copyright (C) 2016-2020 Jonas Bernoulli <jonas@bernoul.li>
@@ -418,7 +418,7 @@ what went wrong.  Here are some things that could have happened and
 how to deal with them.
 
 The commit that you have referenced was removed from the upstream
-epository.  Pick another commit instead and resume the bootstrap.
+repository.  Pick another commit instead and resume the bootstrap.
 
 #+BEGIN_SRC sh
   $ git submodule update --init lib/hl-todo

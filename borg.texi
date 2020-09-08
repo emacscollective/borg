@@ -31,7 +31,7 @@ General Public License for more details.
 @finalout
 @titlepage
 @title Borg User Manual
-@subtitle for version 3.1.2 (v3.1.2-45-g53ae5cc+1)
+@subtitle for version 3.1.2 (v3.1.2-49-g1fe1d2b+1)
 @author Jonas Bernoulli
 @page
 @vskip 0pt plus 1filll
@@ -48,7 +48,7 @@ The Borg assimilate Emacs packages as Git submodules.  Borg is a
 bare-bones package manager for Emacs packages.
 
 @noindent
-This manual is for Borg version 3.1.2 (v3.1.2-45-g53ae5cc+1).
+This manual is for Borg version 3.1.2 (v3.1.2-49-g1fe1d2b+1).
 
 @quotation
 Copyright (C) 2016-2020 Jonas Bernoulli <jonas@@bernoul.li>
@@ -184,6 +184,13 @@ saying.
 
 @node Bootstrapping
 @section Bootstrapping
+
+(As mentioned in the next section you can use a location other than
+@code{~/.emacs.d}.  Never-the-less most of the subsequent examples just talk
+about @code{~/.emacs.d} and if you use something else, then obviously have to
+substitute that.  The same for the string @code{lib} and the variables
+@code{user-init-file} and @code{user-emacs-directory}, which also might not be
+appropriate depending on your choices.)
 
 @menu
 * Bootstrapping using a seed::
@@ -494,7 +501,7 @@ what went wrong.  Here are some things that could have happened and
 how to deal with them.
 
 The commit that you have referenced was removed from the upstream
-epository.  Pick another commit instead and resume the bootstrap.
+repository.  Pick another commit instead and resume the bootstrap.
 
 @example
 $ git submodule update --init lib/hl-todo
