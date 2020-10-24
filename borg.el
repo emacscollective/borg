@@ -625,7 +625,10 @@ then also activate the clone using `borg-activate'."
                     nil generated-autoload-file nil 'silent)
       (cl-letf (((symbol-function 'progress-reporter-do-update) (lambda (&rest _)))
                 ((symbol-function 'progress-reporter-done) (lambda (_))))
-        (apply #'update-directory-autoloads path)))
+        (cond ((fboundp 'make-directory-autoloads)   ; >= 28
+               (make-directory-autoloads path generated-autoload-file))
+              ((fboundp 'update-directory-autoloads) ; <= 27
+               (apply 'update-directory-autoloads path)))))
     (let ((buf (find-buffer-visiting generated-autoload-file)))
       (when buf
         (kill-buffer buf)))))
