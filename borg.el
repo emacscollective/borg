@@ -368,12 +368,20 @@ load \"`user-emacs-directory'/etc/borg/init.el\", if that exists."
        (t
         (cl-incf initialized)
         (borg-activate drone))))
-    (message "Initializing drones...done (%s drones in %.3fs%s)"
-             initialized
-             (float-time (time-subtract (current-time) start))
-             (if (> skipped 0)
-                 (format ", %d skipped" skipped)
-               ""))))
+    (let* ((message (current-message))
+           (inhibit (and message
+                         (string-match-p
+                          "\\`Recompiling .+init\\.el\\.\\.\\.\\'" message))))
+      (let ((inhibit-message inhibit))
+        (message "Initializing drones...done (%s drones in %.3fs%s)"
+                 initialized
+                 (float-time (time-subtract (current-time) start))
+                 (if (> skipped 0)
+                     (format ", %d skipped" skipped)
+                   "")))
+      (when inhibit
+        (let ((message-log-max nil))
+          (message "%s" message))))))
 
 (defun borg-activate (clone)
   "Activate the clone named CLONE.
