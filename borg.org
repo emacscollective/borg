@@ -8,7 +8,7 @@
 #+TEXINFO_DIR_CATEGORY: Emacs
 #+TEXINFO_DIR_TITLE: Borg: (borg).
 #+TEXINFO_DIR_DESC: Assimilate Emacs packages as Git submodules
-#+SUBTITLE: for version 3.1.2 (v3.1.2-53-g79bfdbd+1)
+#+SUBTITLE: for version 3.1.2 (v3.1.2-54-gb210e4a+1)
 
 #+TEXINFO_DEFFN: t
 #+OPTIONS: H:4 num:4 toc:2
@@ -20,7 +20,7 @@ The Borg assimilate Emacs packages as Git submodules.  Borg is a
 bare-bones package manager for Emacs packages.
 
 #+TEXINFO: @noindent
-This manual is for Borg version 3.1.2 (v3.1.2-53-g79bfdbd+1).
+This manual is for Borg version 3.1.2 (v3.1.2-54-gb210e4a+1).
 
 #+BEGIN_QUOTE
 Copyright (C) 2016-2021 Jonas Bernoulli <jonas@bernoul.li>
@@ -118,7 +118,7 @@ saying.
 (As mentioned in the next section you can use a location other than
 ~~/.emacs.d~.  Never-the-less most of the subsequent examples just talk
 about ~~/.emacs.d~ and if you use something else, then obviously have to
-substitute that.  The same for the string ~lib~ and the variables
+substitute that.  The same applies to the string ~lib~ and the variables
 ~user-init-file~ and ~user-emacs-directory~, which also might not be
 appropriate depending on your choices.)
 
