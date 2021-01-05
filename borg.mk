@@ -29,6 +29,7 @@ EMACS_ARGUMENTS += --eval "(require 'comp nil t)"
 all: build
 
 SILENCIO  = --load subr-x
+SILENCIO += --eval "(setq byte-compile-warnings '(not docstrings))"
 SILENCIO += --eval "(fset 'original-message (symbol-function 'message))"
 SILENCIO += --eval "(fset 'message\
 (lambda (format &rest args)\
