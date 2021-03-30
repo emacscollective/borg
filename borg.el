@@ -86,7 +86,7 @@
             (expand-file-name
              (car (process-lines "git" "config" "borg.drones-directory")))))
         (if (ignore-errors
-              (file-equal-p libdir (bound-and-true-p 'package-user-dir)))
+              (file-equal-p libdir (bound-and-true-p package-user-dir)))
             (expand-file-name (file-name-as-directory "borg") topdir)
           libdir)))
   "Directory beneath which drone submodules are placed.
