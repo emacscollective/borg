@@ -849,7 +849,7 @@ Formatting is according to the commit message conventions."
   (let ((default-directory borg-user-emacs-directory))
     (mapcar
      (lambda (line)
-       (pcase-let* ((`(,state ,module) (split-string line "\t")))
+       (pcase-let ((`(,state ,module) (split-string line "\t")))
          (list (file-name-nondirectory module)
                state
                (and (member state '("A" "M"))
