@@ -939,10 +939,15 @@ Formatting is according to the commit message conventions."
     (revert-buffer t t)
     (save-excursion
       (goto-char (point-min))
-      (re-search-forward "^\\[submodule")
-      (sort-regexp-fields
-       nil "^\\(?:#.*\n\\)*\\[submodule \"\\([^\"]+\\)\"].*\\(?:[^[].*\n\\)+"
-       "\\1" (line-beginning-position) (point-max)))
+      (while (re-search-forward "^\\[submodule" nil t)
+        (let ((end (or (and (save-excursion (re-search-forward "^##+ ." nil t))
+                            (match-beginning 0))
+                       (point-max))))
+          (sort-regexp-fields
+           nil
+           "^\\(?:#.*\n\\)*\\[submodule \"\\([^\"]+\\)\"].*\\(?:[^[].*\n\\)+"
+           "\\1" (line-beginning-position) end)
+          (goto-char end))))
     (save-buffer)))
 
 (defun borg--maybe-confirm-unsafe-action (action package url)
