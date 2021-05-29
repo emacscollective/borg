@@ -934,6 +934,9 @@ Formatting is according to the commit message conventions."
             (or path (borg-load-path clone)))))
 
 (defun borg--sort-submodule-sections (file)
+  "Sort submodule sections in the current buffer.
+Non-interactively operate in FILE instead."
+  (interactive (list buffer-file-name))
   (with-current-buffer (or (find-buffer-visiting file)
                            (find-file-noselect file))
     (revert-buffer t t)
