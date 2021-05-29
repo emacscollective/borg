@@ -937,11 +937,12 @@ Formatting is according to the commit message conventions."
   (with-current-buffer (or (find-buffer-visiting file)
                            (find-file-noselect file))
     (revert-buffer t t)
-    (goto-char (point-min))
-    (re-search-forward "^\\[submodule")
-    (sort-regexp-fields
-     nil "^\\(?:#.*\n\\)*\\[submodule \"\\([^\"]+\\)\"].*\\(?:[^[].*\n\\)+"
-     "\\1" (line-beginning-position) (point-max))
+    (save-excursion
+      (goto-char (point-min))
+      (re-search-forward "^\\[submodule")
+      (sort-regexp-fields
+       nil "^\\(?:#.*\n\\)*\\[submodule \"\\([^\"]+\\)\"].*\\(?:[^[].*\n\\)+"
+       "\\1" (line-beginning-position) (point-max)))
     (save-buffer)))
 
 (defun borg--maybe-confirm-unsafe-action (action package url)
