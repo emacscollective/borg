@@ -6,6 +6,8 @@
 ;; Homepage: https://github.com/emacscollective/borg
 ;; Keywords: tools
 
+;; SPDX-License-Identifier: GPL-3.0-or-later
+
 ;; This file contains code from GNU Emacs, which is
 ;; Copyright (C) 1976-2017 Free Software Foundation, Inc.
 
