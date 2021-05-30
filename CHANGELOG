@@ -1,5 +1,5 @@
 # -*- mode: org -*-
-* v3.2.0    UNRELEASED
+* v3.2.0    2021/05/30
 
 - Taught ~borg-load-path~ to use the ~elisp/~ directory automatically
   like it already uses the ~lisp/~ directory or the top-level.  The
@@ -17,7 +17,8 @@
 - The ~default-directory~ used during compilation and when presenting
   the results did not always match, leading to broken links.  41b4494
 
-- Disabled clones are now being skipped when rebuilding.  bde5d4c
+- When initializing and rebuilding packages, then missing and disabled
+  packages are skipped now.  bde5d4c, 93f40f9, 640169d
 
 - It is now possible to place the drones in a directory that is named
   something other than ~lib~ using the ~borg.drones-directory~ variable.
@@ -32,6 +33,11 @@
 
 - When Borg is used as secondary package manager, then ~borg.mk~ is now
   usable as well.  5d87d34
+
+- Added documentation on how to recover from missing commits and
+  missing repositories.  ecb2f9f
+
+- Symlinks are resolved now when setting path variables.  444b9d7
 
 * v3.1.2    2019/12/05
 
