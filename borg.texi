@@ -31,7 +31,7 @@ General Public License for more details.
 @finalout
 @titlepage
 @title Borg User Manual
-@subtitle for version 3.2.0
+@subtitle for version 3.2.0 (v3.2.0-1-g136bb31+1)
 @author Jonas Bernoulli
 @page
 @vskip 0pt plus 1filll
@@ -48,7 +48,7 @@ The Borg assimilate Emacs packages as Git submodules.  Borg is a
 bare-bones package manager for Emacs packages.
 
 @noindent
-This manual is for Borg version 3.2.0.
+This manual is for Borg version 3.2.0 (v3.2.0-1-g136bb31+1).
 
 @quotation
 Copyright (C) 2016-2021 Jonas Bernoulli <jonas@@bernoul.li>
@@ -418,7 +418,7 @@ repository is missing.  That can be scary but understanding what is
 going on and how to deal with it goes a long way.
 
 So what does it look like when that happens? Here are two typical
-examples that you might see when run @code{make bootstrap}.
+examples that you might see when running @code{make bootstrap}.
 
 Some commit is missing:
 
@@ -455,8 +455,8 @@ futile: Clone of any remote into submodule path 'lib/paren-face' failed
 Both of these packages are not essential and I recommend that you
 delay figuring out what is going on exactly and that you instead
 proceed bootstrapping the rest of your configuration.  Once you are
-done with, then you have an Emacs setup that allows you to be
-efficiently investigate the above issues.
+done with that, then you have a personalized Emacs setup that allows
+you to efficiently investigate the above issues.
 
 To skip a package you have to "deinit" the submodule and also remove
 the empty directory that represents the no longer initialized module:
