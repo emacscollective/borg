@@ -102,9 +102,11 @@ The value of this variable is usually the same as that of
 `emacs -q -l /path/to/init.el'.")
 
 (defconst borg-top-level-directory
-  (let ((default-directory borg-user-emacs-directory))
-    (file-name-as-directory
-     (car (process-lines "git" "rev-parse" "--show-toplevel"))))
+  (or (ignore-errors
+        (let ((default-directory borg-user-emacs-directory))
+          (file-name-as-directory
+           (car (process-lines "git" "rev-parse" "--show-toplevel")))))
+      borg-user-emacs-directory)
   "The top-level of repository containing `borg-user-emacs-directory'.")
 
 (defconst borg-gitmodules-file
