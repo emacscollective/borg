@@ -13,24 +13,24 @@ test -n "$toplevel" || exit 2
 cd "$toplevel"
 
 git submodule--helper list |
-while read mode sha1 stage path
+while read -r mode sha1 stage path
 do
     if test -e "$path"
     then
         name=$(git submodule--helper name "$path")
 
-        printf "\n--- [%s] ---\n\n" $name
+        printf "\n--- [%s] ---\n\n" "$name"
 
         if ! test -e "$path"/.git
         then
             git submodule--helper clone \
                 --name "$name" \
                 --path "$path" \
-                --url $(git config -f .gitmodules submodule."$name".url)
+                --url "$(git config -f .gitmodules submodule."$name".url)"
         fi
 
         git config -f .gitmodules --get-all submodule."$name".remote |
-        while read remote remote_url
+        while read -r remote remote_url
         do
             if ! test -e "$path"/.git
             then
