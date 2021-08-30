@@ -69,7 +69,11 @@ do
 
         if test -e "$path"/.git
         then
+            branch=$(git submodule--helper remote-branch "$path")
             cd "$path"
+            # FIXME figure out the correct remote if there are multiple
+            remote=$(git remote | head -n 1)
+            git switch --force-create "$branch" "$remote/$branch"
             if ! git reset --hard "$sha1"
             then
                 echo >&2 "futile: Checkout of '$sha1' into submodule path '$path' failed"
