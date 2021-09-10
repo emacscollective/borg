@@ -220,13 +220,22 @@ are not there yet.  Instead run this:
 Now that ~borg~ is available we can build all the assimilated packages (currently
 just ~borg~ itself) using ~make bootstrap~.
 
-The final obligatory step is to tell Emacs to initialize Borg by
+Now it is time to tell Emacs to initialize Borg instead of Package by
 adding a simple ~init.el~ file containing at least:
 
 #+BEGIN_SRC emacs-lisp
+  (when (< emacs-major-version 27)
+    (setq package-enable-at-startup nil))
   (add-to-list 'load-path (expand-file-name "lib/borg" user-emacs-directory))
   (require 'borg)
   (borg-initialize)
+#+END_SRC
+
+Beginning with Emacs 27.1, ~package-enable-at-startup~ has to be
+disabled earlier, in ~early-init.el~:
+
+#+BEGIN_SRC emacs-lisp
+  (setq package-enable-at-startup nil)
 #+END_SRC
 
 Now you could create the initial commit but you could also delay that.
