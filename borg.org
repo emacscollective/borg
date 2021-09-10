@@ -129,7 +129,7 @@ To get started clone the repository of the ~emacs.g~ collective.  A
 Borg as the package manager.  Most users end up using ~emacs.g~ merely
 as a bootstrapping seed and do not merge upstream changes after that.
 
-This collective already assimilats a few drones in addition to ~borg~
+This collective already assimilates a few drones in addition to ~borg~
 itself, namely ~magit~, ~epkg~, ~use-package~, ~auto-compile~, ~git-modes~ and
 ~diff-hl~, as well as their dependencies.  These drones are not required
 by ~borg~ but their use is highly recommended.
