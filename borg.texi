@@ -31,7 +31,7 @@ General Public License for more details.
 @finalout
 @titlepage
 @title Borg User Manual
-@subtitle for version 3.2.0 (v3.2.0-1-g136bb31+1)
+@subtitle for version 3.2.0 (v3.2.0-7-g541f384+1)
 @author Jonas Bernoulli
 @page
 @vskip 0pt plus 1filll
@@ -48,7 +48,7 @@ The Borg assimilate Emacs packages as Git submodules.  Borg is a
 bare-bones package manager for Emacs packages.
 
 @noindent
-This manual is for Borg version 3.2.0 (v3.2.0-1-g136bb31+1).
+This manual is for Borg version 3.2.0 (v3.2.0-7-g541f384+1).
 
 @quotation
 Copyright (C) 2016-2021 Jonas Bernoulli <jonas@@bernoul.li>
@@ -209,7 +209,7 @@ To get started clone the repository of the @code{emacs.g} collective.  A
 Borg as the package manager.  Most users end up using @code{emacs.g} merely
 as a bootstrapping seed and do not merge upstream changes after that.
 
-This collective already assimilats a few drones in addition to @code{borg}
+This collective already assimilates a few drones in addition to @code{borg}
 itself, namely @code{magit}, @code{epkg}, @code{use-package}, @code{auto-compile}, @code{git-modes} and
 @code{diff-hl}, as well as their dependencies.  These drones are not required
 by @code{borg} but their use is highly recommended.
@@ -300,13 +300,22 @@ git submodule add --name borg git@@github.com:emacscollective/borg.git lib/borg
 Now that @code{borg} is available we can build all the assimilated packages (currently
 just @code{borg} itself) using @code{make bootstrap}.
 
-The final obligatory step is to tell Emacs to initialize Borg by
+Now it is time to tell Emacs to initialize Borg instead of Package by
 adding a simple @code{init.el} file containing at least:
 
 @lisp
+(when (< emacs-major-version 27)
+  (setq package-enable-at-startup nil))
 (add-to-list 'load-path (expand-file-name "lib/borg" user-emacs-directory))
 (require 'borg)
 (borg-initialize)
+@end lisp
+
+Beginning with Emacs 27.1, @code{package-enable-at-startup} has to be
+disabled earlier, in @code{early-init.el}:
+
+@lisp
+(setq package-enable-at-startup nil)
 @end lisp
 
 Now you could create the initial commit but you could also delay that.

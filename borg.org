@@ -8,7 +8,7 @@
 #+TEXINFO_DIR_CATEGORY: Emacs
 #+TEXINFO_DIR_TITLE: Borg: (borg).
 #+TEXINFO_DIR_DESC: Assimilate Emacs packages as Git submodules
-#+SUBTITLE: for version 3.2.0 (v3.2.0-1-g136bb31+1)
+#+SUBTITLE: for version 3.2.0 (v3.2.0-7-g541f384+1)
 
 #+TEXINFO_DEFFN: t
 #+OPTIONS: H:4 num:4 toc:2
@@ -20,7 +20,7 @@ The Borg assimilate Emacs packages as Git submodules.  Borg is a
 bare-bones package manager for Emacs packages.
 
 #+TEXINFO: @noindent
-This manual is for Borg version 3.2.0 (v3.2.0-1-g136bb31+1).
+This manual is for Borg version 3.2.0 (v3.2.0-7-g541f384+1).
 
 #+BEGIN_QUOTE
 Copyright (C) 2016-2021 Jonas Bernoulli <jonas@bernoul.li>
