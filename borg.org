@@ -2,28 +2,28 @@
 :PREAMBLE:
 #+AUTHOR: Jonas Bernoulli
 #+EMAIL: jonas@bernoul.li
-#+DATE: 2018-2021
+#+DATE: 2018-{{{year}}}
 #+LANGUAGE: en
 
 #+TEXINFO_DIR_CATEGORY: Emacs
 #+TEXINFO_DIR_TITLE: Borg: (borg).
 #+TEXINFO_DIR_DESC: Assimilate Emacs packages as Git submodules
-#+SUBTITLE: for version 3.2.0 (v3.2.0-7-g541f384+1)
+#+SUBTITLE: for version {{{version}}}
 
 #+TEXINFO_DEFFN: t
 #+OPTIONS: H:4 num:4 toc:2
 #+PROPERTY: header-args :eval never
-#+BIND: ox-texinfo+-before-export-hook ox-texinfo+-update-copyright-years
-#+BIND: ox-texinfo+-before-export-hook ox-texinfo+-update-version-strings
+#+MACRO: version (eval (ox-texinfo+-get-version 'mixed))
+#+MACRO: year (eval (format-time-string "%Y"))
 
 The Borg assimilate Emacs packages as Git submodules.  Borg is a
 bare-bones package manager for Emacs packages.
 
 #+TEXINFO: @noindent
-This manual is for Borg version 3.2.0 (v3.2.0-7-g541f384+1).
+This manual is for Borg version {{{version}}}.
 
 #+BEGIN_QUOTE
-Copyright (C) 2016-2021 Jonas Bernoulli <jonas@bernoul.li>
+Copyright (C) 2016-{{{year}}} Jonas Bernoulli <jonas@bernoul.li>
 
 You can redistribute this document and/or modify it under the terms
 of the GNU General Public License as published by the Free Software
@@ -1167,7 +1167,7 @@ being noted in the change log.
 :END:
 
 #+BEGIN_QUOTE
-Copyright (C) 2016-2021 Jonas Bernoulli <jonas@bernoul.li>
+Copyright (C) 2016-{{{year}}} Jonas Bernoulli <jonas@bernoul.li>
 
 You can redistribute this document and/or modify it under the terms
 of the GNU General Public License as published by the Free Software
