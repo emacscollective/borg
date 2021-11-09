@@ -1,4 +1,11 @@
 # -*- mode: org -*-
+* v3.3.0    UNRELEASED
+
+- When setting ~borg-top-level-directory~ do not assume we are inside
+  a Git repository, which makes it possible to use Borg to build a
+  static configuration to be deployed outside the repository used
+  to build it.  #110
+
 * v3.2.0    2021/05/30
 
 - Taught ~borg-load-path~ to use the ~elisp/~ directory automatically
