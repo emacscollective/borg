@@ -118,8 +118,8 @@ The value of this variable is usually the same as that of
 (defvar borg-emacs-arguments '("-Q")
   "Arguments used when calling an inferior Emacs instance.
 Set this in \"~/.emacs.d/etc/borg/config.el\" and also set
-`EMACS_ARGUMENTS' in \"~/.emacs.d/etc/borg/config.mk\" to
-the same value")
+`EMACS_ARGUMENTS' in either \"~/.emacs.d/Makefile\" or
+\"~/.emacs.d/etc/borg/config.mk\" to the same value")
 
 (defvar borg-byte-compile-recursively nil
   "Whether to compile recursively.

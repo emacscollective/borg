@@ -5,7 +5,7 @@
 
 BORG_DIR := $(dir $(lastword $(MAKEFILE_LIST)))
 
--include ../../etc/borg/config.mk
+-include etc/borg/config.mk
 
 ifeq "$(BORG_SECONDARY_P)" "true"
   DRONES_DIR ?= $(shell git config "borg.drones-directory" || echo "elpa")

@@ -6,6 +6,8 @@
   static configuration to be deployed outside the repository used
   to build it.  #110
 
+- Fixed path to ~etc/borg/config.mk~.
+
 * v3.2.0    2021/05/30
 
 - Taught ~borg-load-path~ to use the ~elisp/~ directory automatically
