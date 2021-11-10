@@ -74,6 +74,10 @@
 
 (define-obsolete-variable-alias 'borg-drone-directory
   'borg-drones-directory "Borg 3.2.0")
+(define-obsolete-variable-alias 'borg-byte-compile-recursively
+  'borg-compile-recursively "Borg 3.3.0")
+(define-obsolete-function-alias 'borg-byte-compile
+  'borg-compile "Borg 3.3.0")
 
 (defvar borg-drones-directory
   (let* ((libdir (file-name-directory (directory-file-name
@@ -121,7 +125,10 @@ Set this in \"~/.emacs.d/etc/borg/config.el\" and also set
 `EMACS_ARGUMENTS' in either \"~/.emacs.d/Makefile\" or
 \"~/.emacs.d/etc/borg/config.mk\" to the same value")
 
-(defvar borg-byte-compile-recursively nil
+(defvar borg-compile-function #'byte-compile-file
+  "The function used to compile a library.")
+
+(defvar borg-compile-recursively nil
   "Whether to compile recursively.
 
 Unfortunately there are many packages that put random crap
@@ -493,8 +500,10 @@ then also activate the clone using `borg-activate'."
         (dolist (cmd build)
           (message "  Running `%s'..." cmd)
           (cond ((member cmd '("borg-update-autoloads"
-                               "borg-byte-compile"
-                               "borg-makeinfo"))
+                               "borg-compile"
+                               "borg-makeinfo"
+                               ;; For backward compatibility.
+                               "borg-byte-compile"))
                  (funcall (intern cmd) clone))
                 ((string-match-p "\\`(" cmd)
                  (eval (read cmd)))
@@ -511,7 +520,7 @@ then also activate the clone using `borg-activate'."
           (message "  Running `%s'...done" cmd))
       (let ((path (mapcar #'file-name-as-directory (borg-load-path clone))))
         (borg-update-autoloads clone path)
-        (borg-byte-compile clone path)
+        (borg-compile clone path)
         (borg-makeinfo clone)))))
 
 (defun borg--build-interactive (clone)
@@ -647,7 +656,7 @@ then also activate the clone using `borg-activate'."
     (when-let ((buf (find-buffer-visiting generated-autoload-file)))
       (kill-buffer buf))))
 
-(defun borg-byte-compile (clone &optional path)
+(defun borg-compile (clone &optional path)
   "Compile libraries for the clone named CLONE in the directories in PATH."
   (let ((dirs (borg--expand-load-path clone path))
         (exclude (borg-get-all clone "no-byte-compile"))
@@ -668,7 +677,7 @@ then also activate the clone using `borg-activate'."
                (when (and (if-let ((v (borg-get
                                        clone "recursive-byte-compile")))
                               (member v '("yes" "on" "true" "1"))
-                            borg-byte-compile-recursively)
+                            borg-compile-recursively)
                           (not (file-symlink-p file))
                           (not (string-prefix-p "." name))
                           (not (member name '("RCS" "CVS"))))
@@ -691,7 +700,7 @@ then also activate the clone using `borg-activate'."
                            skip-count)
                   (unless byte-compile-verbose
                     (message "Compiling %s..." file))
-                  (pcase (byte-compile-file file)
+                  (pcase (funcall borg-compile-function file)
                     ('no-byte-compile
                      (message "Compiling %s...skipped" file)
                      skip-count)

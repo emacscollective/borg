@@ -8,6 +8,18 @@
 
 - Fixed path to ~etc/borg/config.mk~.
 
+- Added new variable ~borg-compile-function~, which can be set to
+  ~native-compile~ to enable upfront native compilation.  This should
+  be done in ~~/.emacs.d/etc/borg/config.el~ like so:
+
+  #+begin_src emacs-lisp
+    (when (native-comp-available-p)
+      (setq borg-compile-function #'native-compile))
+  #+end_src
+
+  Renamed ~borg-byte-compile-recursively~ to ~borg-compile-recursively~
+  and ~borg-byte-compile~ to ~borg-compile~ accordingly.  #116
+
 * v3.2.0    2021/05/30
 
 - Taught ~borg-load-path~ to use the ~elisp/~ directory automatically

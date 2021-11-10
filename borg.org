@@ -606,7 +606,7 @@ commit messages.
   omitted or contain file-names that are relative to the top-level of
   CLONE's repository.
 
-- Function: borg-byte-compile clone &optional path
+- Function: borg-compile clone &optional path
 
   This function compiles the libraries for the clone named CLONE in
   the directories in PATH.  PATH can be omitted or contain file-names
@@ -874,8 +874,8 @@ file ~~/.emacs.d/.gitmodules~.  The variables ~borg.pushDefault~ and
 Because most repositories used to maintain Emacs packages follow some
 common-sense conventions, Borg usually does not have to be told how to
 build a given drone.  Building is done using ~borg-build~, which in turn
-usually does its work using ~borg-update-autoloads~, ~borg-byte-compile~,
-and ~borg-makeinfo~.
+usually does its work using ~borg-update-autoloads~, ~borg-compile~, and
+~borg-makeinfo~.
 
 However some packages don't follow the conventions either because they
 are too complex to do so, or for the sake of doing it differently.
@@ -885,9 +885,9 @@ variables you can tell Borg how to build such packages.
 - Variable: submodule.DRONE.build-step COMMAND
 
   By default drones are built using the lisp functions
-  ~borg-update-autoloads~, ~borg-byte-compile~, and ~borg-makeinfo~, but
-  if this variable has one or more values, then DRONE is built using
-  these COMMANDs *instead*.
+  ~borg-update-autoloads~, ~borg-compile~, and ~borg-makeinfo~, but if this
+  variable has one or more values, then DRONE is built using these
+  COMMANDs *instead*.
 
   Each COMMAND can be one of the default steps, an S-expression, or
   a shell command.  The COMMANDs are executed in the specified order.
@@ -918,7 +918,7 @@ variables you can tell Borg how to build such packages.
     [submodule "multiple-cursors"]
             path = lib/multiple-cursors
             url = git@github.com:magnars/multiple-cursors.el.git
-            build-step = borg-byte-compile
+            build-step = borg-compile
   #+END_SRC
 
   Note that just because a package provides a ~Makefile~, you do not
@@ -961,10 +961,9 @@ variables you can tell Borg how to build such packages.
 
   This variable instructs ~borg-activate~ to add PATH to the ~load-path~
   instead of the directory it would otherwise have added.  Likewise it
-  instructs ~borg-byte-compile~ to compile the libraries in that
-  directory.  PATH has to be relative to the top-level of the
-  repository of the drone named DRONE.  This variable can be specified
-  multiple times.
+  instructs ~borg-compile~ to compile the libraries in that directory.
+  PATH has to be relative to the top-level of the repository of the
+  drone named DRONE.  This variable can be specified multiple times.
 
   Normally Borg uses ~elisp/~ as the drone's ~load-path~, if that exists;
   otherwise ~lisp/~, if that exists; or else the top-level directory.
@@ -984,9 +983,9 @@ variables you can tell Borg how to build such packages.
 
 - Variable: submodule.DRONE.no-byte-compile PATH
 
-  This variable instructs ~borg-byte-compile~ to not compile the library
-  at PATH.  PATH has to be relative to the top-level of the repository
-  of the drone named DRONE.  This variable can be specified multiple
+  This variable instructs ~borg-compile~ to not compile the library at
+  PATH.  PATH has to be relative to the top-level of the repository of
+  the drone named DRONE.  This variable can be specified multiple
   times.
 
   Sometimes a drone comes with an optional library which adds support
@@ -1002,7 +1001,7 @@ variables you can tell Borg how to build such packages.
 
 - Variable: submodule.DRONE.recursive-byte-compile BOOLEAN
 
-  Setting this variable to ~true~ instructs ~borg-byte-compile~ to compile
+  Setting this variable to ~true~ instructs ~borg-compile~ to compile
   DRONE's directories recursively.  This isn't done by default because
   there are more repositories in which doing so would cause issues
   than there are repositories that would benefit from doing so.
@@ -1014,11 +1013,21 @@ variables you can tell Borg how to build such packages.
   a feature (which effectively turns them into libraries) and/or if a
   file named ~.nosearch~ existed in the subdirectory.  That file tells
   functions such as ~normal-top-level-add-subdirs-to-load-path~ and
-  ~borg-byte-compile~ to ignore the containing directory.
+  ~borg-compile~ to ignore the containing directory.
 
-- Variable: borg-byte-compile-recursive
+- Variable: borg-compile-function
 
-  Setting this variable to a non-nil value instructs ~borg-byte-compile~
+  Setting this variable to ~native-compile~ enables native compilation.
+  This can be done in ~/.emacs.d/etc/borg/config.el~.
+
+  #+begin_src emacs-lisp
+    (when (native-comp-available-p)
+      (setq borg-compile-function #'native-compile))
+  #+end_src
+
+- Variable: borg-compile-recursive
+
+  Setting this variable to a non-nil value instructs ~borg-compile~
   to compile all drones recursively.  Doing so is discouraged.
 
 - Variable: submodule.DRONE.info-path PATH

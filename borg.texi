@@ -31,7 +31,7 @@ General Public License for more details.
 @finalout
 @titlepage
 @title Borg User Manual
-@subtitle for version 3.2.0 (v3.2.0-7-g541f384+1)
+@subtitle for version 3.2.0 (v3.2.0-14-g9dd578e+1)
 @author Jonas Bernoulli
 @page
 @vskip 0pt plus 1filll
@@ -48,7 +48,7 @@ The Borg assimilate Emacs packages as Git submodules.  Borg is a
 bare-bones package manager for Emacs packages.
 
 @noindent
-This manual is for Borg version 3.2.0 (v3.2.0-7-g541f384+1).
+This manual is for Borg version 3.2.0 (v3.2.0-14-g9dd578e+1).
 
 @quotation
 Copyright (C) 2016-2021 Jonas Bernoulli <jonas@@bernoul.li>
@@ -708,7 +708,7 @@ omitted or contain file-names that are relative to the top-level of
 CLONE's repository.
 @end defun
 
-@defun borg-byte-compile clone &optional path
+@defun borg-compile clone &optional path
 
 This function compiles the libraries for the clone named CLONE in
 the directories in PATH@.  PATH can be omitted or contain file-names
@@ -1014,8 +1014,8 @@ drones).
 Because most repositories used to maintain Emacs packages follow some
 common-sense conventions, Borg usually does not have to be told how to
 build a given drone.  Building is done using @code{borg-build}, which in turn
-usually does its work using @code{borg-update-autoloads}, @code{borg-byte-compile},
-and @code{borg-makeinfo}.
+usually does its work using @code{borg-update-autoloads}, @code{borg-compile}, and
+@code{borg-makeinfo}.
 
 However some packages don't follow the conventions either because they
 are too complex to do so, or for the sake of doing it differently.
@@ -1025,9 +1025,9 @@ variables you can tell Borg how to build such packages.
 @defvar submodule.DRONE.build-step COMMAND
 
 By default drones are built using the lisp functions
-@code{borg-update-autoloads}, @code{borg-byte-compile}, and @code{borg-makeinfo}, but
-if this variable has one or more values, then DRONE is built using
-these COMMANDs @strong{instead}.
+@code{borg-update-autoloads}, @code{borg-compile}, and @code{borg-makeinfo}, but if this
+variable has one or more values, then DRONE is built using these
+COMMANDs @strong{instead}.
 
 Each COMMAND can be one of the default steps, an S-expression, or
 a shell command.  The COMMANDs are executed in the specified order.
@@ -1058,7 +1058,7 @@ ignores a missing "autoloads" file during initialization
 [submodule "multiple-cursors"]
         path = lib/multiple-cursors
         url = git@@github.com:magnars/multiple-cursors.el.git
-        build-step = borg-byte-compile
+        build-step = borg-compile
 @end example
 
 Note that just because a package provides a @code{Makefile}, you do not
@@ -1103,10 +1103,9 @@ started with @code{-Q --batch}, which only receives the name of the function.
 
 This variable instructs @code{borg-activate} to add PATH to the @code{load-path}
 instead of the directory it would otherwise have added.  Likewise it
-instructs @code{borg-byte-compile} to compile the libraries in that
-directory.  PATH has to be relative to the top-level of the
-repository of the drone named DRONE@.  This variable can be specified
-multiple times.
+instructs @code{borg-compile} to compile the libraries in that directory.
+PATH has to be relative to the top-level of the repository of the
+drone named DRONE@.  This variable can be specified multiple times.
 
 Normally Borg uses @code{elisp/} as the drone's @code{load-path}, if that exists;
 otherwise @code{lisp/}, if that exists; or else the top-level directory.
@@ -1127,9 +1126,9 @@ explicitly specify the default location.
 
 @defvar submodule.DRONE.no-byte-compile PATH
 
-This variable instructs @code{borg-byte-compile} to not compile the library
-at PATH@.  PATH has to be relative to the top-level of the repository
-of the drone named DRONE@.  This variable can be specified multiple
+This variable instructs @code{borg-compile} to not compile the library at
+PATH@.  PATH has to be relative to the top-level of the repository of
+the drone named DRONE@.  This variable can be specified multiple
 times.
 
 Sometimes a drone comes with an optional library which adds support
@@ -1146,7 +1145,7 @@ undo that.)
 
 @defvar submodule.DRONE.recursive-byte-compile BOOLEAN
 
-Setting this variable to @code{true} instructs @code{borg-byte-compile} to compile
+Setting this variable to @code{true} instructs @code{borg-compile} to compile
 DRONE's directories recursively.  This isn't done by default because
 there are more repositories in which doing so would cause issues
 than there are repositories that would benefit from doing so.
@@ -1158,12 +1157,23 @@ perfectly fine, if only the non-library lisp files did not provide
 a feature (which effectively turns them into libraries) and/or if a
 file named @code{.nosearch} existed in the subdirectory.  That file tells
 functions such as @code{normal-top-level-add-subdirs-to-load-path} and
-@code{borg-byte-compile} to ignore the containing directory.
+@code{borg-compile} to ignore the containing directory.
 @end defvar
 
-@defvar borg-byte-compile-recursive
+@defvar borg-compile-function
 
-Setting this variable to a non-nil value instructs @code{borg-byte-compile}
+Setting this variable to @code{native-compile} enables native compilation.
+This can be done in @code{/.emacs.d/etc/borg/config.el}.
+
+@lisp
+(when (native-comp-available-p)
+  (setq borg-compile-function #'native-compile))
+@end lisp
+@end defvar
+
+@defvar borg-compile-recursive
+
+Setting this variable to a non-nil value instructs @code{borg-compile}
 to compile all drones recursively.  Doing so is discouraged.
 @end defvar
 
