@@ -484,8 +484,12 @@ then also activate the clone using `borg-activate'."
         (build-cmd (if (functionp borg-build-shell-command)
                        (funcall borg-build-shell-command clone)
                      borg-build-shell-command))
-        (build (borg-get-all clone "build-step")))
-    (if  build
+        (build (borg-get-all clone "build-step"))
+        (config (borg--config-file)))
+    (when (file-exists-p config)
+      (message "  Loading %s..." config)
+      (load config nil t t))
+    (if build
         (dolist (cmd build)
           (message "  Running `%s'..." cmd)
           (cond ((member cmd '("borg-update-autoloads"
@@ -519,9 +523,7 @@ then also activate the clone using `borg-activate'."
                   (string-match-p emacs-lisp-file-regexp file)
                   (file-in-directory-p file top))))))
   (let ((buffer (get-buffer-create "*Borg Build*"))
-        (config (expand-file-name
-                 (convert-standard-filename "etc/borg/config.el")
-                 user-emacs-directory))
+        (config (borg--config-file))
         (process-connection-type nil))
     (switch-to-buffer buffer)
     (with-current-buffer buffer
@@ -534,7 +536,9 @@ then also activate the clone using `borg-activate'."
                           (format-time-string "%H:%M:%S")
                           config))
           (load-file config))
-        (insert (format "\n(%s) Building %s\n\n"
+        (unless (looking-back "\n\n" (- (point) 2))
+          (insert ?\n))
+        (insert (format "(%s) Building %s\n\n"
                         (format-time-string "%H:%M:%S")
                         clone))))
     (set-process-filter
@@ -863,6 +867,10 @@ Formatting is according to the commit message conventions."
                     "--" (file-relative-name borg-drones-directory)))))
 
 ;;; Internal Utilities
+
+(defun borg--config-file ()
+  (expand-file-name (convert-standard-filename "etc/borg/config.el")
+                    user-emacs-directory))
 
 (defun borg--maybe-absorb-gitdir (pkg)
   (let* ((ver (nth 2 (split-string (car (process-lines "git" "version")) " ")))
