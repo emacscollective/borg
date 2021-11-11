@@ -243,36 +243,46 @@ name is a member of `borg--multi-value-variables'.  If a property
 name isn't a member of `borg--multi-value-variables' but it does
 have multiple values anyway, then it is undefined with value is
 included in the returned value."
-  (if include-variables
-      (let (alist)
-        (dolist (line (and (file-exists-p borg-gitmodules-file)
-                           (process-lines "git" "config" "--list"
-                                          "--file" borg-gitmodules-file)))
-          (when (string-match
-                 "\\`submodule\\.\\([^.]+\\)\\.\\([^=]+\\)=\\(.+\\)\\'" line)
-            (let* ((drone (match-string 1 line))
-                   (prop  (intern (match-string 2 line)))
-                   (value (match-string 3 line))
-                   (elt   (assoc drone alist))
-                   (plist (cdr elt)))
-              (unless elt
-                (push (setq elt (list drone)) alist))
-              (setq plist
-                    (plist-put plist prop
-                               (if (or (eq include-variables 'raw)
-                                       (memq prop borg--multi-value-variables))
-                                   (nconc (plist-get plist prop)
-                                          (list value))
-                                 value)))
-              (setcdr elt plist))))
-        (cl-sort alist #'string< :key #'car))
-    (let* ((default-directory borg-top-level-directory)
-           (prefix (file-relative-name borg-drones-directory))
-           (offset (+ (length prefix) 50)))
-      (cl-mapcan (lambda (line)
-                   (and (string-equal (substring line 50 offset) prefix)
-                        (list (substring line offset))))
-                 (process-lines "git" "submodule--helper" "list")))))
+  (let* ((default-directory borg-top-level-directory)
+         (prefix (file-relative-name borg-drones-directory)))
+    (if include-variables
+        (let (alist)
+          (dolist (line (and (file-exists-p borg-gitmodules-file)
+                             (process-lines "git" "config" "--list"
+                                            "--file" borg-gitmodules-file)))
+            (when (string-match
+                   "\\`submodule\\.\\([^.]+\\)\\.\\([^=]+\\)=\\(.+\\)\\'"
+                   line)
+              (let* ((drone (match-string 1 line))
+                     (prop  (intern (match-string 2 line)))
+                     (value (match-string 3 line))
+                     (elt   (assoc drone alist))
+                     (plist (cdr elt)))
+                (unless elt
+                  (push (setq elt (list drone)) alist))
+                (setq plist (plist-put
+                             plist prop
+                             (if (or (eq include-variables 'raw)
+                                     (memq prop borg--multi-value-variables))
+                                 (nconc (plist-get plist prop)
+                                        (list value))
+                               value)))
+                (setcdr elt plist))))
+          (cl-sort (cl-delete-if-not
+                    (lambda (drone)
+                      (let ((path (plist-get (cdr drone) 'path)))
+                        (string-prefix-p prefix
+                                         (if (listp path)
+                                             (car (last path))
+                                           path))))
+                    alist)
+                   #'string< :key #'car))
+      (let ((offset (+ (length prefix) 50)))
+        (cl-mapcan (lambda (line)
+                     (and (ignore-errors
+                            (string-equal (substring line 50 offset) prefix))
+                          (list (substring line offset))))
+                   (process-lines "git" "submodule--helper" "list"))))))
 
 (defun borg-clones ()
   "Return a list of cloned packages.

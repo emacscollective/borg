@@ -20,6 +20,8 @@
   Renamed ~borg-byte-compile-recursively~ to ~borg-compile-recursively~
   and ~borg-byte-compile~ to ~borg-compile~ accordingly.  #116
 
+- ~borg-drones~ learned to ignore non-drone submodules.  #117
+
 * v3.2.0    2021/05/30
 
 - Taught ~borg-load-path~ to use the ~elisp/~ directory automatically
