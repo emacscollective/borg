@@ -184,7 +184,7 @@ VARIABLE can be a symbol or a string."
                            "--file" borg-gitmodules-file
                            `(,@(and all (list "--get-all"))
                              ,(format "submodule.%s.%s" clone variable)))))))
-    (if all values (car values))))
+    (if all values (car (last values)))))
 
 (defun borg-get-all (clone variable)
   "Return all values of `submodule.CLONE.VARIABLE' in `~/.emacs.d/.gitmodules'.
@@ -245,8 +245,8 @@ INCLUDE-VARIABLES is `raw' then all values are lists.  Otherwise
 a property value is only a list if the corresponding property
 name is a member of `borg--multi-value-variables'.  If a property
 name isn't a member of `borg--multi-value-variables' but it does
-have multiple values anyway, then it is undefined with value is
-included in the returned value."
+have multiple values anyway, then the last value is included in
+the overall return value."
   (let* ((default-directory borg-top-level-directory)
          (prefix (file-relative-name borg-drones-directory)))
     (if include-variables
