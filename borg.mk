@@ -47,6 +47,7 @@ ifeq "$(BORG_SECONDARY_P)" "true"
 else
 	$(info make $(DRONES_DIR)/DRONE       = rebuild DRONE)
 endif
+	$(info make build-native    = rebuild drones natively and init files)
 	$(info make build-init      = rebuild init files)
 	$(info make tangle-init     = recreate init.el from init.org)
 	$(info make clean           = remove all byte-code files)
@@ -67,6 +68,12 @@ build: clean-init
 	@$(EMACS) $(EMACS_ARGUMENTS) $(SILENCIO) \
 	$(BORG_ARGUMENTS) \
 	--funcall borg-batch-rebuild $(INIT_FILES) 2>&1
+
+build-native:
+	@$(EMACS) $(EMACS_ARGUMENTS) $(SILENCIO) \
+	$(BORG_ARGUMENTS) \
+	--eval "(borg-batch-rebuild nil 'native-compile-async)" \
+	$(INIT_FILES) 2>&1
 
 build-init: clean-init
 	@$(EMACS) $(EMACS_ARGUMENTS) \

@@ -9,6 +9,8 @@
 - Added new macro ~borg-do-drones~, which is mostly like ~dolist~ but
   caches variables that are set in ".gitmodules".
 
+- Added new make target ~build-native~.
+
 * v3.3.0    2022/01/01
 
 - When setting ~borg-top-level-directory~ do not assume we are inside

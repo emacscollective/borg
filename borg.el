@@ -136,6 +136,9 @@ into subdirectories.  Instead of this variable you should set
 `submodule.<drone>.recursive-byte-compile' for each DRONE that
 needs it.")
 
+(defvar borg--compile-natively nil
+  "Internal variable used by \"build-native\" make target.")
+
 (defvar borg-build-shell-command nil
   "Optional command used to run shell command build steps.
 This variable is documented in the manual (which see).")
@@ -451,7 +454,7 @@ if it exists."
 
 ;;; Construction
 
-(defun borg-batch-rebuild (&optional quick)
+(defun borg-batch-rebuild (&optional quick native)
   "Rebuild all assimilated drones.
 
 Drones are rebuilt in alphabetic order, except that Org is built
@@ -460,8 +463,11 @@ first.  `init.el' and `USER-REAL-LOGIN-NAME.el' are also rebuilt.
 This function is to be used only with `--batch'.
 
 When optional QUICK is non-nil, then do not build drones for
-which `submodule.DRONE.build-step' is set, assuming those are the
-drones that take longer to be built."
+which `submodule.DRONE.build-step' is set, assuming those are
+the drones that take longer to be built.
+
+When optional NATIVE is non-nil, then compile natively.  If
+NATIVE is a function, then use that, `native-compile' otherwise."
   (unless noninteractive
     (error "borg-batch-rebuild is to be used only with --batch"))
   (when (borg-dronep "org")
@@ -481,7 +487,8 @@ drones that take longer to be built."
       (message "Skipped (Missing)"))
      ((and quick (borg-get-all drone "build-step"))
       (message "Skipped (Expensive to build)"))
-     (t (borg-build drone))))
+     (t (let ((borg--compile-natively native))
+          (borg-build drone)))))
   (borg-batch-rebuild-init))
 
 (defun borg-batch-rebuild-init ()
@@ -521,6 +528,11 @@ then also activate the clone using `borg-activate'."
     (when (file-exists-p config)
       (message "  Loading %s..." config)
       (load config nil t t))
+    (when borg--compile-natively
+      (setq borg-compile-function
+            (if (functionp borg--compile-natively)
+                borg--compile-natively
+              'native-compile)))
     (if build
         (dolist (cmd build)
           (message "  Running `%s'..." cmd)
