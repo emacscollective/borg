@@ -57,7 +57,6 @@ which it was announced.
 [fn:1] https://emacsair.me/2016/05/17/assimilate-emacs-packages-as-git-submodules.
 
 * Installation
-*** _
 
 Borg can be used by itself, in which case it has to be bootstrapped.
 This is how Borg originally was intended to be used exclusively but
@@ -113,7 +112,6 @@ relevant even when Borg was installed the way we just did.  Just
 saying.
 
 ** Bootstrapping
-*** _
 
 (As mentioned in the next section you can use a location other than
 ~~/.emacs.d~.  Never-the-less most of the subsequent examples just talk
@@ -1170,7 +1168,7 @@ being noted in the change log.
 :APPENDIX:   t
 :INDEX:      vr
 :END:
-* _ Copying
+* Copying
 :PROPERTIES:
 :COPYING:    t
 :END:
@@ -1200,7 +1198,6 @@ General Public License for more details.
 # IMPORTANT: Also update ORG_ARGS and ORG_EVAL in the Makefile.
 # Local Variables:
 # eval: (require 'ox-texinfo+ nil t)
-# org-texinfo+-dissolve-noexport-headlines: t
 # indent-tabs-mode: nil
 # org-src-preserve-indentation: nil
 # End:
