@@ -49,7 +49,7 @@ html-dir: $(PKG).texi
 .PHONY: stats
 stats:
 	@printf "Generating statistics\n"
-	@gitstats -c style=https://magit.vc/assets/stats.css -c max_authors=999 $(TOP) $(STATS_DIR)
+	@gitstats $(GITSTATS_ARGS) $(TOP) $(GITSTATS_DIR)
 
 PUBLISH_PATH   ?= /manual/
 RELEASE_PATH   ?= /manual/$(VERSION)/
