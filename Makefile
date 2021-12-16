@@ -7,8 +7,8 @@ all: lisp docs
 
 help:
 	$(info make all          - generate lisp and manual)
-	$(info make docs         - generate most manual formats)
 	$(info make lisp         - generate byte-code and autoloads)
+	$(info make docs         - generate most manual formats)
 	$(info make texi         - generate texi manual (see comments))
 	$(info make info         - generate info manual)
 	$(info make html         - generate html manual file)
