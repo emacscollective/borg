@@ -35,6 +35,7 @@ help:
 	$(info make html         - generate html manual file)
 	$(info make html-dir     - generate html manual directory)
 	$(info make pdf          - generate pdf manual)
+	$(info make stats        - generate statistics)
 	$(info make preview      - preview html and pdf manuals)
 	$(info make publish      - publish html and pdf manuals)
 	$(info make clean        - remove most generated files)
@@ -90,6 +91,11 @@ html-dir: $(PKG).texi
 %.pdf: %.texi
 	@printf "Generating $@\n"
 	@texi2pdf --clean $< > /dev/null
+
+.PHONY: stats
+stats:
+	@printf "Generating statistics\n"
+	@gitstats -c style=https://magit.vc/assets/stats.css -c max_authors=999 . stats
 
 DOMAIN         ?= emacsmirror.net
 CFRONT_DIST    ?= E1IXJGPIOM4EUW
