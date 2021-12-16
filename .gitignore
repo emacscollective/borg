@@ -1,9 +1,9 @@
-/*.elc
+/config.mk
+/docs/*.html
+/docs/*.pdf
+/docs/dir
+/docs/stats/
+
 /*-autoloads.el
-/.config.mk
-/dir
-/borg/
-/borg.html
-/borg.info
-/borg.pdf
-/stats/
+/*.elc
+/docs/borg/
