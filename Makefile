@@ -15,8 +15,8 @@ help:
 	$(info make html-dir     - generate html manual directory)
 	$(info make pdf          - generate pdf manual)
 	$(info make stats        - generate statistics)
-	$(info make preview      - preview html and pdf manuals)
-	$(info make publish      - publish html and pdf manuals)
+	$(info make publish      - publish snapshot manuals)
+	$(info make release      - publish release manuals)
 	$(info make clean        - remove most generated files)
 	@printf "\n"
 

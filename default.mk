@@ -8,6 +8,9 @@ ELCS  = $(ELS:.el=.elc)
 
 DEPS  =
 
+DOMAIN      ?= emacsmirror.net
+CFRONT_DIST ?= E1IXJGPIOM4EUW
+
 EMACS      ?= emacs
 EMACS_ARGS ?=
 

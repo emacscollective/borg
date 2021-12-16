@@ -51,29 +51,34 @@ stats:
 	@printf "Generating statistics\n"
 	@gitstats -c style=https://magit.vc/assets/stats.css -c max_authors=999 $(TOP) $(STATS_DIR)
 
-DOMAIN         ?= emacsmirror.net
-CFRONT_DIST    ?= E1IXJGPIOM4EUW
 PUBLISH_PATH   ?= /manual/
-PUBLISH_BUCKET ?= s3://$(DOMAIN)
-PREVIEW_BUCKET ?= s3://preview.$(DOMAIN)
-PUBLISH_TARGET ?= $(PUBLISH_BUCKET)$(PUBLISH_PATH)
-PREVIEW_TARGET ?= $(PREVIEW_BUCKET)$(PUBLISH_PATH)
+RELEASE_PATH   ?= /manual/$(VERSION)/
+S3_BUCKET      ?= s3://$(DOMAIN)
+PUBLISH_TARGET  = $(S3_BUCKET)$(PUBLISH_PATH)
+RELEASE_TARGET  = $(S3_BUCKET)$(RELEASE_PATH)
+CFRONT_PATHS    = $(PKG).html $(PKG).pdf $(PKG)/*
 
-preview: html html-dir pdf
-	@aws s3 cp $(PKG).html $(PREVIEW_TARGET)
-	@aws s3 cp $(PKG).pdf $(PREVIEW_TARGET)
-	@aws s3 sync $(PKG) $(PREVIEW_TARGET)$(PKG)/
+comma := ,
+empty :=
+space := $(empty) $(empty)
 
 publish: html html-dir pdf
 	@aws s3 cp $(PKG).html $(PUBLISH_TARGET)
-	@aws s3 cp $(PKG).pdf $(PUBLISH_TARGET)
-	@aws s3 sync $(PKG) $(PUBLISH_TARGET)$(PKG)/
+	@aws s3 cp $(PKG).pdf  $(PUBLISH_TARGET)
+	@aws s3 sync $(PKG)    $(PUBLISH_TARGET)$(PKG)/
 	@printf "Generating CDN invalidation\n"
-	@aws cloudfront create-invalidation \
-	--distribution-id $(CFRONT_DIST) --paths "\
-$(PUBLISH_PATH)$(PKG).html,\
-$(PUBLISH_PATH)$(PKG).pdf,\
-$(PUBLISH_PATH)$(PKG)/*" > /dev/null
+	@aws cloudfront create-invalidation --distribution-id $(CFRONT_DIST) --paths \
+	"$(subst $(space),$(comma),$(addprefix $(PUBLISH_PATH),$(CFRONT_PATHS)))" > /dev/null
+
+release: html html-dir pdf
+	@aws s3 cp $(PKG).html $(RELEASE_TARGET)
+	@aws s3 cp $(PKG).pdf  $(RELEASE_TARGET)
+	@aws s3 sync $(PKG)    $(RELEASE_TARGET)$(PKG)/
+	@aws s3 cp $(PUBLISH_TARGET)dir.html $(RELEASE_TARGET)dir.html
+	@aws s3 cp $(PUBLISH_TARGET)dir/index.html $(RELEASE_TARGET)dir/index.html
+	@printf "Generating CDN invalidation\n"
+	@aws cloudfront create-invalidation --distribution-id $(CFRONT_DIST) --paths \
+	"$(subst $(space),$(comma),$(addprefix $(RELEASE_PATH),$(CFRONT_PATHS)))" > /dev/null
 
 CLEAN = $(PKG).info dir $(PKG) $(PKG).html $(PKG).pdf
 
