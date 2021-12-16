@@ -11,6 +11,8 @@ DEPS  =
 DOMAIN      ?= emacsmirror.net
 CFRONT_DIST ?= E1IXJGPIOM4EUW
 
+VERSION ?= $(shell test -e $(TOP).git && git describe --tags --abbrev=0 | cut -c2-)
+
 EMACS      ?= emacs
 EMACS_ARGS ?=
 
