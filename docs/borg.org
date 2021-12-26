@@ -3,18 +3,13 @@
 #+author: Jonas Bernoulli
 #+email: jonas@bernoul.li
 #+date: 2018-{{{year}}}
-#+language: en
 
 #+texinfo_dir_category: Emacs
 #+texinfo_dir_title: Borg: (borg).
 #+texinfo_dir_desc: Assimilate Emacs packages as Git submodules
 #+subtitle: for version {{{version}}}
 
-#+texinfo_deffn: t
-#+options: H:4 num:4 toc:2
-#+property: header-args :eval never
-#+macro: version (eval (ox-texinfo+-get-version 'mixed))
-#+macro: year (eval (format-time-string "%Y"))
+#+setupfile: .orgconfig
 
 The Borg assimilate Emacs packages as Git submodules.  Borg is a
 bare-bones package manager for Emacs packages.
