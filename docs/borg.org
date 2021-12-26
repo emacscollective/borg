@@ -1,28 +1,28 @@
-#+TITLE: Borg User Manual
+#+title: Borg User Manual
 :PREAMBLE:
-#+AUTHOR: Jonas Bernoulli
-#+EMAIL: jonas@bernoul.li
-#+DATE: 2018-{{{year}}}
-#+LANGUAGE: en
+#+author: Jonas Bernoulli
+#+email: jonas@bernoul.li
+#+date: 2018-{{{year}}}
+#+language: en
 
-#+TEXINFO_DIR_CATEGORY: Emacs
-#+TEXINFO_DIR_TITLE: Borg: (borg).
-#+TEXINFO_DIR_DESC: Assimilate Emacs packages as Git submodules
-#+SUBTITLE: for version {{{version}}}
+#+texinfo_dir_category: Emacs
+#+texinfo_dir_title: Borg: (borg).
+#+texinfo_dir_desc: Assimilate Emacs packages as Git submodules
+#+subtitle: for version {{{version}}}
 
-#+TEXINFO_DEFFN: t
-#+OPTIONS: H:4 num:4 toc:2
-#+PROPERTY: header-args :eval never
-#+MACRO: version (eval (ox-texinfo+-get-version 'mixed))
-#+MACRO: year (eval (format-time-string "%Y"))
+#+texinfo_deffn: t
+#+options: H:4 num:4 toc:2
+#+property: header-args :eval never
+#+macro: version (eval (ox-texinfo+-get-version 'mixed))
+#+macro: year (eval (format-time-string "%Y"))
 
 The Borg assimilate Emacs packages as Git submodules.  Borg is a
 bare-bones package manager for Emacs packages.
 
-#+TEXINFO: @noindent
+#+texinfo: @noindent
 This manual is for Borg version {{{version}}}.
 
-#+BEGIN_QUOTE
+#+begin_quote
 Copyright (C) 2016-{{{year}}} Jonas Bernoulli <jonas@bernoul.li>
 
 You can redistribute this document and/or modify it under the terms
@@ -34,7 +34,7 @@ This document is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 General Public License for more details.
-#+END_QUOTE
+#+end_quote
 :END:
 * Introduction
 
@@ -69,29 +69,29 @@ To use Borg as a secondary package manager alongside Package, begin by
 installing the former using the latter.  Borg is only available from
 Melpa, so you have to add that first.
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
   (add-to-list 'package-archives
                (cons "melpa" "https://melpa.org/packages/")
                t)
-#+END_SRC
+#+end_src
 
 Then you have to ~M-x package-refresh-contents RET~ before you can ~M-x
 package-install RET borg RET~.  Doing that should add a verbose variant
 of this to your init file:
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
   (custom-set-variables
    '(package-selected-packages '(borg)))
-#+END_SRC
+#+end_src
 
 Then you have to make the two package managers aware of one another by
 replacing the call to ~package-initialize~ in your init file with this:
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
   (if (require 'borg-elpa nil t)
       (borg-elpa-initialize)
     (package-initialize))
-#+END_SRC
+#+end_src
 
 Just like Package (aka Elpa) defaults to installing packages in ~elpa/~,
 Borg defaults to installing them in ~borg/~.  (When using both package
@@ -101,11 +101,11 @@ setting the Git variable ~borg.drones-directory~.
 
 You should also add a ~Makefile~ containing:
 
-#+BEGIN_SRC makefile
+#+begin_src makefile
   BORG_SECONDARY_P = true
   include $(shell find -L elpa -maxdepth 1 -regex '.*/borg-[.0-9]*' |\
     sort | tail -n 1)/borg.mk
-#+END_SRC
+#+end_src
 
 Despite its title, many things mentioned in the next section are
 relevant even when Borg was installed the way we just did.  Just
@@ -142,12 +142,12 @@ mentioned files available.  Now that these files are available you can
 run ~make bootstrap~ to get and configure all submodules (including the
 ~borg~ submodule) and to build all drones.
 
-#+BEGIN_SRC sh
+#+begin_src sh
   git clone git@github.com:emacscollective/emacs.g.git ~/.emacs.d
   cd ~/.emacs.d
   make bootstrap-borg
   make bootstrap
-#+END_SRC
+#+end_src
 
 If you cloned to somewhere other than ~~/.emacs.d~, then you can use
 that configuration using ~emacs -Q --load /path/to/emacs.g/init.el~.
@@ -167,11 +167,11 @@ ignored in those submodules.  For this reason it is useful to ignore
 these outputs globally, for example in your ~~/.config/git/ignore~
 file:
 
-#+BEGIN_SRC undefined
+#+begin_src undefined
   *.elc
   *-autoloads.el
   dir
-#+END_SRC
+#+end_src
 
 You may discover more things that you'll want to ignore this way as
 you use ~borg~.
@@ -182,10 +182,10 @@ If you don't want to base your configuration on the ~emacs.g~
 starter-kit described in the previous section, then you have
 to do a few things manually.
 
-#+BEGIN_SRC sh
+#+begin_src sh
   git init ~/.emacs.d
   cd ~/.emacs.d
-#+END_SRC
+#+end_src
 
 By default Borg installs packages inside the ~lib/~ subdirectory, but
 since you are starting from scratch, you may choose something else
@@ -194,7 +194,7 @@ repository.
 
 Then you should add a ~Makefile~ containing at least:
 
-#+BEGIN_SRC makefile
+#+begin_src makefile
   DRONES_DIR = $(shell git config "borg.drones-directory" || echo "lib")
 
   -include $(DRONES_DIR)/borg/borg.mk
@@ -204,16 +204,16 @@ Then you should add a ~Makefile~ containing at least:
           --url git@github.com:emacscollective/borg.git
           @cd $(DRONES_DIR)/borg; git symbolic-ref HEAD refs/heads/master
           @cd $(DRONES_DIR)/borg; git reset --hard HEAD
-#+END_SRC
+#+end_src
 
 Now you are probably tempted to run ~make bootstrap-borg~, but that is
 for bootstrapping /from a seed/, and what we are doing right now is to
 bootstrap /from scratch/.  In the process we are creating a seed but we
 are not there yet.  Instead run this:
 
-#+BEGIN_SRC sh
+#+begin_src sh
   git submodule add --name borg git@github.com:emacscollective/borg.git lib/borg
-#+END_SRC
+#+end_src
 
 Now that ~borg~ is available we can build all the assimilated packages (currently
 just ~borg~ itself) using ~make bootstrap~.
@@ -221,33 +221,33 @@ just ~borg~ itself) using ~make bootstrap~.
 Now it is time to tell Emacs to initialize Borg instead of Package by
 adding a simple ~init.el~ file containing at least:
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
   (when (< emacs-major-version 27)
     (setq package-enable-at-startup nil))
   (add-to-list 'load-path (expand-file-name "lib/borg" user-emacs-directory))
   (require 'borg)
   (borg-initialize)
-#+END_SRC
+#+end_src
 
 Beginning with Emacs 27.1, ~package-enable-at-startup~ has to be
 disabled earlier, in ~early-init.el~:
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
   (setq package-enable-at-startup nil)
-#+END_SRC
+#+end_src
 
 Now you could create the initial commit but you could also delay that.
 
-#+BEGIN_SRC sh
+#+begin_src sh
   git commit -m "Assimilate borg"
-#+END_SRC
+#+end_src
 
 Now it is time to assimilate some other essential packages.  You could
 do so using ~M-x borg-assimilate~, but you would quickly notice that
 doing so without the help of the ~epkg~ package is quite cumbersome,
 so lets manually install that and its dependency first:
 
-#+BEGIN_SRC sh
+#+begin_src sh
   git submodule add --name closql git@github.com:emacscollective/closql.git lib/closql
   git submodule add --name emacsql git@github.com:skeeto/emacsql.git lib/emacsql
   git submodule add --name epkg git@github.com:emacscollective/epkg.git lib/epkg
@@ -256,19 +256,19 @@ so lets manually install that and its dependency first:
   git add .gitignore .gitmodules
   make all
   git commit -m "Assimilate epkg and dependencies"
-#+END_SRC
+#+end_src
 
 Once you have done that and restarted Emacs, then you can Magit using
 Borg as described in [[*Assimilation]].  As part of that you should tell
 Magit status buffers to display submodules:
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
   (with-eval-after-load 'magit
     (magit-add-section-hook 'magit-status-sections-hook
                             'magit-insert-modules
                             'magit-insert-stashes
                             'append))
-#+END_SRC
+#+end_src
 
 Finally (look, nobody forced you to do this from scratch ;-) I
 strongly suggest that you make yourself familiar with my ~auto-compile~
@@ -301,39 +301,39 @@ your keys.
 
 Luckily this can easily be fixed using the following global rules.
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
   git config --global url.https://github.com/.insteadOf git@github.com:
   git config --global url.https://gitlab.com/.insteadOf git@gitlab.com:
-#+END_SRC
+#+end_src
 
 If you don't want to configure this globally, then you can also configure
 Borg itself to prefer the ~https~ URLS.
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
   (setq borg-rewrite-urls-alist
         '(("git@github.com:" . "https://github.com/")
           ("git@gitlab.com:" . "https://gitlab.com/")))
-#+END_SRC
+#+end_src
 
 This does not affect packages that have already been assimilated.
 During bootstrapping you have to change the URLs for packages that
 are assimilated by default.
 
-#+BEGIN_SRC sh
+#+begin_src sh
   cd ~/.emacs.d
   sed -i "s|git@github.com:|https://github.com/|g" .gitmodules
   sed -i "s|git@gitlab.com:|https://gitlab.com/|g" .gitmodules
   git commit -m "Use https URLs for Github and Gitlab"
-#+END_SRC
+#+end_src
 
 If you have already run ~make bootstrap~, then you also have to edit
 ~.git/config~.
 
-#+BEGIN_SRC sh
+#+begin_src sh
   cd ~/.emacs.d
   sed -i "s|git@github.com:|https://github.com/|g" .git/config
   sed -i "s|git@gitlab.com:|https://gitlab.com/|g" .git/config
-#+END_SRC
+#+end_src
 
 *** Missing commits and repositories
 
@@ -346,7 +346,7 @@ examples that you might see when running ~make bootstrap~.
 
 Some commit is missing:
 
-#+BEGIN_SRC fundamental
+#+begin_src fundamental
   --- [hl-todo] ---
 
   Cloning into '/home/you/.emacs.d/lib/hl-todo'...
@@ -359,11 +359,11 @@ Some commit is missing:
   fatal: Could not parse object '02bda39bf2d2b77168255d9e49c78b95b0bd314a'.
   futile: Checkout of '02bda39bf2d2b77168255d9e49c78b95b0bd314a' into submodule path 'lib/hl-todo' failed
   HEAD is now at 3bba459 README.md: Cosmetics
-#+END_SRC
+#+end_src
 
 Some repository is missing:
 
-#+BEGIN_SRC fundamental
+#+begin_src fundamental
   --- [paren-face] ---
 
   Cloning into '/home/you/.emacs.d/lib/paren-face'...
@@ -374,7 +374,7 @@ Some repository is missing:
   and the repository exists.
   fatal: clone of 'git@github.com:tarsius/broken-url.git' into submodule path '/home/you/.emacs.d/lib/paren-face' failed
   futile: Clone of any remote into submodule path 'lib/paren-face' failed
-#+END_SRC
+#+end_src
 
 Both of these packages are not essential and I recommend that you
 delay figuring out what is going on exactly and that you instead
@@ -385,7 +385,7 @@ you to efficiently investigate the above issues.
 To skip a package you have to "deinit" the submodule and also remove
 the empty directory that represents the no longer initialized module:
 
-#+BEGIN_SRC sh
+#+begin_src sh
   $ git submodule deinit lib/paren-face/
   Cleared directory 'lib/paren-face'
   error: could not lock config file .git/modules/paren-face/config: No such file or directory
@@ -400,18 +400,18 @@ the empty directory that represents the no longer initialized module:
           deleted:    lib/paren-face
 
   no changes added to commit
-#+END_SRC
+#+end_src
 
 Ignore the irrelevant warnings and that the package is now considered deleted.
 
 Now ~make bootstrap~ has to resume where it left of, more or less.  This
 make target is equal to these three commands:
 
-#+BEGIN_SRC sh
+#+begin_src sh
   $ git submodule init
   $ lib/borg/borg.sh
   $ make build
-#+END_SRC
+#+end_src
 
 The first already succeeded at this point and the second failed
 somewhere along the way, so lets run that again.  It will make some
@@ -427,7 +427,7 @@ how to deal with them.
 The commit that you have referenced was removed from the upstream
 repository.  Pick another commit instead and resume the bootstrap.
 
-#+BEGIN_SRC sh
+#+begin_src sh
   $ git submodule update --init lib/hl-todo
   Submodule 'hl-todo' (git@github.com:tarsius/hl-todo.git) registered for path 'lib/hl-todo'
   fatal: remote error: upload-pack: not our ref 02bda39bf2d2b77168255d9e49c78b95b0bd314a
@@ -437,11 +437,11 @@ repository.  Pick another commit instead and resume the bootstrap.
   $ cd ../..
   $ git add lib/hl-todo
   $ git commit -m '"Update" hl-todo'
-#+END_SRC
+#+end_src
 
 The repository was moved.  Update the url and resume the bootstrap.
 
-#+BEGIN_SRC sh
+#+begin_src sh
   $ git config --file .gitmodules submodule.paren-face.url git@github.com:tarsius/paren-face.git
   $ git submodule update --init lib/paren-face
   Submodule 'paren-face' (git@github.com:tarsius/paren-face.git) registered for path 'lib/paren-face'
@@ -449,16 +449,16 @@ The repository was moved.  Update the url and resume the bootstrap.
   Submodule path 'lib/paren-face': checked out 'eb4a51b8ef455e0914108105e7c0008d675457cc'
   $ git add .gitmodules
   $ git commit -m "paren-face: Update url"
-#+END_SRC
+#+end_src
 
 The repository was removed and no copy remains available anywhere.
 This is the worst case scenario and unlikely to become a reality.
 Remove the package for good.
 
-#+BEGIN_SRC sh
+#+begin_src sh
   $ git rm lib/goner
   $ git commit -m "Remove goner"
-#+END_SRC
+#+end_src
 
 * Startup
 
@@ -520,24 +520,24 @@ commit.
 If you assimilate a single package, then it is recommended that you
 use a message similar to this:
 
-#+BEGIN_SRC undefined
+#+begin_src undefined
   Assimilate foo v1.0.0
-#+END_SRC
+#+end_src
 
 Or if one or more dependencies had to be assimilated, something like:
 
-#+BEGIN_SRC undefined
+#+begin_src undefined
   Assimilate foo and dependencies
 
   Assimilate foo v1.0.0
   Assimilate bar v1.1.0
   Assimilate baz v0.1.0
-#+END_SRC
+#+end_src
 
 It's usually a good idea not to assimilate unrelated packages in the
 same commit, but something like this might make sense:
 
-#+BEGIN_SRC undefined
+#+begin_src undefined
   Assimilate ido and extensions
 
   Assimilate flx               v0.6.1-3-gae0981b
@@ -545,7 +545,7 @@ same commit, but something like this might make sense:
   Assimilate ido-ubiquitious   v3.12-2-g7354d98
   Assimilate ido-vertical-mode v0.1.6-33-gb42e422
   Assimilate smex               3.0-13-g55aaebe
-#+END_SRC
+#+end_src
 
 The command ~borg-insert-update-message~ can be used to generate such
 commit messages.
@@ -673,18 +673,18 @@ can create a single commit for all updated drones, which ever you find
 more appropriate.  However it is recommended that you use a message
 similar to:
 
-#+BEGIN_SRC undefined
+#+begin_src undefined
   Update foo to v1.1.0
-#+END_SRC
+#+end_src
 
 Or for multiple packages:
 
-#+BEGIN_SRC undefined
+#+begin_src undefined
   Update 2 drones
 
   Update foo to v1.1.0
   Update bar to v1.2.1
-#+END_SRC
+#+end_src
 
 The command ~borg-insert-update-message~ can be used to generate such
 commit messages.
@@ -1173,7 +1173,7 @@ being noted in the change log.
 :COPYING:    t
 :END:
 
-#+BEGIN_QUOTE
+#+begin_quote
 Copyright (C) 2016-{{{year}}} Jonas Bernoulli <jonas@bernoul.li>
 
 You can redistribute this document and/or modify it under the terms
@@ -1185,7 +1185,7 @@ This document is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 General Public License for more details.
-#+END_QUOTE
+#+end_quote
 
 #  LocalWords:  CLONE's COMMANDs DRONE's Elpa Epkg Github Gitlab
 #  LocalWords:  LocalWords MERCHANTABILITY Magit Makefile Melpa
