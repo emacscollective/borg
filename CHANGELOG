@@ -1,12 +1,13 @@
 # -*- mode: org -*-
-* v3.3.0    UNRELEASED
+* v3.3.0    2022/01/01
 
 - When setting ~borg-top-level-directory~ do not assume we are inside
   a Git repository, which makes it possible to use Borg to build a
   static configuration to be deployed outside the repository used
   to build it.  #110
 
-- Fixed path to ~etc/borg/config.mk~.
+- Fixed path to ~etc/borg/config.mk~, which is now also loaded when
+  building not-interactively.
 
 - Added new variable ~borg-compile-function~, which can be set to
   ~native-compile~ to enable upfront native compilation.  This should
@@ -23,6 +24,10 @@
 - ~borg-drones~ learned to ignore non-drone submodules.  #117
 
 - The ~variable~ argument of ~borg-get~ can now be a symbol.
+
+- If a variable has multiple values ~borg-get~ failed to return the
+  last value when using the cache, as it already did when not using
+  the cache.
 
 * v3.2.0    2021/05/30
 
