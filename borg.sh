@@ -1,6 +1,6 @@
 #!/bin/sh
 
-# Copyright (C) 2016-2021  Jonas Bernoulli
+# Copyright (C) 2016-2022  Jonas Bernoulli
 #
 # Author: Jonas Bernoulli <jonas@bernoul.li>
 # License: GPL v3 <https://www.gnu.org/licenses/gpl-3.0.txt>
