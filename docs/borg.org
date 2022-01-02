@@ -1066,6 +1066,13 @@ build your own tools on top of Borg.
   when CLONE's Git directory is actually located inside the working
   tree.
 
+- Macro: borg-do-drones (var [result]) body...) ::
+
+  This macro loop over drones.  BODY is evaluated with VAR bound to
+  each drone, in turn.  Inside BODY variables set in ~.gitmodules~ are
+  cached.  Then RESULT is evaluated to get the return value,
+  defaulting to nil.
+
 - Function: borg-get clone variable &optional all ::
 
   This function returns the value of the Git variable

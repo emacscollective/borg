@@ -167,6 +167,20 @@ inside the working tree."
 
 (defvar borg--gitmodule-cache nil)
 
+(defmacro borg-do-drones (spec &rest body)
+  "Loop over drones.
+Evaluate BODY with VAR bound to each drone, in turn.
+Inside BODY variables set in \".gitmodules\" are cached.
+Then evaluate RESULT to get return value, default nil.
+\n(fn (VAR [RESULT]) BODY...)"
+  (declare (indent 1))
+  (let ((var (car spec))
+        (result (cadr spec)))
+    `(let ((borg--gitmodule-cache (borg-drones 'raw)))
+       (dolist (,var borg--gitmodule-cache ,result)
+         (setq ,var (car ,var))
+         ,@body))))
+
 (defun borg-get (clone variable &optional all)
   "Return the value of `submodule.CLONE.VARIABLE' in `~/.emacs.d/.gitmodules'.
 If optional ALL is non-nil, then return all values as a list.
@@ -390,9 +404,8 @@ exists."
   (info-initialize)
   (let ((start (current-time))
         (skipped 0)
-        (initialized 0)
-        (borg--gitmodule-cache (borg-drones 'raw)))
-    (pcase-dolist (`(,drone) borg--gitmodule-cache)
+        (initialized 0))
+    (borg-do-drones (drone)
       (cond
        ((equal (borg-get drone "disabled") "true")
         (cl-incf skipped))
@@ -451,24 +464,24 @@ which `submodule.DRONE.build-step' is set, assuming those are the
 drones that take longer to be built."
   (unless noninteractive
     (error "borg-batch-rebuild is to be used only with --batch"))
-  (let ((drones (borg-drones)))
-    (when (borg-dronep "org")
-      ;; `org-loaddefs.el' has to exist when compiling a library
-      ;; which depends on `org', else we get warnings about that
-      ;; not being so, and other more confusing warnings too.
-      (setq drones (cons "org" (delete "org" drones))))
-    (dolist (drone drones)
-      (borg--remove-autoloads drone quick))
-    (dolist (drone drones)
-      (message "\n--- [%s] ---\n" drone)
-      (cond
-       ((equal (borg-get drone "disabled") "true")
-        (message "Skipped (Disabled)"))
-       ((not (file-exists-p (borg-worktree drone)))
-        (message "Skipped (Missing)"))
-       ((and quick (borg-get-all drone "build-step"))
-        (message "Skipped (Expensive to build)"))
-       (t (borg-build drone)))))
+  (when (borg-dronep "org")
+    ;; `org-loaddefs.el' has to exist when compiling a library
+    ;; which depends on `org', else we get warnings about that
+    ;; not being so, and other more confusing warnings too.
+    (borg--remove-autoloads "org" quick))
+  (borg-do-drones (drone)
+    (unless (equal drone "org")
+      (borg--remove-autoloads drone quick)))
+  (borg-do-drones (drone)
+    (message "\n--- [%s] ---\n" drone)
+    (cond
+     ((equal (borg-get drone "disabled") "true")
+      (message "Skipped (Disabled)"))
+     ((not (file-exists-p (borg-worktree drone)))
+      (message "Skipped (Missing)"))
+     ((and quick (borg-get-all drone "build-step"))
+      (message "Skipped (Expensive to build)"))
+     (t (borg-build drone))))
   (borg-batch-rebuild-init))
 
 (defun borg-batch-rebuild-init ()
