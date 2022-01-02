@@ -371,11 +371,12 @@ is true in \"~/.emacs.d/.gitmodules\", then the drone named DRONE
 is skipped.
 
 If Emacs is running without an interactive terminal, then first
-load \"`user-emacs-directory'/etc/borg/init.el\", if that exists."
+load \"`borg-user-emacs-directory'/etc/borg/init.el\", if that
+exists."
   (when noninteractive
     (let ((init (expand-file-name
                  (convert-standard-filename "etc/borg/init.el")
-                 user-emacs-directory)))
+                 borg-user-emacs-directory)))
       (when (file-exists-p init)
         (load-file init))))
   (info-initialize)
@@ -580,7 +581,7 @@ then also activate the clone using `borg-activate'."
   (require 'borg-elpa)
   (borg-elpa-initialize)
   (setq borg-build-shell-command (quote %S))
-  (borg-build %S))" user-emacs-directory borg-build-shell-command clone)
+  (borg-build %S))" borg-user-emacs-directory borg-build-shell-command clone)
                           (format "(progn
   (require 'borg)
   (borg-initialize)
@@ -893,7 +894,7 @@ Formatting is according to the commit message conventions."
 
 (defun borg--config-file ()
   (expand-file-name (convert-standard-filename "etc/borg/config.el")
-                    user-emacs-directory))
+                    borg-user-emacs-directory))
 
 (defun borg--maybe-absorb-gitdir (pkg)
   (let* ((ver (nth 2 (split-string (car (process-lines "git" "version")) " ")))

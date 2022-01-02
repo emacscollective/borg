@@ -1,4 +1,9 @@
 # -*- mode: org -*-
+* v3.3.0    UNRELEASED
+
+- ~borg-user-emacs-directory~ wasn't used in all places where it
+  should be used.
+
 * v3.3.0    2022/01/01
 
 - When setting ~borg-top-level-directory~ do not assume we are inside
