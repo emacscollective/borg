@@ -374,9 +374,9 @@ If Emacs is running without an interactive terminal, then first
 load \"`borg-user-emacs-directory'/etc/borg/init.el\", if that
 exists."
   (when noninteractive
-    (let ((init (expand-file-name
-                 (convert-standard-filename "etc/borg/init.el")
-                 borg-user-emacs-directory)))
+    (let ((init (convert-standard-filename
+                 (expand-file-name "etc/borg/init.el"
+                                   borg-user-emacs-directory))))
       (when (file-exists-p init)
         (load-file init))))
   (info-initialize)
@@ -893,8 +893,8 @@ Formatting is according to the commit message conventions."
 ;;; Internal Utilities
 
 (defun borg--config-file ()
-  (expand-file-name (convert-standard-filename "etc/borg/config.el")
-                    borg-user-emacs-directory))
+  (convert-standard-filename
+   (expand-file-name "etc/borg/config.el" borg-user-emacs-directory)))
 
 (defun borg--maybe-absorb-gitdir (pkg)
   (let* ((ver (nth 2 (split-string (car (process-lines "git" "version")) " ")))
