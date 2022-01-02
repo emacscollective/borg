@@ -415,20 +415,16 @@ Add the appropriate directories to `load-path' and
 `Info-directory-list', and load the autoloads file,
 if it exists."
   (interactive (list (borg-read-clone "Activate clone: ")))
-  (dolist (dir (borg-load-path clone))
-    (let (file)
-      (cond ((and (file-exists-p
-                   (setq file (expand-file-name
-                               (concat clone "-autoloads.el") dir)))
-                  (with-demoted-errors "Error loading autoloads: %s"
-                    (load file nil t))))
-            ((and (file-exists-p
-                   (setq file (expand-file-name
-                               (concat clone "-loaddefs.el") dir)))
-                  (with-demoted-errors "Error loading autoloads: %s"
-                    (add-to-list 'load-path dir) ; for `org'
-                    (load file nil t))))
-            (t (push dir load-path)))))
+  (cl-flet
+      ((activate (dir part)
+         (let ((file (expand-file-name (format "%s-%s.el" clone part) dir)))
+           (and (file-exists-p file)
+                (with-demoted-errors "Error loading autoloads: %s"
+                  (load file nil t))))))
+    (dolist (dir (borg-load-path clone))
+      (or (activate dir "autoloads")
+          (activate dir "loaddefs") ; for `org'
+          (push dir load-path))))
   (dolist (dir (borg-info-path clone))
     (push  dir Info-directory-list)))
 
