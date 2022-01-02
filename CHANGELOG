@@ -4,6 +4,8 @@
 - ~borg-user-emacs-directory~ wasn't used in all places where it
   should be used.
 
+- Added new function ~borg-dronep~.
+
 * v3.3.0    2022/01/01
 
 - When setting ~borg-top-level-directory~ do not assume we are inside

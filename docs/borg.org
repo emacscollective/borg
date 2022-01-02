@@ -1091,6 +1091,13 @@ build your own tools on top of Borg.
   containing ~texi~ and/or ~info~ files.  Otherwise it returns a list of
   directories containing a file named ~dir~.
 
+- Function: borg-dronep name ::
+
+  This function returns non-nil if a drone named NAME exists.
+
+  If that is set in ~.gitmodules~, then it returns the value of
+  ~submodule.NAME.path~, nil otherwise.
+
 - Function: borg-drones &optional include-variables ::
 
   This function returns a list of all assimilated drones.

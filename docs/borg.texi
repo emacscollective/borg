@@ -31,7 +31,7 @@ General Public License for more details.
 @finalout
 @titlepage
 @title Borg User Manual
-@subtitle for version v3.3.0
+@subtitle for version v3.3.0-4-g2106273+1
 @author Jonas Bernoulli
 @page
 @vskip 0pt plus 1filll
@@ -48,7 +48,7 @@ The Borg assimilate Emacs packages as Git submodules.  Borg is a
 bare-bones package manager for Emacs packages.
 
 @noindent
-This manual is for Borg version v3.3.0.
+This manual is for Borg version v3.3.0-4-g2106273+1.
 
 @quotation
 Copyright (C) 2016-2022 Jonas Bernoulli <jonas@@bernoul.li>
@@ -1189,6 +1189,13 @@ CLONE@.
 If optional SETUP is non-nil, then it returns a list of directories
 containing @code{texi} and/or @code{info} files.  Otherwise it returns a list of
 directories containing a file named @code{dir}.
+@end defun
+
+@defun borg-dronep name
+This function returns non-nil if a drone named NAME exists.
+
+If that is set in @code{.gitmodules}, then it returns the value of
+@code{submodule.NAME.path}, nil otherwise.
 @end defun
 
 @defun borg-drones &optional include-variables

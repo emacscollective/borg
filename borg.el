@@ -229,6 +229,14 @@ directories containing a file named \"dir\"."
   '(build-step load-path no-byte-compile info-path)
   "List of submodule variables which can have multiple values.")
 
+(defun borg-dronep (name)
+  "Return non-nil if a drone named NAME exists.
+If set in \".gitmodules\", then return the value
+of `submodule.NAME.path', nil otherwise."
+  (let ((default-directory borg-top-level-directory))
+    (car (process-lines "git" "submodule--helper" "config"
+                        (format "submodule.%s.path" name)))))
+
 (defun borg-drones (&optional include-variables)
   "Return a list of all assimilated drones.
 
@@ -444,7 +452,7 @@ drones that take longer to be built."
   (unless noninteractive
     (error "borg-batch-rebuild is to be used only with --batch"))
   (let ((drones (borg-drones)))
-    (when (member "org" drones)
+    (when (borg-dronep "org")
       ;; `org-loaddefs.el' has to exist when compiling a library
       ;; which depends on `org', else we get warnings about that
       ;; not being so, and other more confusing warnings too.
