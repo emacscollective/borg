@@ -450,14 +450,7 @@ drones that take longer to be built."
       ;; not being so, and other more confusing warnings too.
       (setq drones (cons "org" (delete "org" drones))))
     (dolist (drone drones)
-      (unless (or (equal (borg-get drone "disabled") "true")
-                  (not (file-exists-p (borg-worktree drone)))
-                  (and quick (borg-get-all drone "build-step")))
-        (dolist (d (borg-load-path drone))
-          (dolist (f (directory-files
-                      d t "\\(\\.elc\\|-autoloads\\.el\\|-loaddefs\\.el\\)\\'"
-                      t))
-            (ignore-errors (delete-file f))))))
+      (borg--remove-autoloads drone quick))
     (dolist (drone drones)
       (message "\n--- [%s] ---\n" drone)
       (cond
@@ -748,6 +741,16 @@ then also activate the clone using `borg-activate'."
         (borg-silencio "\\`(Shell command succeeded with %s)\\'"
           (shell-command cmd))
         (message "  Running `%s'...done" cmd)))))
+
+(defun borg--remove-autoloads (drone &optional quick)
+  (unless (or (equal (borg-get drone "disabled") "true")
+              (not (file-exists-p (borg-worktree drone)))
+              (and quick (borg-get-all drone "build-step")))
+    (dolist (dir (borg-load-path drone))
+      (dolist (file (directory-files
+                     dir t "\\(\\.elc\\|-autoloads\\.el\\|-loaddefs\\.el\\)\\'"
+                     t))
+        (ignore-errors (delete-file file))))))
 
 ;;; Assimilation
 
