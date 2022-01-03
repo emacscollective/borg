@@ -233,7 +233,8 @@ directories containing a file named \"dir\"."
      (if setup
          (lambda (d)
            (setq d (file-name-as-directory d))
-           (and (directory-files d t "\\.\\(texi\\(nfo\\)?\\|info\\)\\'" t)
+           (and (file-directory-p d)
+                (directory-files d t "\\.\\(texi\\(nfo\\)?\\|info\\)\\'" t)
                 (list d)))
        (lambda (d)
          (setq d (file-name-as-directory d))
@@ -241,7 +242,9 @@ directories containing a file named \"dir\"."
               (list d))))
      (if path
          (mapcar (lambda (d) (expand-file-name d repo)) path)
-       (list repo)))))
+       (list repo
+             (expand-file-name "doc" repo)
+             (expand-file-name "docs" repo))))))
 
 (defvar borg--multi-value-variables
   '(build-step load-path no-byte-compile info-path)
