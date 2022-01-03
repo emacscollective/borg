@@ -446,9 +446,9 @@ if it exists."
                 (with-demoted-errors "Error loading autoloads: %s"
                   (load file nil t))))))
     (dolist (dir (borg-load-path clone))
-      (or (activate dir "autoloads")
-          (activate dir "loaddefs") ; for `org'
-          (push dir load-path))))
+      (unless (activate dir "autoloads")
+        (activate dir "loaddefs") ; for `org'
+        (push dir load-path))))
   (dolist (dir (borg-info-path clone))
     (push  dir Info-directory-list)))
 
