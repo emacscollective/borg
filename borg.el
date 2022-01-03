@@ -229,18 +229,19 @@ containing texinfo and/or info files.  Otherwise return a list of
 directories containing a file named \"dir\"."
   (let ((repo (borg-worktree clone))
         (path (borg-get-all clone "info-path")))
-    (cl-mapcan (if setup
-                   (lambda (d)
-                     (setq d (file-name-as-directory d))
-                     (when (directory-files d t "\\.\\(texi\\(nfo\\)?\\|info\\)\\'" t)
-                       (list d)))
-                 (lambda (d)
-                   (setq d (file-name-as-directory d))
-                   (when (file-exists-p (expand-file-name "dir" d))
-                     (list d))))
-               (if path
-                   (mapcar (lambda (d) (expand-file-name d repo)) path)
-                 (list repo)))))
+    (cl-mapcan
+     (if setup
+         (lambda (d)
+           (setq d (file-name-as-directory d))
+           (and (directory-files d t "\\.\\(texi\\(nfo\\)?\\|info\\)\\'" t)
+                (list d)))
+       (lambda (d)
+         (setq d (file-name-as-directory d))
+         (and (file-exists-p (expand-file-name "dir" d))
+              (list d))))
+     (if path
+         (mapcar (lambda (d) (expand-file-name d repo)) path)
+       (list repo)))))
 
 (defvar borg--multi-value-variables
   '(build-step load-path no-byte-compile info-path)
