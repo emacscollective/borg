@@ -759,8 +759,10 @@ then also activate the clone using `borg-activate'."
 (defun borg-makeinfo (clone)
   "Generate Info manuals and the Info index for the clone named CLONE."
   (dolist (default-directory (borg-info-path clone t))
-    (let ((exclude (borg-get-all clone "no-makeinfo")))
-      (dolist (texi (directory-files default-directory nil "\\.texi\\(nfo\\)?\\'"))
+    (let ((exclude (nconc (list "fdl.texi" "gpl.texi")
+                          (borg-get-all clone "no-makeinfo"))))
+      (dolist (texi (directory-files default-directory nil
+                                     "\\.texi\\(nfo\\)?\\'"))
         (let ((info (concat (file-name-sans-extension texi) ".info")))
           (when (and (not (member texi exclude))
                      (or (not (file-exists-p info))
