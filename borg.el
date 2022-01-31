@@ -475,7 +475,8 @@ NATIVE is a function, then use that, `native-compile' otherwise."
   (unless noninteractive
     (error "borg-batch-rebuild is to be used only with --batch"))
   (borg-do-drones (drone)
-    (borg--remove-autoloads drone quick))
+    (unless (and quick (borg-get-all drone "build-step"))
+      (borg--remove-autoloads drone quick)))
   (when (borg-dronep "org")
     ;; `org-loaddefs.el' has to exist when compiling a library
     ;; which depends on `org', else we get warnings about that
