@@ -474,14 +474,14 @@ When optional NATIVE is non-nil, then compile natively.  If
 NATIVE is a function, then use that, `native-compile' otherwise."
   (unless noninteractive
     (error "borg-batch-rebuild is to be used only with --batch"))
+  (borg-do-drones (drone)
+    (borg--remove-autoloads drone quick))
   (when (borg-dronep "org")
     ;; `org-loaddefs.el' has to exist when compiling a library
     ;; which depends on `org', else we get warnings about that
-    ;; not being so, and other more confusing warnings too.
-    (borg--remove-autoloads "org" quick))
-  (borg-do-drones (drone)
-    (unless (equal drone "org")
-      (borg--remove-autoloads drone quick)))
+    ;; not being so.
+    (let ((default-directory (borg-worktree "org")))
+      (shell-command "make autoloads")))
   (borg-do-drones (drone)
     (message "\n--- [%s] ---\n" drone)
     (cond
