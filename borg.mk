@@ -23,6 +23,8 @@ EMACS_ARGUMENTS ?= -Q --batch
 # `comp-subr-trampoline-install' but without requiring `comp'.
 EMACS_ARGUMENTS += --eval "(require 'comp nil t)"
 
+EMACS_EXTRA ?=
+
 .PHONY: all help clean clean-init build build-init quick bootstrap
 .FORCE:
 
@@ -65,35 +67,35 @@ clean-init:
 	@rm -f init.elc $(INIT_FILES:.el=.elc)
 
 build: clean-init
-	@$(EMACS) $(EMACS_ARGUMENTS) $(SILENCIO) \
+	@$(EMACS) $(EMACS_ARGUMENTS) $(EMACS_EXTRA) $(SILENCIO) \
 	$(BORG_ARGUMENTS) \
 	--funcall borg-batch-rebuild $(INIT_FILES) 2>&1
 
 build-native:
-	@$(EMACS) $(EMACS_ARGUMENTS) $(SILENCIO) \
+	@$(EMACS) $(EMACS_ARGUMENTS) $(EMACS_EXTRA) $(SILENCIO) \
 	$(BORG_ARGUMENTS) \
 	--eval "(borg-batch-rebuild nil 'native-compile-async)" \
 	$(INIT_FILES) 2>&1
 
 build-init: clean-init
-	@$(EMACS) $(EMACS_ARGUMENTS) \
+	@$(EMACS) $(EMACS_ARGUMENTS) $(EMACS_EXTRA) \
 	$(BORG_ARGUMENTS) \
 	--funcall borg-batch-rebuild-init $(INIT_FILES) 2>&1
 
 tangle-init: init.el
 init.el: init.org
-	@$(EMACS) $(EMACS_ARGUMENTS) \
+	@$(EMACS) $(EMACS_ARGUMENTS) $(EMACS_EXTRA) \
 	--load org \
 	--eval '(org-babel-tangle-file "init.org")' 2>&1
 
 quick: clean-init
-	@$(EMACS) $(EMACS_ARGUMENTS) $(SILENCIO) \
+	@$(EMACS) $(EMACS_ARGUMENTS) $(EMACS_EXTRA) $(SILENCIO) \
 	$(BORG_ARGUMENTS) \
 	--eval '(borg-batch-rebuild t)' 2>&1
 
 $(BORG_DIR)borg.mk: ;
 lib/%: .FORCE
-	@$(EMACS) $(EMACS_ARGUMENTS) $(SILENCIO) \
+	@$(EMACS) $(EMACS_ARGUMENTS) $(EMACS_EXTRA) $(SILENCIO) \
 	$(BORG_ARGUMENTS) \
 	--eval '(borg-build "$*")' 2>&1
 
