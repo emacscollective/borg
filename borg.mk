@@ -1,7 +1,7 @@
 # Copyright (C) 2016-2022  Jonas Bernoulli
 #
 # Author: Jonas Bernoulli <jonas@bernoul.li>
-# License: GPL v3 <https://www.gnu.org/licenses/gpl-3.0.txt>
+# SPDX-License-Identifier: GPL-3.0-or-later
 
 BORG_DIR := $(dir $(lastword $(MAKEFILE_LIST)))
 
