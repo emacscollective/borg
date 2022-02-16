@@ -6,8 +6,8 @@
 ;; Homepage: https://github.com/emacscollective/borg
 ;; Keywords: tools
 
-;; Package-Version: 3.3.0-git
-;; Package-Requires: ((emacs "26") (epkg "3.3.0") (magit "3.0.0"))
+;; Package-Version: 3.3.1
+;; Package-Requires: ((emacs "26") (epkg "3.3.3") (magit "3.3.0"))
 ;;
 ;;   Borg itself does no actually require Emacs 26 and has no
 ;;   other dependencies but when it is installed from Melpa,

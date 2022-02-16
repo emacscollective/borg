@@ -1,5 +1,5 @@
 # -*- mode: org -*-
-* v3.3.0    UNRELEASED
+* v3.3.1    2022-02-16
 
 - ~borg-user-emacs-directory~ wasn't used in all places where it
   should be used.
@@ -10,6 +10,13 @@
   caches variables that are set in ".gitmodules".
 
 - Added new make target ~build-native~.
+
+- Like manual in the top directory, those in the ~doc/~ and ~docs/~
+  directories are now also automatically build and added to
+  ~Info-directory-list~.
+
+- Added an additional make variable ~EMACS_ARGUMENTS~ that is reserved
+  for use by users.
 
 * v3.3.0    2022-01-01
 
