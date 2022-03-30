@@ -537,7 +537,9 @@ then also activate the clone using `borg-activate'."
       (setq borg-compile-function
             (if (functionp borg--compile-natively)
                 borg--compile-natively
-              'native-compile)))
+              #'borg--native-compile)))
+    (when (eq borg-compile-function #'native-compile)
+      (setq borg-compile-function #'borg--native-compile))
     (if build
         (dolist (cmd build)
           (message "  Running `%s'..." cmd)
@@ -746,8 +748,9 @@ then also activate the clone using `borg-activate'."
                     ('no-byte-compile
                      (message "Compiling %s...skipped" file)
                      skip-count)
-                    ('t file-count)
-                    (_  fail-count))))
+                    ((or 't (pred stringp))
+                     file-count)
+                    (_ fail-count))))
                (unless (equal dir last-dir)
                  (setq last-dir dir)
                  (cl-incf dir-count))))))))
@@ -791,6 +794,10 @@ then also activate the clone using `borg-activate'."
                      dir t "\\(\\.elc\\|-autoloads\\.el\\|-loaddefs\\.el\\)\\'"
                      t))
         (ignore-errors (delete-file file))))))
+
+(defun borg--native-compile (file)
+  (with-demoted-errors "borg--native-compile: %S"
+    (native-compile file)))
 
 ;;; Assimilation
 
