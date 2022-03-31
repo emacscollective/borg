@@ -1018,7 +1018,7 @@ variables you can tell Borg how to build such packages.
       (setq borg-compile-function #'native-compile))
   #+end_src
 
-- Variable: borg-compile-recursive ::
+- Variable: borg-compile-recursively ::
 
   Setting this variable to a non-nil value instructs ~borg-compile~
   to compile all drones recursively.  Doing so is discouraged.
