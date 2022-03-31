@@ -798,10 +798,17 @@ non-nil, then try those files instead."
                           (let ((case-fold-search t))
                             (re-search-forward
                              "^#\\+texinfo_dir_title:" nil t)))
-                    (message "Exporting %s..." file)
-                    (require (quote ox))
-                    (ignore-errors (org-texinfo-export-to-texinfo))
-                    (message "Exporting %s...done" file))))
+                    (let ((texi
+                           (save-excursion
+                             (let ((case-fold-search t))
+                               (and (re-search-forward
+                                     "^#\\+export_file_name: \\(.+\\)" nil t)
+                                    (match-string 1))))))
+                      (unless (and texi (borg--file-tracked-p texi))
+                        (message "Exporting %s..." file)
+                        (require (quote ox))
+                        (ignore-errors (org-texinfo-export-to-texinfo))
+                        (message "Exporting %s...done" file))))))
               (unless buffer
                 (kill-buffer (current-buffer))))))))))
 
