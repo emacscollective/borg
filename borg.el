@@ -768,10 +768,8 @@ then also activate the clone using `borg-activate'."
       (dolist (texi (directory-files default-directory nil
                                      "\\.texi\\(nfo\\)?\\'"))
         (let ((info (concat (file-name-sans-extension texi) ".info")))
-          (when (and (not (member texi exclude))
-                     (= (process-file "git" nil nil nil
-                                      "ls-files" "--error-unmatch" info)
-                        1)))
+          (unless (or (member texi exclude)
+                      (borg--file-tracked-p info))
             (let ((cmd (format "makeinfo --no-split %s -o %s" texi info)))
               (message "  Running `%s'..." cmd)
               (borg-silencio "\\`(Shell command succeeded with %s)\\'"
@@ -994,6 +992,9 @@ Formatting is according to the commit message conventions."
 
 (defun borg--git-success (&rest args)
   (= (apply #'process-file "git" nil nil nil args) 0))
+
+(defun borg--file-tracked-p (file)
+  (borg--git-success "ls-files" "--error-unmatch" file))
 
 (defun borg--refresh-magit ()
   (when (and (derived-mode-p 'magit-mode)
