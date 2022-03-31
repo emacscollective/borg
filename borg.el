@@ -68,6 +68,8 @@
 (declare-function format-spec      "format-spec" (format specification))
 (declare-function magit-get             "magit-git" (&rest keys))
 (declare-function magit-get-some-remote "magit-git" (&optional branch))
+(declare-function org-texinfo-export-to-texinfo "ox-texinfo"
+                  (&optional async subtreep visible-only body-only ext-plist))
 
 (defvar git-commit-mode-map)
 (defvar compilation-mode-font-lock-keywords)
@@ -149,6 +151,11 @@ Each element has the form (ORIG . BASE).  Each URL that starts
 with ORIG is rewritten to start with BASE instead.  See info
 node `(borg)Using https URLs'.")
 
+(defvar borg-maketexi-filename-regexp "\\`\\(%s\\|README\\).org\\'"
+  "Regexp matching Org files that may be exported to Texinfo.
+The name of the clone is substituted for %s.  Setting this to
+nil disables the export of any Org files.")
+
 ;;; Utilities
 
 (defun borg-worktree (clone)
@@ -225,8 +232,8 @@ a string."
   "Return the `Info-directory-list' for the clone named CLONE.
 
 If optional SETUP is non-nil, then return a list of directories
-containing texinfo and/or info files.  Otherwise return a list of
-directories containing a file named \"dir\"."
+containing org, texinfo and/or info files.  Otherwise return a
+list of directories containing a file named \"dir\"."
   (let ((repo (borg-worktree clone))
         (path (borg-get-all clone "info-path")))
     (cl-mapcan
@@ -234,7 +241,8 @@ directories containing a file named \"dir\"."
          (lambda (d)
            (setq d (file-name-as-directory d))
            (and (file-directory-p d)
-                (directory-files d t "\\.\\(texi\\(nfo\\)?\\|info\\)\\'" t)
+                (directory-files
+                 d t "\\.\\(org\\|texi\\(nfo\\)?\\|info\\)\\'" t)
                 (list d)))
        (lambda (d)
          (setq d (file-name-as-directory d))
@@ -545,6 +553,7 @@ then also activate the clone using `borg-activate'."
           (message "  Running `%s'..." cmd)
           (cond ((member cmd '("borg-update-autoloads"
                                "borg-compile"
+                               "borg-maketexi"
                                "borg-makeinfo"
                                ;; For backward compatibility.
                                "borg-byte-compile"))
@@ -565,6 +574,7 @@ then also activate the clone using `borg-activate'."
       (let ((path (mapcar #'file-name-as-directory (borg-load-path clone))))
         (borg-update-autoloads clone path)
         (borg-compile clone path)
+        (borg-maketexi clone)
         (borg-makeinfo clone)))))
 
 (defun borg--build-interactive (clone)
@@ -759,6 +769,41 @@ then also activate the clone using `borg-activate'."
              (if (> fail-count 0) (format ", %d failed"  fail-count) "")
              (if (> skip-count 0) (format ", %d skipped" skip-count) "")
              (if (> dir-count  1) (format " in %d directories" dir-count) ""))))
+
+(defun borg-maketexi (clone &optional files)
+  "Generate Texinfo manuals from Org files for the clone named CLONE.
+Export each file located on `borg-info-path' if its name matches
+`borg-maketexi-filename-regexp' and the `TEXINFO_DIR_HEADER'
+export keyword is set in its content.  If optional FILES is
+non-nil, then try those files instead."
+  (when (or files borg-maketexi-filename-regexp)
+    (let ((repo (borg-worktree clone))
+          (exclude (borg-get-all clone "no-maketexi")))
+      (dolist (file (or files
+                        (cl-mapcan
+                         (lambda (dir)
+                           (directory-files
+                            dir t (format borg-maketexi-filename-regexp clone)))
+                         (borg-info-path clone t))))
+        (unless (or (member (file-relative-name file repo) exclude)
+                    (borg--file-tracked-p
+                     (concat (file-name-sans-extension file) ".texi")))
+          (let ((buffer (get-file-buffer file)))
+            (with-current-buffer (or buffer (find-file-noselect file))
+              (save-excursion
+                (save-restriction
+                  (widen)
+                  (goto-char (point-min))
+                  (when (save-excursion
+                          (let ((case-fold-search t))
+                            (re-search-forward
+                             "^#\\+texinfo_dir_title:" nil t)))
+                    (message "Exporting %s..." file)
+                    (require (quote ox))
+                    (ignore-errors (org-texinfo-export-to-texinfo))
+                    (message "Exporting %s...done" file))))
+              (unless buffer
+                (kill-buffer (current-buffer))))))))))
 
 (defun borg-makeinfo (clone)
   "Generate Info manuals and the Info index for the clone named CLONE."

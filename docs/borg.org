@@ -605,6 +605,13 @@ commit messages.
   the directories in PATH.  PATH can be omitted or contain file-names
   that are relative to the top-level of CLONE's repository.
 
+- Function: borg-maketexi clone &optional files ::
+
+  This function generates Texinfo files from certain Org files for the
+  clone named CLONE.  Org files that are located on ~borg-info-path~ are
+  exported if their names match ~borg-maketexi-filename-regexp~ and the
+  ~TEXINFO_DIR_HEADER~ export keyword is set in their content.
+
 - Function: borg-makeinfo clone ::
 
   This function generates the Info manuals and the Info index for the
@@ -867,8 +874,8 @@ file ~~/.emacs.d/.gitmodules~.  The variables ~borg.pushDefault~ and
 Because most repositories used to maintain Emacs packages follow some
 common-sense conventions, Borg usually does not have to be told how to
 build a given drone.  Building is done using ~borg-build~, which in turn
-usually does its work using ~borg-update-autoloads~, ~borg-compile~, and
-~borg-makeinfo~.
+usually does its work using ~borg-update-autoloads~, ~borg-compile~,
+~borg-maketexi~, and ~borg-makeinfo~.
 
 However some packages don't follow the conventions either because they
 are too complex to do so, or for the sake of doing it differently.
@@ -878,9 +885,9 @@ variables you can tell Borg how to build such packages.
 - Variable: submodule.DRONE.build-step COMMAND ::
 
   By default drones are built using the lisp functions
-  ~borg-update-autoloads~, ~borg-compile~, and ~borg-makeinfo~, but if this
-  variable has one or more values, then DRONE is built using these
-  COMMANDs *instead*.
+  ~borg-update-autoloads~, ~borg-compile~, ~borg-maketexi~, and
+  ~borg-makeinfo~, but if this variable has one or more values, then
+  DRONE is built using these COMMANDs *instead*.
 
   Each COMMAND can be one of the default steps, an S-expression, or
   a shell command.  The COMMANDs are executed in the specified order.
@@ -1029,6 +1036,13 @@ variables you can tell Borg how to build such packages.
   ~Info-directory-list~.  PATH has to be relative to the top-level of
   the repository of the drone named DRONE.
 
+- Variable: submodule.DRONE.no-maketexi PATH ::
+
+  This variable instructs ~borg-maketexi~ to not create a Texinfo file
+  for the Org file at PATH.  PATH has to be relative to the top-level
+  of the repository of the drone named DRONE.  This variable can be
+  specified multiple times.
+
 - Variable: submodule.DRONE.no-makeinfo PATH ::
 
   This variable instructs ~borg-makeinfo~ to not create an Info file for
@@ -1046,6 +1060,12 @@ variables you can tell Borg how to build such packages.
   An alist that can optionally be used to rewrite certain URLs.  Each
   element has the form ~(ORIG . BASE)~.  Each URL that starts with ORIG
   is rewritten to start with BASE instead.  See [[*Using https URLs]].
+
+- Variable: borg-maketexi-filename-regexp ::
+
+  A regexp matching Org files that may be exported to Texinfo by
+  ~borg-maketexi~.  The name of the clone is substituted for ~%s~.
+  Setting this to ~nil~ disables the export of any Org files.
 
 * Low-level functions
 
