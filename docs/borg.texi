@@ -1117,7 +1117,7 @@ This can be done in @code{/.emacs.d/etc/borg/config.el}.
 @end lisp
 @end defvar
 
-@defvar borg-compile-recursive
+@defvar borg-compile-recursively
 Setting this variable to a non-nil value instructs @code{borg-compile}
 to compile all drones recursively.  Doing so is discouraged.
 @end defvar

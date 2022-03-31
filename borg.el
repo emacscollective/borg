@@ -769,10 +769,9 @@ then also activate the clone using `borg-activate'."
                                      "\\.texi\\(nfo\\)?\\'"))
         (let ((info (concat (file-name-sans-extension texi) ".info")))
           (when (and (not (member texi exclude))
-                     (or (not (file-exists-p info))
-                         (= (process-file "git" nil nil nil
-                                          "ls-files" "--error-unmatch" info)
-                            1)))
+                     (= (process-file "git" nil nil nil
+                                      "ls-files" "--error-unmatch" info)
+                        1)))
             (let ((cmd (format "makeinfo --no-split %s -o %s" texi info)))
               (message "  Running `%s'..." cmd)
               (borg-silencio "\\`(Shell command succeeded with %s)\\'"
