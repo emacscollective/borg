@@ -75,7 +75,7 @@
       (funcall fn pkg-desc reload deps)))
 
 (advice-add 'package-activate-1 :around
-            'package-activate-1--borg-handle-activation)
+            #'package-activate-1--borg-handle-activation)
 
 (defun package-load-descriptor--borg-use-database (fn pkg-dir)
   "For a Borg-installed package, use information from the Epkgs database."
@@ -96,7 +96,7 @@
     (funcall fn pkg-dir)))
 
 (advice-add 'package-load-descriptor :around
-            'package-load-descriptor--borg-use-database)
+            #'package-load-descriptor--borg-use-database)
 
 (defun package--borg-clone-p (pkg-dir)
   ;; Currently `pkg-dir' is a `directory-file-name', but that might change.

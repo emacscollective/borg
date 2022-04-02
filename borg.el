@@ -79,7 +79,7 @@
 (define-obsolete-variable-alias 'borg-byte-compile-recursively
   'borg-compile-recursively "Borg 3.3.0")
 (define-obsolete-function-alias 'borg-byte-compile
-  'borg-compile "Borg 3.3.0")
+  #'borg-compile "Borg 3.3.0")
 
 (defvar borg-drones-directory
   (let* ((libdir (file-name-directory (directory-file-name
@@ -641,7 +641,7 @@ then also activate the clone using `borg-activate'."
 
 (defvar borg-build-mode-map
   (let ((map (make-sparse-keymap)))
-    (define-key map "\C-q" 'bury-buffer)
+    (define-key map "\C-q" #'bury-buffer)
     map)
   "Keymap for `borg-build-mode'.")
 
@@ -929,7 +929,7 @@ The Git directory is not removed."
 ;;; Convenience
 
 (with-eval-after-load 'git-commit
-  (define-key git-commit-mode-map "\C-c\C-b" 'borg-insert-update-message))
+  (define-key git-commit-mode-map "\C-c\C-b" #'borg-insert-update-message))
 
 (defun borg-insert-update-message ()
   "Insert information about drones that are changed in the index.
