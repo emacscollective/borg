@@ -802,8 +802,8 @@ non-nil, then try those files instead."
                            (save-excursion
                              (let ((case-fold-search t))
                                (and (re-search-forward
-                                     "^#\\+export_file_name: \\(.+\\)" nil t)
-                                    (match-string 1))))))
+                                     "^#\\+export_file_name:\\(.+\\)" nil t)
+                                    (string-trim (match-string 1)))))))
                       (unless (and texi (borg--file-tracked-p texi))
                         (message "Exporting %s..." file)
                         (require (quote ox))
