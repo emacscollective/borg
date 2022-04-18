@@ -802,13 +802,16 @@ doesn't do anything."
                           (let ((case-fold-search t))
                             (re-search-forward
                              "^#\\+texinfo_dir_title:" nil t)))
-                    (let ((texi
+                    (let ((export
                            (save-excursion
                              (let ((case-fold-search t))
                                (and (re-search-forward
                                      "^#\\+export_file_name:\\(.+\\)" nil t)
                                     (string-trim (match-string 1)))))))
-                      (unless (and texi (borg--file-tracked-p texi))
+                      (unless (and export
+                                   (memq (file-name-extension export)
+                                         '("texi" "texinfo"))
+                                   (borg--file-tracked-p export))
                         (message "Exporting %s..." file)
                         (require (quote ox))
                         (ignore-errors (org-texinfo-export-to-texinfo))
