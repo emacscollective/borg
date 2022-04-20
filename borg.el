@@ -809,8 +809,8 @@ doesn't do anything."
                                      "^#\\+export_file_name:\\(.+\\)" nil t)
                                     (string-trim (match-string 1)))))))
                       (unless (and export
-                                   (memq (file-name-extension export)
-                                         '("texi" "texinfo"))
+                                   (member (file-name-extension export)
+                                           '("texi" "texinfo"))
                                    (borg--file-tracked-p export))
                         (message "Exporting %s..." file)
                         (require (quote ox))
