@@ -71,6 +71,9 @@
 (declare-function org-texinfo-export-to-texinfo "ox-texinfo"
                   (&optional async subtreep visible-only body-only ext-plist))
 
+(when (< emacs-major-version 26)
+  (defun register-definition-prefixes (_file _prefixes)))
+
 (defvar git-commit-mode-map)
 (defvar compilation-mode-font-lock-keywords)
 
@@ -461,11 +464,13 @@ if it exists."
          (let ((file (expand-file-name (format "%s-%s.el" clone part) dir)))
            (and (file-exists-p file)
                 (with-demoted-errors "Error loading autoloads: %s"
-                  (load file nil t))))))
+                  (load file nil t))
+                ;; We cannot rely on the autoloads file doing that.
+                (add-to-list 'load-path dir)))))
     (dolist (dir (borg-load-path clone))
-      (unless (activate dir "autoloads")
-        (activate dir "loaddefs") ; for `org'
-        (push dir load-path))))
+      (or (activate dir "autoloads")
+          (activate dir "loaddefs")       ; `org' uses a different name.
+          (add-to-list 'load-path dir)))) ; There might be no autoloads file.
   (dolist (dir (borg-info-path clone))
     (push  dir Info-directory-list)))
 
@@ -669,23 +674,6 @@ then also activate the clone using `borg-activate'."
           (remove '(" --?o\\(?:utfile\\|utput\\)?[= ]\\(\\S +\\)" . 1)
                   compilation-mode-font-lock-keywords)))
 
-(defconst borg-autoload-format "\
-;;;\
- %s --- automatically extracted autoloads
-;;
-;;;\
- Code:
-\(add-to-list 'load-path (directory-file-name \
-\(or (file-name-directory #$) (car load-path))))
-\
-;; Local Variables:
-;; version-control: never
-;; no-byte-compile: t
-;; no-update-autoloads: t
-;; End:
-;;;\
- %s ends here\n")
-
 (defun borg-update-autoloads (clone &optional path)
   "Update autoload files for the clone named CLONE in the directories in PATH."
   (setq path (borg--expand-load-path clone path))
@@ -699,24 +687,26 @@ then also activate the clone using `borg-activate'."
                          (expand-file-name (concat clone "-tests.el") dir)))
                  path)
                 autoload-excludes))
-        (generated-autoload-file
-         (expand-file-name (format "%s-autoloads.el" clone) (car path))))
-    (message " Creating %s..." generated-autoload-file)
-    (when (file-exists-p generated-autoload-file)
-      (delete-file generated-autoload-file t))
-    (let* ((backup-inhibited t)
-           (version-control 'never)
-           (noninteractive t)
-           (filename (file-name-nondirectory generated-autoload-file)))
-      (write-region (format borg-autoload-format filename filename)
-                    nil generated-autoload-file nil 'silent)
+        (file (expand-file-name (format "%s-autoloads.el" clone) (car path))))
+    (message " Creating %s..." file)
+    ;; Stay close to what `package-generate-autoloads' does.
+    (let (;; This currently defaults to `nil' anyway and there is no
+          ;; need to double down on that.  By not doing so we avoid
+          ;; a warning on Emacs 25 and we keep it possible for users
+          ;; to change the value.
+          ;; (autoload-timestamps nil)
+          (backup-inhibited t)
+          ;; On Emacs 25 we get "Making version-control local to
+          ;; borg-autoloads.el while let-bound!" warnings, which
+          ;; I believe are harmless.
+          (version-control 'never)
+          (noninteractive t))
+      (write-region (autoload-rubric file "package" nil) nil file nil 'silent)
       (cl-letf (((symbol-function 'progress-reporter-do-update) (lambda (&rest _)))
                 ((symbol-function 'progress-reporter-done) (lambda (_))))
-        (cond ((fboundp 'make-directory-autoloads)   ; >= 28
-               (make-directory-autoloads path generated-autoload-file))
-              ((fboundp 'update-directory-autoloads) ; <= 27
-               (apply 'update-directory-autoloads path)))))
-    (when-let ((buf (find-buffer-visiting generated-autoload-file)))
+        (let ((generated-autoload-file file))
+          (apply 'update-directory-autoloads path))))
+    (when-let ((buf (find-buffer-visiting file)))
       (kill-buffer buf))))
 
 (defun borg-compile (clone &optional path)
