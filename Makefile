@@ -47,7 +47,7 @@ stats-upload:
 	@$(MAKE) -C docs stats-upload
 
 clean:
-	@printf "Cleaning *...\n"
+	@printf " Cleaning *...\n"
 	@rm -rf $(ELCS) $(PKG)-autoloads.el
 	@$(MAKE) -C docs clean
 
@@ -58,7 +58,7 @@ loaddefs: $(PKG)-autoloads.el
 	@$(EMACS) -Q --batch $(EMACS_ARGS) $(LOAD_PATH) -f batch-byte-compile $<
 
 $(PKG)-autoloads.el: $(ELS)
-	@printf "Creating $@\n"
+	@printf " Creating $@\n"
 	@$(EMACS) -Q --batch -l autoload -l cl-lib --eval "\
 (let ((file (expand-file-name \"$@\"))\
       (autoload-timestamps nil) \
