@@ -558,7 +558,7 @@ then also activate the clone using `borg-activate'."
                                ;; For backward compatibility.
                                "borg-byte-compile"))
                  (funcall (intern cmd) clone))
-                ((string-match-p "\\`(" cmd)
+                ((string-prefix-p "(" cmd)
                  (eval (read cmd)))
                 (build-cmd
                  (when (or (stringp build-cmd)
@@ -743,12 +743,13 @@ then also activate the clone using `borg-activate'."
                         (file-readable-p file)
                         (string-match-p emacs-lisp-file-regexp name)
                         (not (auto-save-file-name-p file))
-                        (not (string-match-p "\\`\\." name))
-                        (not (string-match-p "-autoloads.el\\'" name))
+                        (not (string-prefix-p "." name))
+                        (not (string-suffix-p "-autoloads.el" name))
                         (not (string-equal dir-locals-file name)))
                (cl-incf
-                (if (or (string-match-p "-pkg.el\\'" name)
-                        (string-match-p "-tests?.el\\'" name)
+                (if (or (string-suffix-p "-pkg.el" name)
+                        (string-suffix-p "-test.el" name)
+                        (string-suffix-p "-tests.el" name)
                         (member file-relative exclude))
                     (progn (message " Skipping %s...skipped" file)
                            skip-count)
