@@ -549,13 +549,14 @@ then also activate the clone using `borg-activate'."
     (when (file-exists-p config)
       (message "  Loading %s..." config)
       (load config nil t t))
-    (when borg--compile-natively
-      (setq borg-compile-function
-            (if (functionp borg--compile-natively)
-                borg--compile-natively
-              #'borg--native-compile)))
-    (when (eq borg-compile-function #'native-compile)
-      (setq borg-compile-function #'borg--native-compile))
+    (when (featurep 'comp)
+      (when borg--compile-natively
+        (setq borg-compile-function
+              (if (functionp borg--compile-natively)
+                  borg--compile-natively
+                #'borg--native-compile)))
+      (when (eq borg-compile-function 'native-compile) ; don't #'quote
+        (setq borg-compile-function #'borg--native-compile)))
     (if build
         (dolist (cmd build)
           (message "  Running `%s'..." cmd)
@@ -862,7 +863,8 @@ doesn't do anything."
 
 (defun borg--native-compile (file)
   (with-demoted-errors "borg--native-compile: %S"
-    (native-compile file)))
+    (when (fboundp 'native-compile)
+      (native-compile file))))
 
 ;;; Assimilation
 
