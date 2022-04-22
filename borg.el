@@ -11,11 +11,6 @@
 ;;     (emacs "26")
 ;;     (epkg "3.3.3")
 ;;     (magit "3.3.0"))
-;;
-;;   Borg itself does no actually require Emacs 26 and has no
-;;   other dependencies but when it is installed from Melpa,
-;;   then it includes `borg-elpa' and that requires Emacs 26
-;;   and Epkg.
 
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 
