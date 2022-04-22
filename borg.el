@@ -156,6 +156,11 @@ node `(borg)Using https URLs'.")
 The name of the clone is substituted for %s.  Setting this to
 nil disables the export of any Org files.")
 
+(defvar borg-minimal-emacs-alist nil
+  "Alist mapping drones to the Emacs release they depend on.
+Drones that depend on an Emacs release highter than the currently
+used release are automatically disabled.")
+
 ;;; Utilities
 
 (defun borg-worktree (clone)
@@ -496,6 +501,9 @@ NATIVE is a function, then use that, `native-compile' otherwise."
     (cond
      ((equal (borg-get drone "disabled") "true")
       (message "Skipped (Disabled)"))
+     ((let ((min (cdr (assoc drone borg-minimal-emacs-alist))))
+        (and min (version< emacs-version min)
+             (message "Skipped (Requires Emacs >= %s)" min))))
      ((not (file-exists-p (borg-worktree drone)))
       (message "Skipped (Missing)"))
      ((and quick (borg-get-all drone "build-step"))
