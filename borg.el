@@ -713,7 +713,9 @@ then also activate the clone using `borg-activate'."
           ;; I believe are harmless.
           (version-control 'never)
           (noninteractive t))
-      (write-region (autoload-rubric file "package" nil) nil file nil 'silent)
+      (let ((coding-system-for-write 'utf-8-emacs-unix))
+        (write-region (autoload-rubric file "package" nil)
+                      nil file nil 'silent))
       (cl-letf (((symbol-function 'progress-reporter-do-update) (lambda (&rest _)))
                 ((symbol-function 'progress-reporter-done) (lambda (_))))
         (let ((generated-autoload-file file))
