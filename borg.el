@@ -712,7 +712,10 @@ then also activate the clone using `borg-activate'."
           ;; borg-autoloads.el while let-bound!" warnings, which
           ;; I believe are harmless.
           (version-control 'never)
-          (noninteractive t))
+          (noninteractive t)
+          ;; I don't want to see the resulting warning again.
+          (autoload-compute-prefixes
+           (and (not (equal clone "ht")) autoload-compute-prefixes)))
       (let ((coding-system-for-write 'utf-8-emacs-unix))
         (write-region (autoload-rubric file "package" nil)
                       nil file nil 'silent))
