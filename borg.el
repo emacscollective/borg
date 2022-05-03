@@ -161,7 +161,7 @@ nil disables the export of any Org files.")
 
 (defvar borg-minimal-emacs-alist nil
   "Alist mapping drones to the Emacs release they depend on.
-Drones that depend on an Emacs release highter than the currently
+Drones that depend on an Emacs release higher than the currently
 used release are automatically disabled.")
 
 ;;; Utilities
