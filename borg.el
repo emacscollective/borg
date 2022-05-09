@@ -55,10 +55,11 @@
 (declare-function eieio-oref "eieio-core" (obj slot))
 (declare-function epkg "epkg" (name))
 (declare-function epkgs "epkg" (&optional select predicates))
-(declare-function epkg-git-package-p "epkg" (obj))
-(declare-function epkg-github-package-p "epkg" (obj))
-(declare-function epkg-gitlab-package-p "epkg" (obj))
-(declare-function epkg-orphaned-package-p "epkg" (obj))
+;; check-declare doesn't know about defclass.
+;; (declare-function epkg-git-package-p "epkg" (obj))
+;; (declare-function epkg-github-package-p "epkg" (obj))
+;; (declare-function epkg-gitlab-package-p "epkg" (obj))
+;; (declare-function epkg-orphaned-package-p "epkg" (obj))
 (declare-function epkg-read-package "epkg" (prompt &optional default predicate))
 (declare-function format-spec "format-spec"
                   (format specification &optional ignore-missing split))
@@ -365,12 +366,13 @@ to variable `borg-rewrite-urls-alist' (which see)."
                                     nil nil nil 'epkg-package-history))
              (pkg  (epkg name))
              (url  (and pkg
-                        (if (or (epkg-git-package-p pkg)
-                                (epkg-github-package-p pkg)
-                                (epkg-orphaned-package-p pkg)
-                                (epkg-gitlab-package-p pkg))
-                            (eieio-oref pkg 'url)
-                          (eieio-oref pkg 'mirror-url)))))
+                        (with-no-warnings
+                          (if (or (epkg-git-package-p pkg)
+                                  (epkg-github-package-p pkg)
+                                  (epkg-orphaned-package-p pkg)
+                                  (epkg-gitlab-package-p pkg))
+                              (eieio-oref pkg 'url)
+                            (eieio-oref pkg 'mirror-url))))))
         (when url
           (pcase-dolist (`(,orig . ,base) borg-rewrite-urls-alist)
             (when (string-prefix-p orig url)
