@@ -1108,25 +1108,26 @@ Non-interactively operate in FILE instead."
   (require 'epkg nil t)
   (let* ((pkg (and (fboundp 'epkg)
                    (epkg package)))
-         (ask (cond ((and pkg
-                          (fboundp 'epkg-wiki-package-p)
-                          (epkg-wiki-package-p pkg)) "\
+         (ask (cond ((and (fboundp 'epkg-wiki-package-p)
+                          (epkg-wiki-package-p pkg))
+                     "\
 This package is from the Emacswiki.  Anyone could trivially \
 inject malicious code.  Do you really want to %s it? ")
-                    ((or (and pkg
-                              (fboundp 'epkg-orphaned-package-p)
+                    ((or (and (fboundp 'epkg-orphaned-package-p)
                               (epkg-orphaned-package-p pkg))
-                         (string-match-p "emacsorphanage" url)) "\
+                         (string-match-p "emacsorphanage" url))
+                     "\
 This package is from the Emacsorphanage, which might import it \
 over an insecure connection.  Do you really want to %s it? ")
-                    ((or (and pkg
-                              (fboundp 'epkg-shelved-package-p)
+                    ((or (and (fboundp 'epkg-shelved-package-p)
                               (epkg-shelved-package-p pkg))
-                         (string-match-p "emacsattic" url)) "\
+                         (string-match-p "emacsattic" url))
+                     "\
 This package is from the Emacsattic, which might have imported it \
 over an insecure connection.  Do you really want to %s it? ")
                     ((or (string-prefix-p "git://" url)
-                         (string-prefix-p "http://" url)) "\
+                         (string-prefix-p "http://" url))
+                     "\
 This package is being fetched over an insecure connection. \
 Do you really want to %s it? "))))
     (when (and ask (not (yes-or-no-p (format ask action))))
