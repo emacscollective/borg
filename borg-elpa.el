@@ -45,7 +45,7 @@
 
 ;; Do not require `epkg' to avoid forcing all `borg' users
 ;; to install that and all of its numerous dependencies.
-(declare-function epkg 'epkg (name))
+(declare-function epkg "epkg" (name))
 (eval-when-compile
   (cl-pushnew 'summary eieio--known-slot-names))
 
