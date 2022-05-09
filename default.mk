@@ -6,7 +6,9 @@ ELS   = $(PKG).el
 ELS  += $(PKG)-elpa.el
 ELCS  = $(ELS:.el=.elc)
 
-DEPS  =
+# Optional:
+DEPS  = epkg/lisp
+DEPS += magit/lisp
 
 DOMAIN      ?= emacsmirror.net
 CFRONT_DIST ?= E1IXJGPIOM4EUW

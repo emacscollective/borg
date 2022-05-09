@@ -21,7 +21,7 @@ help:
 	$(info make clean        - remove most generated files)
 	@printf "\n"
 
-lisp: $(ELCS) loaddefs
+lisp: $(ELCS) loaddefs check-declare
 
 docs:
 	@$(MAKE) -C docs docs
@@ -56,6 +56,11 @@ loaddefs: $(PKG)-autoloads.el
 %.elc: %.el
 	@printf "Compiling $<\n"
 	@$(EMACS) -Q --batch $(EMACS_ARGS) $(LOAD_PATH) -f batch-byte-compile $<
+
+check-declare:
+	@printf " Checking function declarations\n"
+	@$(EMACS) -Q --batch $(EMACS_ARGS) $(LOAD_PATH) \
+	--eval "(check-declare-directory default-directory)"
 
 $(PKG)-autoloads.el: $(ELS)
 	@printf " Creating $@\n"
