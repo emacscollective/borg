@@ -655,9 +655,9 @@ then also activate the clone using `borg-activate'."
   (borg-initialize)
   (setq borg-build-shell-command (quote %S))
   (borg-build %S))" borg-build-shell-command clone))))
-     'borg-build--process-filter)))
+     'borg--build-process-filter)))
 
-(defun borg-build--process-filter (process string)
+(defun borg--build-process-filter (process string)
   (when (buffer-live-p (process-buffer process))
     (with-current-buffer (process-buffer process)
       (let ((moving (= (point) (process-mark process))))
