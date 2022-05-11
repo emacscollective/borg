@@ -482,8 +482,9 @@ if it exists."
 (defun borg-batch-rebuild (&optional quick native)
   "Rebuild all assimilated drones.
 
-Drones are rebuilt in alphabetic order, except that Org is built
-first.  `init.el' and `USER-REAL-LOGIN-NAME.el' are also rebuilt.
+Borg and Compat are rebuild first, followed by other drones in
+alphabetic order.  `init.el' and `USER-REAL-LOGIN-NAME.el' are
+also rebuilt.
 
 This function is to be used only with `--batch'.
 
