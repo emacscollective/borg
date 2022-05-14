@@ -19,9 +19,6 @@ endif
 
 EMACS           ?= emacs
 EMACS_ARGUMENTS ?= -Q --batch
-# FIXME When using gccemacs, then some callers end up calling
-# `comp-subr-trampoline-install' but without requiring `comp'.
-EMACS_ARGUMENTS += --eval "(require 'comp nil t)"
 
 EMACS_EXTRA ?=
 
