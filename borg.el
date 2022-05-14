@@ -554,9 +554,12 @@ This function is to be used only with `--batch'."
 Interactively, or when optional ACTIVATE is non-nil,
 then also activate the clone using `borg-activate'."
   (interactive (list (borg-read-clone "Build drone: ") t))
-  (if noninteractive
-      (borg--build-noninteractive clone)
-    (borg--build-interactive clone))
+  (cond
+   (noninteractive
+    (when (string-suffix-p "/" clone)
+      (setq clone (substring clone 0 -1)))
+    (borg--build-noninteractive clone))
+   ((borg--build-interactive clone)))
   (when activate
     (borg-activate clone)))
 
