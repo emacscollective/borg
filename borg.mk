@@ -43,8 +43,10 @@ help::
 	$(info make quick           = byte-compile most drones and init files)
 ifeq "$(BORG_SECONDARY_P)" "true"
 	$(info make $(DRONES_DIR)/DRONE      = byte-compile DRONE)
+	$(info make native/DRONE      = byte+native-compile DRONE)
 else
 	$(info make $(DRONES_DIR)/DRONE       = byte-compile DRONE)
+	$(info make native/DRONE       = byte+native-compile DRONE)
 endif
 	$(info make build-native    = byte+native-compile all drones and init files)
 	$(info make native-compile  = native-compile all drones)
@@ -97,10 +99,16 @@ quick: clean-init
 	--eval '(borg-batch-rebuild t)' 2>&1
 
 $(BORG_DIR)borg.mk: ;
+
 $(DRONES_DIR)/%: .FORCE
 	@$(EMACS) $(EMACS_ARGUMENTS) $(EMACS_EXTRA) $(SILENCIO) \
 	$(BORG_ARGUMENTS) \
 	--eval '(borg-build "$*")' 2>&1
+
+native/%: .FORCE
+	@$(EMACS) $(EMACS_ARGUMENTS) $(EMACS_EXTRA) $(SILENCIO) \
+	$(BORG_ARGUMENTS) \
+	--eval '(borg-build "$*" nil t)' 2>&1
 
 bootstrap:
 	@printf "\n=== Running 'git submodule init' ===\n\n"

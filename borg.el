@@ -151,9 +151,6 @@ into subdirectories.  Instead of this variable you should set
 `submodule.<drone>.recursive-byte-compile' for each DRONE that
 needs it.")
 
-(defvar borg--compile-natively nil
-  "Internal variable used by \"build-native\" make target.")
-
 (defvar borg-native-compile-deny-list nil
   "List of file names to exclude files from native compilation.")
 
@@ -541,8 +538,7 @@ otherwise."
         (message "Skipped (Missing)"))
        ((and quick (borg-get-all drone "build-step"))
         (message "Skipped (Expensive to build)"))
-       (t (let ((borg--compile-natively native))
-            (borg-build drone))))))
+       ((borg-build drone nil native)))))
   (borg-batch-rebuild-init))
 
 (defun borg-batch-rebuild-init ()
@@ -561,15 +557,27 @@ This function is to be used only with `--batch'."
           (load-file file)
           (byte-recompile-file (expand-file-name file) t 0))))))
 
-(defun borg-build (clone &optional activate)
+(defun borg-build (clone &optional activate native)
   "Build the clone named CLONE.
-Interactively, or when optional ACTIVATE is non-nil,
-then also activate the clone using `borg-activate'."
+
+Interactively, or when optional ACTIVATE is non-nil, then also
+activate the clone using `borg-activate'.  When `noninteractive'
+and optional NATIVE are both non-nil, then also compile natively."
   (interactive (list (borg-read-clone "Build drone: ") t))
   (cond
    (noninteractive
     (when (string-suffix-p "/" clone)
       (setq clone (substring clone 0 -1)))
+    (when (fboundp 'comp-ensure-native-compiler)
+      (when native
+        (setq borg-compile-function
+              (if (functionp native) native #'borg-byte+native-compile)))
+      (when (memq borg-compile-function '( borg--native-compile
+                                           native-compile
+                                           native-compile-async))
+        (message "WARNING: Using `%s' instead of unsuitable `%s'"
+                 'borg-byte+native-compile borg-compile-function)
+        (setq borg-compile-function #'borg-byte+native-compile)))
     (borg--build-noninteractive clone))
    ((borg--build-interactive clone)))
   (when activate
@@ -585,18 +593,6 @@ then also activate the clone using `borg-activate'."
     (when (file-exists-p config)
       (message "  Loading %s..." config)
       (load config nil t t))
-    (when (fboundp 'comp-ensure-native-compiler)
-      (when borg--compile-natively
-        (setq borg-compile-function
-              (if (functionp borg--compile-natively)
-                  borg--compile-natively
-                #'borg-byte+native-compile)))
-      (when (memq borg-compile-function '( borg--native-compile
-                                           native-compile
-                                           native-compile-async))
-        (message "WARNING: Using `%s' instead of unsuitable `%s'"
-                 'borg-byte+native-compile borg-compile-function)
-        (setq borg-compile-function #'borg-byte+native-compile)))
     (if build
         (dolist (cmd build)
           (message "  Running `%s'..." cmd)
