@@ -86,6 +86,8 @@
 (define-obsolete-function-alias 'borg-byte-compile
   #'borg-compile "Borg 3.3.0")
 
+;;; Variables
+
 (defvar borg-drones-directory
   (let* ((libdir (file-name-directory (directory-file-name
                                        (file-name-directory
@@ -123,8 +125,6 @@ The value of this variable is usually the same as that of
 (defconst borg-gitmodules-file
   (expand-file-name ".gitmodules" borg-top-level-directory)
   "The \".gitmodules\" file of the drone repository.")
-
-;;; Variables
 
 (defvar borg-emacs-arguments '("-Q")
   "Arguments used when calling an inferior Emacs instance.
