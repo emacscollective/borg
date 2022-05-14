@@ -755,16 +755,16 @@ which is part of the ~borg~ package.
 - Command: all ::
 - Command: build ::
 
-  This target rebuilds all assimilated drones in alphabetic order,
-  except for Org which is rebuilt first.  After that it also builds
+  These targets byte-compiles Borg and Compat first, followed by all
+  other drones in alphabetic order.  After that it also byte-compiles
   the user init files, like ~build-init~ does.
 
 - Command: build-init ::
 
-  This target builds the init files specified by the Make variable
-  ~INIT_FILES~, or if that is unspecified ~init.el~ and ~LOGIN.el~, where
-  ~LOGIN~ is the value of the variable ~user-real-login-name~.  If a file
-  does not exist, then it is silently ignored.
+  This target byte-compiles the init files specified by the make
+  variable ~INIT_FILES~; or if that is unspecified ~init.el~ and ~LOGIN.el~
+  (where ~LOGIN~ is the value of the variable ~user-real-login-name~).
+  If an init file does not exist, then that is silently ignored.
 
   If you publish your ~~/.emacs.d~ repository but would like to keep
   some settings private, then you can do so by putting them in a file
@@ -783,6 +783,23 @@ which is part of the ~borg~ package.
 - Command: lib/DRONE ::
 
   This target builds the drone named DRONE.
+
+- Command: build-native ::
+
+  This target byte-compiles and natively compiles all drones
+  synchronously.  Then it also byte-compiles all user init files.
+
+- Command: native-compile ::
+
+  This target compiles all drones natively.  It doesn't byte-compile
+  them and it doesn't compile any init files and therefore has to be
+  explicitly used in combination with the ~build~ target.  Unlike when
+  using ~build-native~, you don't have to wait for native compilation to
+  complete before you can launch Emacs:
+
+  #+begin_src undefined
+    make clean build ; emacs & ; make native-compile
+  #+end_src
 
 - Command: tangle-init ::
 
@@ -1017,18 +1034,22 @@ variables you can tell Borg how to build such packages.
 
 - Variable: borg-compile-function ::
 
-  Setting this variable to ~native-compile~ enables native compilation.
-  This can be done in ~/.emacs.d/etc/borg/config.el~.
+  The function used to compile each individual library.
+  One of ~byte-compile-file~, ~borg-byte+native-compile~ or
+  ~borg-byte+native-compile-async~.
 
-  #+begin_src emacs-lisp
-    (when (native-comp-available-p)
-      (setq borg-compile-function #'native-compile))
-  #+end_src
+  To enable native compilation when running ~make~, use one of the
+  respective make targets, as described in [[*Make targets]].
 
 - Variable: borg-compile-recursively ::
 
   Setting this variable to a non-nil value instructs ~borg-compile~
   to compile all drones recursively.  Doing so is discouraged.
+
+- Variable: borg-native-compile-deny-list ::
+
+  This variable lists the names of files to be excluded from native
+  compilation.
 
 - Variable: submodule.DRONE.info-path PATH ::
 

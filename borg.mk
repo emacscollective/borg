@@ -39,18 +39,19 @@ SILENCIO += --eval "(fset 'message\
     (apply 'original-message format args))))"
 
 help::
-	$(info make [all|build]     = rebuild all drones and init files)
-	$(info make quick           = rebuild most drones and init files)
+	$(info make [all|build]     = byte-compile all drones and init files)
+	$(info make quick           = byte-compile most drones and init files)
 ifeq "$(BORG_SECONDARY_P)" "true"
-	$(info make $(DRONES_DIR)/DRONE      = rebuild DRONE)
+	$(info make $(DRONES_DIR)/DRONE      = byte-compile DRONE)
 else
-	$(info make $(DRONES_DIR)/DRONE       = rebuild DRONE)
+	$(info make $(DRONES_DIR)/DRONE       = byte-compile DRONE)
 endif
-	$(info make build-native    = rebuild drones natively and init files)
-	$(info make build-init      = rebuild init files)
+	$(info make build-native    = byte+native-compile all drones and init files)
+	$(info make native-compile  = native-compile all drones)
+	$(info make build-init      = byte-compile init files)
 	$(info make tangle-init     = recreate init.el from init.org)
 	$(info make clean           = remove all byte-code files)
-	$(info make clean-init      = remove init files)
+	$(info make clean-init      = remove init byte-code files)
 ifneq "$(BORG_SECONDARY_P)" "true"
 	$(info make bootstrap-borg  = bootstrap borg itself)
 endif
@@ -68,11 +69,16 @@ build: clean-init
 	$(BORG_ARGUMENTS) \
 	--funcall borg-batch-rebuild $(INIT_FILES) 2>&1
 
-build-native:
+build-native: clean-init
 	@$(EMACS) $(EMACS_ARGUMENTS) $(EMACS_EXTRA) $(SILENCIO) \
 	$(BORG_ARGUMENTS) \
-	--eval "(borg-batch-rebuild nil 'native-compile-async)" \
+	--eval "(borg-batch-rebuild nil 'borg-byte+native-compile)" \
 	$(INIT_FILES) 2>&1
+
+native-compile:
+	@$(EMACS) $(EMACS_ARGUMENTS) $(EMACS_EXTRA) $(SILENCIO) \
+	$(BORG_ARGUMENTS) \
+	--eval "(borg--batch-native-compile)" 2>&1
 
 build-init: clean-init
 	@$(EMACS) $(EMACS_ARGUMENTS) $(EMACS_EXTRA) \

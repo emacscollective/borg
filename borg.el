@@ -71,6 +71,12 @@
 (when (< emacs-major-version 26)
   (defun register-definition-prefixes (_file _prefixes)))
 
+(when (< emacs-major-version 28)
+  (defvar byte+native-compile)
+  (defvar comp-files-queue)
+  (defvar native-comp-eln-load-path)
+  (defvar native-compile-target-directory))
+
 (defvar git-commit-mode-map)
 (defvar compilation-mode-font-lock-keywords)
 
@@ -133,7 +139,9 @@ Set this in \"~/.emacs.d/etc/borg/config.el\" and also set
 \"~/.emacs.d/etc/borg/config.mk\" to the same value")
 
 (defvar borg-compile-function #'byte-compile-file
-  "The function used to compile a library.")
+  "The function used to compile a library.
+One of `byte-compile-file', `borg-byte+native-compile'
+or `borg-byte+native-compile-async'.")
 
 (defvar borg-compile-recursively nil
   "Whether to compile recursively.
@@ -145,6 +153,9 @@ needs it.")
 
 (defvar borg--compile-natively nil
   "Internal variable used by \"build-native\" make target.")
+
+(defvar borg-native-compile-deny-list nil
+  "List of file names to exclude files from native compilation.")
 
 (defvar borg-build-shell-command nil
   "Optional command used to run shell command build steps.
@@ -482,18 +493,19 @@ if it exists."
 (defun borg-batch-rebuild (&optional quick native)
   "Rebuild all assimilated drones.
 
-Borg and Compat are rebuild first, followed by other drones in
-alphabetic order.  `init.el' and `USER-REAL-LOGIN-NAME.el' are
-also rebuilt.
-
 This function is to be used only with `--batch'.
+
+Build Borg and Compat first, followed by all other drones in
+alphabetic order.  Finally build `init.el' and, if it exists,
+`USER-REAL-LOGIN-NAME.el'.
 
 When optional QUICK is non-nil, then do not build drones for
 which `submodule.DRONE.build-step' is set, assuming those are
 the drones that take longer to be built.
 
 When optional NATIVE is non-nil, then compile natively.  If
-NATIVE is a function, then use that, `native-compile' otherwise."
+NATIVE is a function, then use that, `borg-byte+native-compile'
+otherwise."
   (unless noninteractive
     (error "borg-batch-rebuild is to be used only with --batch"))
   (borg-do-drones (drone)
@@ -573,14 +585,18 @@ then also activate the clone using `borg-activate'."
     (when (file-exists-p config)
       (message "  Loading %s..." config)
       (load config nil t t))
-    (when (featurep 'comp)
+    (when (fboundp 'comp-ensure-native-compiler)
       (when borg--compile-natively
         (setq borg-compile-function
               (if (functionp borg--compile-natively)
                   borg--compile-natively
-                #'borg--native-compile)))
-      (when (eq borg-compile-function 'native-compile) ; don't #'quote
-        (setq borg-compile-function #'borg--native-compile)))
+                #'borg-byte+native-compile)))
+      (when (memq borg-compile-function '( borg--native-compile
+                                           native-compile
+                                           native-compile-async))
+        (message "WARNING: Using `%s' instead of unsuitable `%s'"
+                 'borg-byte+native-compile borg-compile-function)
+        (setq borg-compile-function #'borg-byte+native-compile)))
     (if build
         (dolist (cmd build)
           (message "  Running `%s'..." cmd)
@@ -794,6 +810,86 @@ then also activate the clone using `borg-activate'."
              (if (> skip-count 0) (format ", %d skipped" skip-count) "")
              (if (> dir-count  1) (format " in %d directories" dir-count) ""))))
 
+(defun borg-byte+native-compile (file)
+  (cond
+   ((or (equal (getenv "NATIVE_DISABLED") "1")
+        (member (file-name-nondirectory file)
+                borg-native-compile-deny-list))
+    (byte-compile-file file))
+   ((and (fboundp 'byte-write-target-file)
+         (fboundp 'comp--native-compile)
+         (fboundp 'comp-ensure-native-compiler))
+    (comp-ensure-native-compiler)
+    (let* ((byte+native-compile t)
+           (byte-to-native-output-buffer-file nil)
+           (native-compile-target-directory (car native-comp-eln-load-path))
+           (eln-file (comp--native-compile file)))
+      (pcase byte-to-native-output-buffer-file
+        (`(,temp-buffer . ,target-file)
+         (unwind-protect
+             (progn
+               (byte-write-target-file temp-buffer target-file)
+               (when (stringp eln-file)
+                 (set-file-times eln-file)))
+           (kill-buffer temp-buffer)
+           (file-exists-p target-file))))))
+   ((error "Emacs %s does not support native compilation" emacs-version))))
+
+(defun borg-byte+native-compile-async (file)
+  (byte-compile-file file)
+  (cond
+   ((fboundp 'native-compile-async)
+    (native-compile-async file))
+   ((error "Emacs %s does not support native compilation" emacs-version))))
+
+(defun borg--batch-native-compile ()
+  (cond
+   ((and (fboundp 'comp-ensure-native-compiler)
+         (fboundp 'comp-run-async-workers))
+    (comp-ensure-native-compiler)
+    (borg-do-drones (drone)
+      (unless (or (equal (borg-get drone "disabled") "true")
+                  (let ((min (cdr (assoc drone borg-minimal-emacs-alist))))
+                    (and min (version< emacs-version min)))
+                  (not (file-exists-p (borg-worktree drone))))
+        (let ((dirs (borg--expand-load-path drone nil))
+              (exclude (borg-get-all drone "no-byte-compile"))
+              (topdir (borg-worktree drone))
+              (default-directory borg-user-emacs-directory)
+              (dir nil))
+          (while (setq dir (pop dirs))
+            (dolist (file (directory-files dir t))
+              (let ((name (file-name-nondirectory file)))
+                (cond
+                 ((member (file-relative-name file topdir) exclude))
+                 ((and (file-directory-p file)
+                       (if-let ((v (borg-get drone "recursive-byte-compile")))
+                           (member v '("yes" "on" "true" "1"))
+                         borg-compile-recursively)
+                       (not (or (file-symlink-p file)
+                                (string-prefix-p "." name)
+                                (member name '("RCS" "CVS"))
+                                (file-exists-p
+                                 (expand-file-name ".nosearch" file)))))
+                  (setq dirs (nconc dirs (list file))))
+                 ((and (file-regular-p file)
+                       (file-readable-p file)
+                       (string-match-p emacs-lisp-file-regexp name)
+                       (not (or (auto-save-file-name-p file)
+                                (string-prefix-p "." name)
+                                (string-suffix-p "-autoloads.el" name)
+                                (string-equal dir-locals-file name)
+                                (string-suffix-p "-pkg.el" name)
+                                (string-suffix-p "-test.el" name)
+                                (string-suffix-p "-tests.el" name))))
+                  (push (list file) comp-files-queue)))))))))
+    (message "Natively compiling %s libraries" (length comp-files-queue))
+    (setq comp-files-queue (nreverse comp-files-queue))
+    (comp-run-async-workers)
+    (add-hook 'native-comp-async-all-done-hook #'kill-emacs)
+    (sit-for 999999999 t))
+   ((error "Emacs %s does not support native compilation" emacs-version))))
+
 (defun borg-maketexi (clone &optional files)
   "Generate Texinfo manuals from Org files for the clone named CLONE.
 Export each file located on `borg-info-path' if its name matches
@@ -874,11 +970,6 @@ doesn't do anything."
                      dir t "\\(\\.elc\\|-autoloads\\.el\\|-loaddefs\\.el\\)\\'"
                      t))
         (ignore-errors (delete-file file))))))
-
-(defun borg--native-compile (file)
-  (with-demoted-errors "borg--native-compile: %S"
-    (when (fboundp 'native-compile)
-      (native-compile file))))
 
 ;;; Assimilation
 
