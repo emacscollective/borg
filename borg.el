@@ -151,7 +151,7 @@ into subdirectories.  Instead of this variable you should set
 `submodule.<drone>.recursive-byte-compile' for each DRONE that
 needs it.")
 
-(defvar borg-native-compile-deny-list nil
+(defvar borg-native-compile-deny-list '("yaml.el")
   "List of file names to exclude files from native compilation.")
 
 (defvar borg-build-shell-command nil
