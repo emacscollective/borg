@@ -91,7 +91,7 @@ quick: clean-init
 	--eval '(borg-batch-rebuild t)' 2>&1
 
 $(BORG_DIR)borg.mk: ;
-lib/%: .FORCE
+$(DRONES_DIR)/%: .FORCE
 	@$(EMACS) $(EMACS_ARGUMENTS) $(EMACS_EXTRA) $(SILENCIO) \
 	$(BORG_ARGUMENTS) \
 	--eval '(borg-build "$*")' 2>&1
