@@ -881,9 +881,15 @@ and optional NATIVE are both non-nil, then also compile natively."
                   (push (list file) comp-files-queue)))))))))
     (message "Natively compiling %s libraries" (length comp-files-queue))
     (setq comp-files-queue (nreverse comp-files-queue))
-    (comp-run-async-workers)
-    (add-hook 'native-comp-async-all-done-hook #'kill-emacs)
-    (sit-for 999999999 t))
+    (let ((borg-comp-files (mapcar 'car comp-files-queue)))
+      (comp-run-async-workers)
+      (while (or comp-files-queue
+                 (> (comp-async-runnings) 0))
+        (sleep-for 1))
+      (dolist (file (mapcar 'comp-lookup-eln borg-comp-files))
+        (if (and file
+                 (file-exists-p file))
+            (set-file-times file)))))
    ((error "Emacs %s does not support native compilation" emacs-version))))
 
 (defun borg-maketexi (clone &optional files)
