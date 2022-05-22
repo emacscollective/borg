@@ -245,6 +245,7 @@ so lets manually install that and its dependency first:
 #+begin_src sh
   git submodule add --name closql git@github.com:emacscollective/closql.git lib/closql
   git submodule add --name emacsql git@github.com:skeeto/emacsql.git lib/emacsql
+  git submodule add --name compat https://git.sr.ht/~pkal/compat lib/compat
   git submodule add --name epkg git@github.com:emacscollective/epkg.git lib/epkg
   git config -f .gitmodules submodule.emacsql.no-byte-compile emacsql-pg.el
   echo /epkgs/ >> .gitignore
