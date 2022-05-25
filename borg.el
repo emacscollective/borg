@@ -723,9 +723,10 @@ then also activate the clone using `borg-activate'."
           ;; I don't want to see the resulting warning again.
           (autoload-compute-prefixes
            (and (not (equal clone "ht")) autoload-compute-prefixes)))
-      (let ((coding-system-for-write 'utf-8-emacs-unix))
-        (write-region (autoload-rubric file "package" nil)
-                      nil file nil 'silent))
+      (with-temp-buffer ; Kludge for #128.
+        (let ((coding-system-for-write 'utf-8-emacs-unix))
+          (write-region (autoload-rubric file "package" nil)
+                        nil file nil 'silent)))
       (cl-letf (((symbol-function 'progress-reporter-do-update) (lambda (&rest _)))
                 ((symbol-function 'progress-reporter-done) (lambda (_))))
         (let ((generated-autoload-file file))
