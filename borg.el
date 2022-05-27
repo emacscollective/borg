@@ -621,7 +621,7 @@ then also activate the clone using `borg-activate'."
   (let ((buffer (get-buffer-create "*Borg Build*"))
         (config (borg--config-file))
         (process-connection-type nil))
-    (switch-to-buffer buffer)
+    (pop-to-buffer-same-window buffer)
     (with-current-buffer buffer
       (setq default-directory borg-user-emacs-directory)
       (borg-build-mode)
