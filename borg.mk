@@ -56,11 +56,7 @@ help helpall::
 	$(info )
 	$(info Drone targets)
 	$(info -------------)
-ifeq "$(BORG_SECONDARY_P)" "true"
-	$(info make $(DRONES_DIR)/DRONE      = rebuild DRONE)
-else
-	$(info make $(DRONES_DIR)/DRONE       = rebuild DRONE)
-endif
+	$(info make build/DRONE     = rebuild DRONE)
 helpall::
 	$(info )
 	$(info Init file targets)
@@ -104,7 +100,7 @@ quick: init-clean
 ## Per-Clone
 
 $(BORG_DIR)borg.mk: ;
-$(DRONES_DIR)/%: .FORCE
+build/% $(DRONES_DIR)/% : .FORCE
 	@$(EMACS) $(EMACS_ARGUMENTS) $(EMACS_EXTRA) $(SILENCIO) \
 	$(BORG_ARGUMENTS) \
 	--eval '(borg-build "$*")' 2>&1
