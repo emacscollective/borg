@@ -57,6 +57,7 @@ help helpall::
 	$(info Drone targets)
 	$(info -------------)
 	$(info make build/DRONE     = byte-compile DRONE)
+	$(info make native/DRONE    = byte+native-compile DRONE)
 helpall::
 	$(info )
 	$(info Init file targets)
@@ -103,6 +104,11 @@ build/% $(DRONES_DIR)/% : .FORCE
 	@$(EMACS) $(EMACS_ARGUMENTS) $(EMACS_EXTRA) $(SILENCIO) \
 	$(BORG_ARGUMENTS) \
 	--eval '(borg-build "$*")' 2>&1
+
+native/%: .FORCE
+	@$(EMACS) $(EMACS_ARGUMENTS) $(EMACS_EXTRA) $(SILENCIO) \
+	$(BORG_ARGUMENTS) \
+	--eval '(borg-build "$*" nil t)' 2>&1
 
 ## Init Files
 

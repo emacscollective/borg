@@ -803,10 +803,15 @@ which is part of the ~borg~ package.
 
 - Command: build/DRONE ::
 
-  This target builds the drone named DRONE.
+  This target byte-compiles the drone named DRONE.
 
   ~lib/DRONE~ is an alias for this target; or rather ~DIR/DRONE~, where
   ~DIR~ is directory containing the drone submodules.
+
+- Command: native/DRONE ::
+
+  This target byte-compiles and natively-compiles the drone named
+  DRONE.
 
 ** Init file targets
 :PROPERTIES:
