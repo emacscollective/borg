@@ -482,11 +482,11 @@ if it exists."
 (defun borg-batch-rebuild (&optional quick native)
   "Rebuild all assimilated drones.
 
-Borg and Compat are rebuild first, followed by other drones in
-alphabetic order.  `init.el' and `USER-REAL-LOGIN-NAME.el' are
-also rebuilt.
-
 This function is to be used only with `--batch'.
+
+Build Borg and Compat first, followed by all other drones in
+alphabetic order.  Finally build `init.el' and, if it exists,
+`USER-REAL-LOGIN-NAME.el'.
 
 When optional QUICK is non-nil, then do not build drones for
 which `submodule.DRONE.build-step' is set, assuming those are
