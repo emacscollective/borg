@@ -769,7 +769,8 @@ which is part of the ~borg~ package.
 
 - Command: clean ::
 
-  This target removes all byte-code files inside ~~/.emacs.d~.
+  This target removes all byte-code and native files of all drones and
+  config files.
 
   To ensure a clean build this should always be run before ~build~, as
   in ~make clean build~.

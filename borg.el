@@ -921,6 +921,12 @@ doesn't do anything."
                      t))
         (ignore-errors (delete-file file))))))
 
+(defun borg--batch-clean (&optional quick)
+  (borg-do-drones (drone)
+    (unless (or (not (file-exists-p (borg-worktree drone)))
+                (and quick (borg-get-all drone "build-step")))
+      (borg-clean drone))))
+
 (defun borg-clean (drone)
   (let ((dir (borg-worktree drone)))
     (dolist (el (directory-files-recursively dir "\\.el\\'" nil t))

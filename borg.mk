@@ -5,6 +5,8 @@
 
 BORG_DIR := $(dir $(lastword $(MAKEFILE_LIST)))
 
+BORG_CLEAN_ELN := true
+
 -include etc/borg/config.mk
 
 ifeq "$(BORG_SECONDARY_P)" "true"
@@ -78,7 +80,14 @@ endif
 ## Batch
 
 clean:
+ifeq "$(BORG_CLEAN_ELN)" "true"
+	@rm -f init.elc $(INIT_FILES:.el=.elc)
+	@$(EMACS) $(EMACS_ARGUMENTS) $(EMACS_EXTRA) $(SILENCIO) \
+	$(BORG_ARGUMENTS) \
+	--funcall borg--batch-clean 2>&1
+else
 	@find . -name '*.elc' -exec rm '{}' ';'
+endif
 
 build: init-clean
 	@$(EMACS) $(EMACS_ARGUMENTS) $(EMACS_EXTRA) $(SILENCIO) \
