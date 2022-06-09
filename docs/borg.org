@@ -789,11 +789,29 @@ which is part of the ~borg~ package.
   first, followed by all other drones in alphabetic order.  After that
   it also byte-compiles the user init files, like ~build-init~ does.
 
+** Quick batch targets
+:PROPERTIES:
+:UNNUMBERED: notoc
+:END:
+
+These targets act on most drones but exclude those for which the Git
+variable ~submodule.DRONE.build-step~ is set.  The assumption is that
+those are the drones that take longer to build.
+
 - Command: quick ::
 
-  This target builds /most/ drones.  Excluded are all drones for which
-  the Git variable ~submodule.DRONE.build-step~ is set, assuming that those
-  are the drones that take longer to build.
+  This target cleans and builds most drones.
+
+  It also cleans and builds the init files as described as for ~build~.
+
+- Command: quick-clean ::
+
+  This target removes all byte-code and native files of most drones
+  It also remove the byte-code files of the config files.
+
+- Command: quick-build ::
+
+  This target builds /most/ drones and the config files
 
   It also builds the init files as described as for ~build~.
 

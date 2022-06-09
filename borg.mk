@@ -54,7 +54,11 @@ help helpall::
 	$(info make clean           = remove all byte-code files)
 	$(info make build           = byte-compile all drones and init files)
 	$(info make native          = byte+native-compile drones and byte-compile init files)
-	$(info make quick           = byte-compile most drones and init files)
+helpall::
+	$(info make quick-clean     = clean most drones and init files)
+	$(info make quick-build     = byte-compile most drones and init files)
+help helpall::
+	$(info make quick           = clean and byte-compile most drones and init files)
 	$(info )
 	$(info Drone targets)
 	$(info -------------)
@@ -101,10 +105,17 @@ native: init-clean
 
 ## Batch Quick
 
-quick: init-clean
+quick-clean: clean-init
 	@$(EMACS) $(EMACS_ARGUMENTS) $(EMACS_EXTRA) $(SILENCIO) \
 	$(BORG_ARGUMENTS) \
-	--eval '(borg-batch-rebuild t)' 2>&1
+	--eval '(borg--batch-clean t)' 2>&1
+
+quick-build:
+	@$(EMACS) $(EMACS_ARGUMENTS) $(EMACS_EXTRA) $(SILENCIO) \
+	$(BORG_ARGUMENTS) \
+	--eval '(borg-batch-rebuild t)' $(INIT_FILES) 2>&1
+
+quick: quick-clean quick-build
 
 ## Per-Clone
 
