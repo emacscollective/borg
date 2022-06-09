@@ -800,16 +800,16 @@ which is part of the ~borg~ package.
 :UNNUMBERED: notoc
 :END:
 
-- Command: clean-init ::
+- Command: init-clean ::
 
   This target removes byte-code files for init files.
 
-- Command: tangle-init ::
+- Command: init-tangle ::
 
   This target tangles (creates) ~init.el~ from ~init.org~.  You obviously
   don't have to use such a file if you don't want to.
 
-- Command: build-init ::
+- Command: init-build ::
 
   This target builds the init files specified by the Make variable
   ~INIT_FILES~, or if that is unspecified ~init.el~ and ~LOGIN.el~, where

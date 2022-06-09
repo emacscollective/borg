@@ -65,9 +65,9 @@ helpall::
 	$(info )
 	$(info Init file targets)
 	$(info -----------------)
-	$(info make clean-init      = remove init files)
-	$(info make tangle-init     = recreate init.el from init.org)
-	$(info make build-init      = rebuild init files)
+	$(info make init-clean      = remove init files)
+	$(info make init-tangle     = recreate init.el from init.org)
+	$(info make init-build      = rebuild init files)
 help helpall::
 	$(info )
 	$(info Bootstrapping)
@@ -83,7 +83,7 @@ endif
 clean:
 	@find . -name '*.elc' -exec rm '{}' ';'
 
-build: clean-init
+build: init-clean
 	@$(EMACS) $(EMACS_ARGUMENTS) $(EMACS_EXTRA) $(SILENCIO) \
 	$(BORG_ARGUMENTS) \
 	--funcall borg-batch-rebuild $(INIT_FILES) 2>&1
@@ -96,7 +96,7 @@ build-native:
 
 ## Batch Quick
 
-quick: clean-init
+quick: init-clean
 	@$(EMACS) $(EMACS_ARGUMENTS) $(EMACS_EXTRA) $(SILENCIO) \
 	$(BORG_ARGUMENTS) \
 	--eval '(borg-batch-rebuild t)' 2>&1
@@ -111,16 +111,16 @@ $(DRONES_DIR)/%: .FORCE
 
 ## Init Files
 
-clean-init:
+init-clean:
 	@rm -f init.elc $(INIT_FILES:.el=.elc)
 
-tangle-init: init.el
+init-tangle: init.el
 init.el: init.org
 	@$(EMACS) $(EMACS_ARGUMENTS) $(EMACS_EXTRA) \
 	--load org \
 	--eval '(org-babel-tangle-file "init.org")' 2>&1
 
-build-init: clean-init
+init-build: init-clean
 	@$(EMACS) $(EMACS_ARGUMENTS) $(EMACS_EXTRA) \
 	$(BORG_ARGUMENTS) \
 	--funcall borg-batch-rebuild-init $(INIT_FILES) 2>&1
