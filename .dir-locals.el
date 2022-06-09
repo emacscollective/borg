@@ -1,2 +1,6 @@
-((nil . ((indent-tabs-mode . nil)))
- (".github" . ((nil . ((truncate-lines . nil))))))
+((nil
+  (indent-tabs-mode . nil))
+ (makefile-gmake-mode
+  (outline-regexp . "##"))
+ (".github"
+  (nil . ((truncate-lines . nil)))))

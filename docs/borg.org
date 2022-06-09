@@ -749,9 +749,27 @@ The following ~make~ targets are available by default.  To use them you
 have to be in ~~/.emacs.d~ in a shell.  They are implemented in ~borg.mk~,
 which is part of the ~borg~ package.
 
+** Help targets
+:PROPERTIES:
+:UNNUMBERED: notoc
+:END:
+
 - Command: help ::
 
   This target prints information about the following targets.
+
+- Command: helpall ::
+
+  This target prints information about all of the following targets.
+
+** Batch targets
+:PROPERTIES:
+:UNNUMBERED: notoc
+:END:
+
+- Command: clean ::
+
+  This target removes all byte-code files inside ~~/.emacs.d~.
 
 - Command: all ::
 - Command: build ::
@@ -759,6 +777,37 @@ which is part of the ~borg~ package.
   This target rebuilds all assimilated drones in alphabetic order,
   except for Org which is rebuilt first.  After that it also builds
   the user init files, like ~build-init~ does.
+
+- Command: quick ::
+
+  This target builds /most/ drones.  Excluded are all drones for which
+  the Git variable ~submodule.DRONE.build-step~ is set, assuming that those
+  are the drones that take longer to build.
+
+  It also builds the init files as described above.
+
+** Drone targets
+:PROPERTIES:
+:UNNUMBERED: notoc
+:END:
+
+- Command: lib/DRONE ::
+
+  This target builds the drone named DRONE.
+
+** Init file targets
+:PROPERTIES:
+:UNNUMBERED: notoc
+:END:
+
+- Command: clean-init ::
+
+  This target removes byte-code files for init files.
+
+- Command: tangle-init ::
+
+  This target tangles (creates) ~init.el~ from ~init.org~.  You obviously
+  don't have to use such a file if you don't want to.
 
 - Command: build-init ::
 
@@ -773,30 +822,10 @@ which is part of the ~borg~ package.
   have to somehow synchronize that file between your machines without
   checking it into Git.
 
-- Command: quick ::
-
-  This target builds /most/ drones.  Excluded are all drones for which
-  the Git variable ~submodule.DRONE.build-step~ is set, assuming that those
-  are the drones that take longer to build.
-
-  It also builds the init files as described above.
-
-- Command: lib/DRONE ::
-
-  This target builds the drone named DRONE.
-
-- Command: tangle-init ::
-
-  This target tangles (creates) ~init.el~ from ~init.org~.  You obviously
-  don't have to use such a file if you don't want to.
-
-- Command: clean ::
-
-  This target removes all byte-code files inside ~~/.emacs.d~.
-
-- Command: clean-init ::
-
-  This target removes byte-code files for init files.
+** Bootstrap targets
+:PROPERTIES:
+:UNNUMBERED: notoc
+:END:
 
 - Command: bootstrap-borg ::
 
