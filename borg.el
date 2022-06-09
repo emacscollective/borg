@@ -592,7 +592,6 @@ and optional NATIVE are both non-nil, then also compile natively."
         (build (borg-get-all clone "build-step"))
         (config (borg--config-file)))
     (when (file-exists-p config)
-      (message "  Loading %s..." config)
       (load config nil t t))
     (if build
         (dolist (cmd build)
