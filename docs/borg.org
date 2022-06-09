@@ -756,7 +756,7 @@ which is part of the ~borg~ package.
 
 - Command: help ::
 
-  This target prints information about the following targets.
+  This target prints information about most of the following targets.
 
 - Command: helpall ::
 
@@ -771,12 +771,16 @@ which is part of the ~borg~ package.
 
   This target removes all byte-code files inside ~~/.emacs.d~.
 
-- Command: all ::
+  To ensure a clean build this should always be run before ~build~, as
+  in ~make clean build~.
+
 - Command: build ::
 
-  This target rebuilds all assimilated drones in alphabetic order,
-  except for Org which is rebuilt first.  After that it also builds
+  This target byte-compiles Borg and Compat first, followed by all
+  other drones in alphabetic order.  After that it also byte-compiles
   the user init files, like ~build-init~ does.
+
+  This is the default target.  ~all~ is an alias for this target.
 
 - Command: quick ::
 
@@ -784,7 +788,7 @@ which is part of the ~borg~ package.
   the Git variable ~submodule.DRONE.build-step~ is set, assuming that those
   are the drones that take longer to build.
 
-  It also builds the init files as described above.
+  It also builds the init files as described as for ~build~.
 
 ** Drone targets
 :PROPERTIES:
@@ -814,10 +818,10 @@ which is part of the ~borg~ package.
 
 - Command: init-build ::
 
-  This target builds the init files specified by the Make variable
-  ~INIT_FILES~, or if that is unspecified ~init.el~ and ~LOGIN.el~, where
-  ~LOGIN~ is the value of the variable ~user-real-login-name~.  If a file
-  does not exist, then it is silently ignored.
+  This target byte-compiles the init files specified by the make
+  variable ~INIT_FILES~; or if that is unspecified ~init.el~ and ~LOGIN.el~
+  (where ~LOGIN~ is the value of the variable ~user-real-login-name~).
+  If an init file does not exist, then that is silently ignored.
 
   If you publish your ~~/.emacs.d~ repository but would like to keep
   some settings private, then you can do so by putting them in a file
