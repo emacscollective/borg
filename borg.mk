@@ -51,7 +51,7 @@ help helpall::
 	$(info -------------)
 	$(info make clean           = remove all byte-code files)
 	$(info make build           = rebuild all drones and init files)
-	$(info make build-native    = rebuild drones natively and init files)
+	$(info make native          = rebuild drones natively and init files)
 	$(info make quick           = rebuild most drones and init files)
 	$(info )
 	$(info Drone targets)
@@ -88,7 +88,7 @@ build: init-clean
 	$(BORG_ARGUMENTS) \
 	--funcall borg-batch-rebuild $(INIT_FILES) 2>&1
 
-build-native:
+native:
 	@$(EMACS) $(EMACS_ARGUMENTS) $(EMACS_EXTRA) $(SILENCIO) \
 	$(BORG_ARGUMENTS) \
 	--eval "(borg-batch-rebuild nil 'native-compile-async)" \
