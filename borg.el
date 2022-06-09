@@ -564,10 +564,11 @@ Interactively, or when optional ACTIVATE is non-nil, then also
 activate the clone using `borg-activate'.  When `noninteractive'
 and optional NATIVE are both non-nil, then also compile natively."
   (interactive (list (borg-read-clone "Build drone: ") t))
+  (when (string-suffix-p "/" clone)
+    (setq clone (substring clone 0 -1)))
+  (borg-clean clone)
   (cond
    (noninteractive
-    (when (string-suffix-p "/" clone)
-      (setq clone (substring clone 0 -1)))
     (when (fboundp 'comp-ensure-native-compiler)
       (when native
         (setq borg-compile-function
@@ -919,6 +920,21 @@ doesn't do anything."
                      dir t "\\(\\.elc\\|-autoloads\\.el\\|-loaddefs\\.el\\)\\'"
                      t))
         (ignore-errors (delete-file file))))))
+
+(defun borg-clean (drone)
+  (let ((dir (borg-worktree drone)))
+    (dolist (el (directory-files-recursively dir "\\.el\\'" nil t))
+      (let ((elc (file-name-with-extension el "elc"))
+            (eln (and (file-readable-p el)
+                      (fboundp 'comp-el-to-eln-filename)
+                      (comp-el-to-eln-filename el))))
+        (when (file-writable-p elc)
+          (delete-file elc))
+        (when (and eln (file-writable-p eln))
+          (delete-file eln))))
+    (dolist (elc (directory-files-recursively dir "\\.elc\\'"))
+      (when (file-writable-p elc)
+        (delete-file elc)))))
 
 ;;; Assimilation
 

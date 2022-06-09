@@ -99,6 +99,11 @@ quick: init-clean
 
 ## Per-Clone
 
+clean/%: .FORCE
+	@$(EMACS) $(EMACS_ARGUMENTS) $(EMACS_EXTRA) $(SILENCIO) \
+	$(BORG_ARGUMENTS) \
+	--eval '(borg-clean "$*")' 2>&1
+
 $(BORG_DIR)borg.mk: ;
 build/% $(DRONES_DIR)/% : .FORCE
 	@$(EMACS) $(EMACS_ARGUMENTS) $(EMACS_EXTRA) $(SILENCIO) \

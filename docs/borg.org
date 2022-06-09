@@ -801,6 +801,11 @@ which is part of the ~borg~ package.
 :UNNUMBERED: notoc
 :END:
 
+- Command: clean/DRONE ::
+
+  This target removes all byte-code and native files belonging to the
+  drone named DRONE.
+
 - Command: build/DRONE ::
 
   This target byte-compiles the drone named DRONE.
