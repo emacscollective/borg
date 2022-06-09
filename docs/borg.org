@@ -782,6 +782,12 @@ which is part of the ~borg~ package.
 
   This is the default target.  ~all~ is an alias for this target.
 
+- Command: native ::
+
+  This target byte-compiles and natively compiles Borg and Compat
+  first, followed by all other drones in alphabetic order.  After that
+  it also byte-compiles the user init files, like ~build-init~ does.
+
 - Command: quick ::
 
   This target builds /most/ drones.  Excluded are all drones for which
@@ -1054,18 +1060,22 @@ variables you can tell Borg how to build such packages.
 
 - Variable: borg-compile-function ::
 
-  Setting this variable to ~native-compile~ enables native compilation.
-  This can be done in ~/.emacs.d/etc/borg/config.el~.
+  The function used to compile each individual library.
+  One of ~byte-compile-file~, ~borg-byte+native-compile~ or
+  ~borg-byte+native-compile-async~.
 
-  #+begin_src emacs-lisp
-    (when (native-comp-available-p)
-      (setq borg-compile-function #'native-compile))
-  #+end_src
+  To enable native compilation when running ~make~, use one of the
+  respective make targets, as described in [[*Make targets]].
 
 - Variable: borg-compile-recursively ::
 
   Setting this variable to a non-nil value instructs ~borg-compile~
   to compile all drones recursively.  Doing so is discouraged.
+
+- Variable: borg-native-compile-deny-list ::
+
+  This variable lists the names of files to be excluded from native
+  compilation.
 
 - Variable: submodule.DRONE.info-path PATH ::
 

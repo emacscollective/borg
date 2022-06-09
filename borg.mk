@@ -87,8 +87,7 @@ build: init-clean
 native: init-clean
 	@$(EMACS) $(EMACS_ARGUMENTS) $(EMACS_EXTRA) $(SILENCIO) \
 	$(BORG_ARGUMENTS) \
-	--eval "(borg-batch-rebuild nil 'native-compile-async)" \
-	$(INIT_FILES) 2>&1
+	--eval "(borg-batch-rebuild nil t)" $(INIT_FILES) 2>&1
 
 ## Batch Quick
 
