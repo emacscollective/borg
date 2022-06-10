@@ -26,7 +26,8 @@ EMACS_ARGUMENTS ?= -Q --batch
 
 EMACS_EXTRA ?=
 
-.PHONY: help clean clean-init build build-init quick bootstrap
+.PHONY: help helpall clean build native quick-clean quick-build quick \
+        init-clean init-build bootstrap bootstrap-borg
 .FORCE:
 
 SILENCIO  = --load subr-x
