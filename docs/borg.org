@@ -758,6 +758,8 @@ which is part of the ~borg~ package.
 
   This target prints information about most of the following targets.
 
+  This is the default target, unless the user sets ~.DEFAULT_GOAL~.
+
 - Command: helpall ::
 
   This target prints information about all of the following targets.
@@ -772,16 +774,20 @@ which is part of the ~borg~ package.
   This target removes all byte-code and native files of all drones and
   config files.
 
-  To ensure a clean build this should always be run before ~build~, as
-  in ~make clean build~.
+  To ensure a clean build, this target should always be run before
+  ~build~, so you might want to add a default target that does just
+  that.  To do so, add this to ~~/.emacs.d/etc/borg/config.mk~:
+
+  #+begin_src makefile-gmake
+    .DEFAULT_GOAL := all
+    all: clean build
+  #+end_src
 
 - Command: build ::
 
   This target byte-compiles Borg and Compat first, followed by all
   other drones in alphabetic order.  After that it also byte-compiles
   the user init files, like ~build-init~ does.
-
-  This is the default target.  ~all~ is an alias for this target.
 
 - Command: native ::
 

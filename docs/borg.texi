@@ -846,23 +846,109 @@ The following @code{make} targets are available by default.  To use them you
 have to be in @code{~/.emacs.d} in a shell.  They are implemented in @code{borg.mk},
 which is part of the @code{borg} package.
 
+@anchor{Help targets}
+@heading Help targets
+
 @deffn Command help
-This target prints information about the following targets.
+This target prints information about most of the following targets.
+
+This is the default target, unless the user sets @code{.DEFAULT_GOAL}.
 @end deffn
 
-@deffn Command all
+@deffn Command helpall
+This target prints information about all of the following targets.
 @end deffn
+
+@anchor{Batch targets}
+@heading Batch targets
+
+@deffn Command clean
+This target removes all byte-code and native files of all drones and
+config files.
+
+To ensure a clean build, this target should always be run before
+@code{build}, so you might want to add a default target that does just
+that.  To do so, add this to @code{~/.emacs.d/etc/borg/config.mk}:
+
+@example
+.DEFAULT_GOAL := all
+all: clean build
+@end example
+@end deffn
+
 @deffn Command build
-This target rebuilds all assimilated drones in alphabetic order,
-except for Org which is rebuilt first.  After that it also builds
+This target byte-compiles Borg and Compat first, followed by all
+other drones in alphabetic order.  After that it also byte-compiles
 the user init files, like @code{build-init} does.
 @end deffn
 
-@deffn Command build-init
-This target builds the init files specified by the Make variable
-@code{INIT_FILES}, or if that is unspecified @code{init.el} and @code{LOGIN.el}, where
-@code{LOGIN} is the value of the variable @code{user-real-login-name}.  If a file
-does not exist, then it is silently ignored.
+@deffn Command native
+This target byte-compiles and natively compiles Borg and Compat
+first, followed by all other drones in alphabetic order.  After that
+it also byte-compiles the user init files, like @code{build-init} does.
+@end deffn
+
+@anchor{Quick batch targets}
+@heading Quick batch targets
+
+These targets act on most drones but exclude those for which the Git
+variable @code{submodule.DRONE.build-step} is set.  The assumption is that
+those are the drones that take longer to build.
+
+@deffn Command quick
+This target cleans and builds most drones.
+
+It also cleans and builds the init files as described as for @code{build}.
+@end deffn
+
+@deffn Command quick-clean
+This target removes all byte-code and native files of most drones
+It also remove the byte-code files of the config files.
+@end deffn
+
+@deffn Command quick-build
+This target builds @emph{most} drones and the config files
+
+It also builds the init files as described as for @code{build}.
+@end deffn
+
+@anchor{Drone targets}
+@heading Drone targets
+
+@deffn Command clean/DRONE
+This target removes all byte-code and native files belonging to the
+drone named DRONE@.
+@end deffn
+
+@deffn Command build/DRONE
+This target byte-compiles the drone named DRONE@.
+
+@code{lib/DRONE} is an alias for this target; or rather @code{DIR/DRONE}, where
+@code{DIR} is directory containing the drone submodules.
+@end deffn
+
+@deffn Command native/DRONE
+This target byte-compiles and natively-compiles the drone named
+DRONE@.
+@end deffn
+
+@anchor{Init file targets}
+@heading Init file targets
+
+@deffn Command init-clean
+This target removes byte-code files for init files.
+@end deffn
+
+@deffn Command init-tangle
+This target tangles (creates) @code{init.el} from @code{init.org}.  You obviously
+don't have to use such a file if you don't want to.
+@end deffn
+
+@deffn Command init-build
+This target byte-compiles the init files specified by the make
+variable @code{INIT_FILES}; or if that is unspecified @code{init.el} and @code{LOGIN.el}
+(where @code{LOGIN} is the value of the variable @code{user-real-login-name}).
+If an init file does not exist, then that is silently ignored.
 
 If you publish your @code{~/.emacs.d} repository but would like to keep
 some settings private, then you can do so by putting them in a file
@@ -871,30 +957,8 @@ have to somehow synchronize that file between your machines without
 checking it into Git.
 @end deffn
 
-@deffn Command quick
-This target builds @emph{most} drones.  Excluded are all drones for which
-the Git variable @code{submodule.DRONE.build-step} is set, assuming that those
-are the drones that take longer to build.
-
-It also builds the init files as described above.
-@end deffn
-
-@deffn Command lib/DRONE
-This target builds the drone named DRONE@.
-@end deffn
-
-@deffn Command tangle-init
-This target tangles (creates) @code{init.el} from @code{init.org}.  You obviously
-don't have to use such a file if you don't want to.
-@end deffn
-
-@deffn Command clean
-This target removes all byte-code files inside @code{~/.emacs.d}.
-@end deffn
-
-@deffn Command clean-init
-This target removes byte-code files for init files.
-@end deffn
+@anchor{Bootstrap targets}
+@heading Bootstrap targets
 
 @deffn Command bootstrap-borg
 This target bootstraps @code{borg} itself.
@@ -1116,18 +1180,22 @@ functions such as @code{normal-top-level-add-subdirs-to-load-path} and
 @end defvar
 
 @defvar borg-compile-function
-Setting this variable to @code{native-compile} enables native compilation.
-This can be done in @code{/.emacs.d/etc/borg/config.el}.
+The function used to compile each individual library.
+One of @code{byte-compile-file}, @code{borg-byte+native-compile} or
+@code{borg-byte+native-compile-async}.
 
-@lisp
-(when (native-comp-available-p)
-  (setq borg-compile-function #'native-compile))
-@end lisp
+To enable native compilation when running @code{make}, use one of the
+respective make targets, as described in @ref{Make targets}.
 @end defvar
 
 @defvar borg-compile-recursively
 Setting this variable to a non-nil value instructs @code{borg-compile}
 to compile all drones recursively.  Doing so is discouraged.
+@end defvar
+
+@defvar borg-native-compile-deny-list
+This variable lists the names of files to be excluded from native
+compilation.
 @end defvar
 
 @defvar submodule.DRONE.info-path PATH

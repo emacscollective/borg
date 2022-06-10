@@ -7,6 +7,8 @@ BORG_DIR := $(dir $(lastword $(MAKEFILE_LIST)))
 
 BORG_CLEAN_ELN := true
 
+help::
+
 -include etc/borg/config.mk
 
 ifeq "$(BORG_SECONDARY_P)" "true"
@@ -24,10 +26,8 @@ EMACS_ARGUMENTS ?= -Q --batch
 
 EMACS_EXTRA ?=
 
-.PHONY: all help clean clean-init build build-init quick bootstrap
+.PHONY: help clean clean-init build build-init quick bootstrap
 .FORCE:
-
-all: build
 
 SILENCIO  = --load subr-x
 SILENCIO += --eval "(setq byte-compile-warnings '(not docstrings))"
