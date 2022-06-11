@@ -813,8 +813,7 @@ and optional NATIVE are both non-nil, then also compile natively."
         (member (file-name-nondirectory file)
                 borg-native-compile-deny-list))
     (byte-compile-file file))
-   ((and (fboundp 'byte-write-target-file)
-         (fboundp 'comp--native-compile)
+   ((and (fboundp 'comp--native-compile)
          (fboundp 'comp-ensure-native-compiler))
     (comp-ensure-native-compiler)
     (let* ((byte+native-compile t)
@@ -825,7 +824,7 @@ and optional NATIVE are both non-nil, then also compile natively."
         (`(,temp-buffer . ,target-file)
          (unwind-protect
              (progn
-               (byte-write-target-file temp-buffer target-file)
+               (borg--byte-write-target-file temp-buffer target-file)
                (when (stringp eln-file)
                  (set-file-times eln-file)))
            (kill-buffer temp-buffer)
@@ -838,6 +837,31 @@ and optional NATIVE are both non-nil, then also compile natively."
    ((fboundp 'native-compile-async)
     (native-compile-async file))
    ((error "Emacs %s does not support native compilation" emacs-version))))
+
+(if (fboundp 'byte-write-target-file)
+    (defalias 'borg--byte-write-target-file #'byte-write-target-file)
+  (defvar byte-native-compiling)
+  (defvar byte-to-native-output-buffer-file)
+  (defun borg--byte-write-target-file (buffer target-file)
+    (with-current-buffer buffer
+      (let* ((coding-system-for-write 'no-conversion)
+             (tempfile
+              (make-temp-file (when (file-writable-p target-file)
+                                (expand-file-name target-file))))
+             (default-modes (default-file-modes))
+             (temp-modes (logand default-modes #o600))
+             (desired-modes (logand default-modes #o666))
+             (kill-emacs-hook
+              (cons (lambda () (ignore-errors
+                            (delete-file tempfile)))
+                    kill-emacs-hook)))
+        (unless (= temp-modes desired-modes)
+          (set-file-modes tempfile desired-modes 'nofollow))
+        (write-region (point-min) (point-max) tempfile nil 1)
+        (if byte-native-compiling
+            (setf byte-to-native-output-buffer-file
+                  (cons tempfile target-file))
+          (rename-file tempfile target-file t))))))
 
 (defun borg-maketexi (clone &optional files)
   "Generate Texinfo manuals from Org files for the clone named CLONE.
