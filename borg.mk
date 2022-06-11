@@ -97,7 +97,7 @@ else
 	@find . -name '*.elc' -exec rm '{}' ';'
 endif
 
-cleanall:
+clean-force:
 	@find . -name '*.elc' -exec rm '{}' ';'
 
 build: init-clean
