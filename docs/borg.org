@@ -783,6 +783,13 @@ which is part of the ~borg~ package.
     all: clean build
   #+end_src
 
+- Command: clean-force ::
+
+  This target removes all byte-code files using ~find~.  The ~clean~
+  target on the other hand uses the lisp function ~borg--batch-clean~.
+  Byte-code isn't always compatible between Emacs releases and this
+  target makes it possible to recover from such an incompatibility.
+
 - Command: build ::
 
   This target byte-compiles Borg and Compat first, followed by all

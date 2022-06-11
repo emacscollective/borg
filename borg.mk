@@ -52,7 +52,10 @@ help helpall::
 	$(info )
 	$(info Batch targets)
 	$(info -------------)
-	$(info make clean           = remove all byte-code files)
+	$(info make clean           = remove all byte-code and native files)
+helpall::
+	$(info make clean-force     = remove all byte-code files using find)
+help helpall::
 	$(info make build           = byte-compile all drones and init files)
 	$(info make native          = byte+native-compile drones and byte-compile init files)
 helpall::
@@ -93,6 +96,9 @@ ifeq "$(BORG_CLEAN_ELN)" "true"
 else
 	@find . -name '*.elc' -exec rm '{}' ';'
 endif
+
+cleanall:
+	@find . -name '*.elc' -exec rm '{}' ';'
 
 build: init-clean
 	@$(EMACS) $(EMACS_ARGUMENTS) $(EMACS_EXTRA) $(SILENCIO) \

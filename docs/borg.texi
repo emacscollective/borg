@@ -876,6 +876,13 @@ all: clean build
 @end example
 @end deffn
 
+@deffn Command clean-force
+This target removes all byte-code files using @code{find}.  The @code{clean}
+target on the other hand uses the lisp function @code{borg--batch-clean}.
+Byte-code isn't always compatible between Emacs releases and this
+target makes it possible to recover from such an incompatibility.
+@end deffn
+
 @deffn Command build
 This target byte-compiles Borg and Compat first, followed by all
 other drones in alphabetic order.  After that it also byte-compiles
