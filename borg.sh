@@ -41,8 +41,11 @@ do
                 git remote rename origin "$remote"
             else
                 cd "$path"
-                git remote add "$remote" "$remote_url"
-                git fetch "$remote"
+                if ! $(git remote | grep -q "^$remote\$" )
+                then
+                    git remote add "$remote" "$remote_url"
+                    git fetch "$remote"
+                fi
                 cd "$toplevel"
             fi
 
