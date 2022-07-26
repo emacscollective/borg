@@ -222,8 +222,7 @@ VARIABLE can be a symbol or a string."
                     ;; If the variable has no value then the exit code is
                     ;; non-zero, but that isn't an error as far as we are
                     ;; concerned.
-                    (apply #'process-lines "git" "config"
-                           "--file" borg-gitmodules-file
+                    (apply #'borg--module-config
                            `(,@(and all (list "--get-all"))
                              ,(format "submodule.%s.%s" clone variable)))))))
     (if all values (car (last values)))))
@@ -307,8 +306,7 @@ the overall return value."
     (if include-variables
         (let (alist)
           (dolist (line (and (file-exists-p borg-gitmodules-file)
-                             (process-lines "git" "config" "--list"
-                                            "--file" borg-gitmodules-file)))
+                             (borg--module-config "--list")))
             (when (string-match
                    "\\`submodule\\.\\([^.]+\\)\\.\\([^=]+\\)=\\(.+\\)\\'"
                    line)
@@ -1164,6 +1162,11 @@ Formatting is according to the commit message conventions."
 
 (defun borg--file-tracked-p (file)
   (borg--git-success "ls-files" "--error-unmatch" file))
+
+(defun borg--module-config (&rest args)
+  (apply #'process-lines "git" "config"
+         "--file" borg-gitmodules-file
+         args))
 
 (defun borg--refresh-magit ()
   (when (and (derived-mode-p 'magit-mode)
