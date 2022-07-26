@@ -13,13 +13,13 @@ test -n "$toplevel" || exit 2
 cd "$toplevel"
 
 git submodule--helper list |
-while read -r mode sha1 stage path
+while read -r mode hash stage path
 do
     if test -e "$path"
     then
         name=$(git submodule--helper name "$path")
 
-        printf "\n--- [%s] ---\n\n" "$name"
+        echo "--- [$name] ---"
 
         if ! test -e "$path"/.git
         then
@@ -73,11 +73,31 @@ do
         if test -e "$path"/.git
         then
             cd "$path"
-            if ! git reset --hard "$sha1"
+            head=$(git rev-parse HEAD)
+            if test "$head" != "$hash"
             then
-                echo >&2 "futile: Checkout of '$sha1' into submodule path '$path' failed"
-                git reset --hard HEAD
-                exit 1
+                if test "$1" != "--reset-hard"
+                then
+                    echo -e "\033[0;31mSkipping checkout\033[0m (--reset-hard not specified)"
+                    echo "(If you have already committed in modules since running"
+                    echo "'make boostrap', then you should not use that argument.)"
+                    echo "    HEAD: $head"
+                    echo "expected: $hash"
+                elif test -n "$(git status --porcelain=v1 --ignored)"
+                then
+                    echo -e "\033[0;31mSkipping checkout\033[0m (due to uncommitted changes)"
+                    echo "    HEAD: $head"
+                    echo "expected: $hash"
+                    git status --porcelain=v1 --ignored
+                else
+                    prev=$(git log --no-walk --format='%h %s' HEAD)
+                    if git reset --hard "$hash"
+                    then
+                        echo -e "\033[1mHEAD was $prev\033[0m"
+                    else
+                        echo -e "\033[0;31mCheckout of $hash for $name failed\033[0m"
+                    fi
+                fi
             fi
             cd "$toplevel"
         else

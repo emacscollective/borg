@@ -164,6 +164,6 @@ bootstrap:
 	@printf "\n=== Running 'git submodule init' ===\n\n"
 	@git submodule init
 	@printf "\n=== Running '$(BORG_DIR)borg.sh' ===\n"
-	@$(BORG_DIR)borg.sh
+	@$(BORG_DIR)borg.sh --reset-hard
 	@printf "\n=== Running 'make build' ===\n\n"
 	@make build
