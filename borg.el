@@ -1165,7 +1165,7 @@ Formatting is according to the commit message conventions."
 
 (defun borg--module-config (&rest args)
   (apply #'process-lines "git" "config"
-         "--file" borg-gitmodules-file
+         "--includes" "--file" borg-gitmodules-file
          args))
 
 (defun borg--refresh-magit ()

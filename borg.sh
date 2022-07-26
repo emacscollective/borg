@@ -26,10 +26,10 @@ do
             git submodule--helper clone \
                 --name "$name" \
                 --path "$path" \
-                --url "$(git config -f .gitmodules submodule."$name".url)"
+                --url "$(git config --includes -f .gitmodules submodule.$name.url)"
         fi
 
-        git config -f .gitmodules --get-all submodule."$name".remote |
+        git config --includes -f .gitmodules --get-all submodule.$name.remote |
         while read -r remote remote_url
         do
             if ! test -e "$path"/.git
