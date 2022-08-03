@@ -213,18 +213,17 @@ Then evaluate RESULT to get return value, default nil.
   "Return the value of `submodule.CLONE.VARIABLE' in `~/.emacs.d/.gitmodules'.
 If optional ALL is non-nil, then return all values as a list.
 VARIABLE can be a symbol or a string."
-  (let ((values (if borg--gitmodule-cache
-                    (plist-get (cdr (assoc clone borg--gitmodule-cache))
-                               (if (symbolp variable)
-                                   variable
-                                 (intern variable)))
-                  (ignore-errors
-                    ;; If the variable has no value then the exit code is
-                    ;; non-zero, but that isn't an error as far as we are
-                    ;; concerned.
-                    (apply #'borg--module-config
-                           `(,@(and all (list "--get-all"))
-                             ,(format "submodule.%s.%s" clone variable)))))))
+  (let ((values
+         (if borg--gitmodule-cache
+             (alist-get (if (symbolp variable) variable (intern variable))
+                        (cdr (assoc clone borg--gitmodule-cache)))
+           (ignore-errors
+             ;; If the variable has no value then the exit code is
+             ;; non-zero, but that isn't an error as far as we are
+             ;; concerned.
+             (apply #'borg--module-config
+                    `(,@(and all (list "--get-all"))
+                      ,(format "submodule.%s.%s" clone variable)))))))
     (if all values (car (last values)))))
 
 (defun borg-get-all (clone variable)
@@ -288,9 +287,9 @@ of `submodule.NAME.path', nil otherwise."
 
 The returned value is a list of the names of the assimilated
 drones, unless optional INCLUDE-VARIABLES is non-nil, in which
-case elements of the returned list have the form (NAME . PLIST).
+case elements of the returned list have the form (NAME . ALIST).
 
-PLIST is a list of paired elements.  Property names are symbols
+ALIST is an association list.  Property names are symbols
 and correspond to a VARIABLE defined in the Borg repository's
 \".gitmodules\" file as \"submodule.NAME.VARIABLE\".
 
@@ -304,35 +303,34 @@ the overall return value."
   (let* ((default-directory borg-top-level-directory)
          (prefix (file-relative-name borg-drones-directory)))
     (if include-variables
-        (let (alist)
+        (let (drones)
           (dolist (line (and (file-exists-p borg-gitmodules-file)
                              (borg--module-config "--list")))
             (when (string-match
                    "\\`submodule\\.\\([^.]+\\)\\.\\([^=]+\\)=\\(.+\\)\\'"
                    line)
               (let* ((drone (match-string 1 line))
-                     (prop  (intern (match-string 2 line)))
+                     (var   (intern (match-string 2 line)))
                      (value (match-string 3 line))
-                     (elt   (assoc drone alist))
-                     (plist (cdr elt)))
+                     (elt   (assoc drone drones))
+                     (vars  (cdr elt)))
                 (unless elt
-                  (push (setq elt (list drone)) alist))
-                (setq plist (plist-put
-                             plist prop
-                             (if (or (eq include-variables 'raw)
-                                     (memq prop borg--multi-value-variables))
-                                 (nconc (plist-get plist prop)
-                                        (list value))
-                               value)))
-                (setcdr elt plist))))
+                  (push (setq elt (list drone)) drones))
+                (setf (alist-get var vars)
+                      (if (or (eq include-variables 'raw)
+                              (memq var borg--multi-value-variables))
+                          (nconc (alist-get var vars)
+                                 (list value))
+                        value))
+                (setcdr elt vars))))
           (cl-sort (cl-delete-if-not
                     (lambda (drone)
-                      (let ((path (plist-get (cdr drone) 'path)))
+                      (let ((path (alist-get 'path (cdr drone))))
                         (string-prefix-p prefix
                                          (if (listp path)
                                              (car (last path))
                                            path))))
-                    alist)
+                    drones)
                    #'string< :key #'car))
       (let ((offset (+ (length prefix) 50)))
         (cl-mapcan (lambda (line)

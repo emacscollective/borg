@@ -1220,9 +1220,9 @@ build your own tools on top of Borg.
 
   The returned value is a list of the names of the assimilated
   drones, unless optional INCLUDE-VARIABLES is non-nil, in which
-  case elements of the returned list have the form ~(NAME . PLIST)~.
+  case elements of the returned list have the form ~(NAME . ALIST)~.
 
-  PLIST is a list of paired elements.  Property names are symbols
+  ALIST is an association list.  Property names are symbols
   and correspond to a VARIABLE defined in the Borg repository's
   ~.gitmodules~ file as ~submodule.NAME.VARIABLE~.
 
