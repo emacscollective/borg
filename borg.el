@@ -243,7 +243,7 @@ a string."
             (lisp (expand-file-name "lisp" repo)))
         (list (cond ((file-exists-p elisp) elisp)
                     ((file-exists-p lisp) lisp)
-                    (t repo)))))))
+                    (t (directory-file-name repo))))))))
 
 (defun borg-info-path (clone &optional setup)
   "Return the `Info-directory-list' for the clone named CLONE.
