@@ -803,6 +803,8 @@ and optional NATIVE are both non-nil, then also compile natively."
              (if (> skip-count 0) (format ", %d skipped" skip-count) "")
              (if (> dir-count  1) (format " in %d directories" dir-count) ""))))
 
+(declare-function borg--byte-write-target-file "borg")
+
 (defun borg-byte+native-compile (file)
   (cond
    ((or (equal (getenv "NATIVE_DISABLED") "1")
@@ -835,7 +837,7 @@ and optional NATIVE are both non-nil, then also compile natively."
    ((error "Emacs %s does not support native compilation" emacs-version))))
 
 (if (fboundp 'byte-write-target-file)
-    (defalias 'borg--byte-write-target-file #'byte-write-target-file)
+    (defalias 'borg--byte-write-target-file 'byte-write-target-file)
   (defvar byte-native-compiling)
   (defvar byte-to-native-output-buffer-file)
   (defun borg--byte-write-target-file (buffer target-file)
