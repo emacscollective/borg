@@ -1100,6 +1100,16 @@ Formatting is according to the commit message conventions."
      (process-lines "git" "diff-index" "--name-status" "--cached" "HEAD"
                     "--" (file-relative-name borg-drones-directory)))))
 
+;;; Integrations
+
+(defun borg-propertize-module-path (path)
+  (and (file-in-directory-p (expand-file-name path) borg-drone-directory)
+       (equal (borg-get (file-name-nondirectory path) "disabled") "true")
+       (propertize path 'face 'font-lock-warning-face)))
+
+(add-hook 'magit-submodule-list-format-path-functions
+          #'borg-propertize-module-path)
+
 ;;; Internal Utilities
 
 (defun borg--config-file ()
