@@ -1112,21 +1112,25 @@ Formatting is according to the commit message conventions."
 
 ;;; Internal Utilities
 
+(defun borg--git-version ()
+  (save-match-data
+    (let ((ver (nth 2 (split-string (car (process-lines "git" "version")) " "))))
+      (if (string-match "\\`[0-9]+\\(\\.[0-9]+\\)*" ver)
+          (match-string 0 ver)
+        (error "Cannot determine Git version (from %s)" ver)))))
+
 (defun borg--config-file ()
   (convert-standard-filename
    (expand-file-name "etc/borg/config.el" borg-user-emacs-directory)))
 
 (defun borg--maybe-absorb-gitdir (pkg)
-  (let* ((ver (nth 2 (split-string (car (process-lines "git" "version")) " ")))
-         (ver (and (string-match "\\`[0-9]+\\(\\.[0-9]+\\)*" ver)
-                   (match-string 0 ver))))
-    (if (version< ver "2.12.0")
-        (let ((default-directory (borg-worktree pkg))
-              (gitdir (borg-gitdir pkg)))
-          (make-directory gitdir t)
-          (borg--call-git pkg "init" "--separate-git-dir" gitdir)
-          (borg--link-gitdir pkg))
-      (borg--call-git pkg "submodule" "absorbgitdirs" "--" (borg-worktree pkg)))))
+  (if (version< (borg--git-version) "2.12.0")
+      (let ((default-directory (borg-worktree pkg))
+            (gitdir (borg-gitdir pkg)))
+        (make-directory gitdir t)
+        (borg--call-git pkg "init" "--separate-git-dir" gitdir)
+        (borg--link-gitdir pkg))
+    (borg--call-git pkg "submodule" "absorbgitdirs" "--" (borg-worktree pkg))))
 
 (defun borg--maybe-reuse-gitdir (pkg)
   (let ((gitdir (borg-gitdir pkg))
