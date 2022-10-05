@@ -332,12 +332,23 @@ the overall return value."
                                            path))))
                     drones)
                    #'string< :key #'car))
-      (let ((offset (+ (length prefix) 50)))
-        (cl-mapcan (lambda (line)
-                     (and (ignore-errors
-                            (string-equal (substring line 50 offset) prefix))
-                          (list (substring line offset))))
-                   (process-lines "git" "submodule--helper" "list"))))))
+      (if (version< (magit-git-version) "2.38.0")
+          (let ((offset (+ (length prefix) 50)))
+            (cl-mapcan
+             (lambda (line)
+               (and (ignore-errors
+                      (string-equal (substring line 50 offset) prefix))
+                    (list (substring line offset))))
+             (process-lines "git" "submodule--helper" "list")))
+        ;; This is much slower, so hopefully the helper's
+        ;; "list" subcommand will be restored.  See #131.
+        (let ((offset (length prefix)))
+          (cl-mapcan
+           (lambda (line)
+             (and (ignore-errors
+                    (string-equal (substring line 0 offset) prefix))
+                  (list (substring line offset))))
+           (process-lines "git" "submodule" "foreach" "-q" "echo $sm_path")))))))
 
 (defun borg-clones ()
   "Return a list of cloned packages.
