@@ -332,7 +332,7 @@ the overall return value."
                                            path))))
                     drones)
                    #'string< :key #'car))
-      (if (version< (magit-git-version) "2.38.0")
+      (if (version< (borg--git-version) "2.38.0")
           (let ((offset (+ (length prefix) 50)))
             (cl-mapcan
              (lambda (line)
