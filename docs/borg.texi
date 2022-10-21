@@ -323,7 +323,7 @@ git submodule add --name epkg git@@github.com:emacscollective/epkg.git lib/epkg
 git config -f .gitmodules submodule.emacsql.no-byte-compile emacsql-pg.el
 echo /epkgs/ >> .gitignore
 git add .gitignore .gitmodules
-make all
+make build
 git commit -m "Assimilate epkg and dependencies"
 @end example
 

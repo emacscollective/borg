@@ -238,7 +238,7 @@ so lets manually install that and its dependency first:
   git config -f .gitmodules submodule.emacsql.no-byte-compile emacsql-pg.el
   echo /epkgs/ >> .gitignore
   git add .gitignore .gitmodules
-  make all
+  make build
   git commit -m "Assimilate epkg and dependencies"
 #+end_src
 
