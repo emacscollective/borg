@@ -5,7 +5,6 @@
 # Author: Jonas Bernoulli <jonas@bernoul.li>
 # SPDX-License-Identifier: GPL-3.0-or-later
 
-hive_remote=$(git config -f .gitmodules borg.collective)
 push_remote=$(git config -f .gitmodules borg.pushDefault)
 
 toplevel=$(git rev-parse --show-toplevel)
@@ -52,17 +51,7 @@ do
             if test -e "$path"/.git
             then
                 cd "$path"
-                if test "$remote" = "$hive_remote"
-                then
-                    if test -e "$toplevel/.hive-maint"
-                    then
-                        git config remote.pushDefault "$remote"
-                    else
-                        branch=$(git rev-parse --abbrev-ref HEAD)
-                        test -n "$branch" &&
-                            git config branch.master.remote "$remote"
-                    fi
-                elif test "$remote" = "$push_remote"
+                if test "$remote" = "$push_remote"
                 then
                     git config remote.pushDefault "$remote"
                 fi

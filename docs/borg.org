@@ -932,18 +932,6 @@ The values of these borg-specific Git variables have to be set in the
 file ~~/.emacs.d/.gitmodules~.  The variables ~borg.pushDefault~ and
 ~submodule.DRONE.remote~ are described in [[*Patching drones]].
 
-- Variable: borg.collective REMOTE ::
-
-  This variable specifies the name used for remotes that reference
-  a repository that has been patched by the collective.  If a NAME
-  matches REMOTE, then it is configured as the upstream of the
-  current branch of the respective DRONE.
-
-  If the file ~.hive-maint~ exists, then this variable has the same
-  effect as ~borg.pushDefault~.  This special case is only useful for
-  maintainers of the collective (but not for maintainers of individual
-  drones).
-
 Because most repositories used to maintain Emacs packages follow some
 common-sense conventions, Borg usually does not have to be told how to
 build a given drone.  Building is done using ~borg-build~, which in turn
