@@ -73,9 +73,10 @@
 
 (when (< emacs-major-version 28)
   (defvar byte+native-compile)
-  (defvar comp-files-queue)
-  (defvar native-comp-eln-load-path)
-  (defvar native-compile-target-directory))
+  (defvar comp-files-queue))
+
+(defvar native-comp-eln-load-path)
+(defvar native-compile-target-directory)
 
 (defvar git-commit-mode-map)
 (defvar compilation-mode-font-lock-keywords)
