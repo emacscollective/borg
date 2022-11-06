@@ -135,9 +135,9 @@ The value of this variable is usually the same as that of
 
 (defvar borg-emacs-arguments '("-Q")
   "Arguments used when calling an inferior Emacs instance.
-Set this in \"~/.emacs.d/etc/borg/config.el\" and also set
-`EMACS_ARGUMENTS' in either \"~/.emacs.d/Makefile\" or
-\"~/.emacs.d/etc/borg/config.mk\" to the same value")
+Set this in \"~/.config/emacs/etc/borg/config.el\" and also set
+`EMACS_ARGUMENTS' in either \"~/.config/emacs/Makefile\" or
+\"~/.config/emacs/etc/borg/config.mk\" to the same value")
 
 (defvar borg-compile-function #'byte-compile-file
   "The function used to compile a library.
@@ -211,7 +211,7 @@ Then evaluate RESULT to get return value, default nil.
          ,@body))))
 
 (defun borg-get (clone variable &optional all)
-  "Return the value of `submodule.CLONE.VARIABLE' in `~/.emacs.d/.gitmodules'.
+  "Return value of `submodule.CLONE.VARIABLE' in `~/.config/emacs/.gitmodules'.
 If optional ALL is non-nil, then return all values as a list.
 VARIABLE can be a symbol or a string."
   (let ((values
@@ -228,8 +228,8 @@ VARIABLE can be a symbol or a string."
     (if all values (car (last values)))))
 
 (defun borg-get-all (clone variable)
-  "Return all values of `submodule.CLONE.VARIABLE' in `~/.emacs.d/.gitmodules'.
-Return the values as a list.  VARIABLE can be a symbol or
+  "Return values of `submodule.CLONE.VARIABLE' in `~/.config/emacs/.gitmodules'.
+Return all values as a list.  VARIABLE can be a symbol or
 a string."
   (borg-get clone variable t))
 
@@ -431,8 +431,8 @@ directories to the `load-path' and `Info-directory-alist', and
 load the autoloads file, if it exists.
 
 If the value of a Git variable named `submodule.DRONE.disabled'
-is true in \"~/.emacs.d/.gitmodules\", then the drone named DRONE
-is skipped.
+is true in \"~/.config/emacs/.gitmodules\", then the drone named
+DRONE is skipped.
 
 If Emacs is running without an interactive terminal, then first
 load \"`borg-user-emacs-directory'/etc/borg/init.el\", if that

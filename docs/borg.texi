@@ -96,9 +96,10 @@ Borg is a bare-bones package manager for Emacs packages.  It provides
 only a few essential features and should be combined with other tools
 such as Magit, @code{epkg}, @code{use-package}, and @code{auto-compile}.
 
-Borg assimilates packages into the @code{~/.emacs.d} repository as Git
-submodules.  An assimilated package is called a drone and a borg-based
-@code{~/.emacs.d} repository is called a collective.
+Borg assimilates packages into the @code{~/.config/emacs} @footnote{Or @code{~/.emacs.d} of course, if you prefer that or have to use the
+old location because you still have to support older Emacs releases.} repository
+as Git submodules.  An assimilated package is called a drone and a
+borg-based @code{~/.config/emacs} repository is called a collective.
 
 It is possible to clone a package repository without assimilating it.
 A cloned package is called a clone.
@@ -172,11 +173,11 @@ saying.
 @section Bootstrapping
 
 (As mentioned in the next section you can use a location other than
-@code{~/.emacs.d}.  Never-the-less most of the subsequent examples just talk
-about @code{~/.emacs.d} and if you use something else, then obviously have to
-substitute that.  The same applies to the string @code{lib} and the variables
-@code{user-init-file} and @code{user-emacs-directory}, which also might not be
-appropriate depending on your choices.)
+@code{~/.config/emacs} (or @code{~/.emacs.d}). Nevertheless most of the subsequent
+examples just talk about @code{~/.config/emacs} and if you use something
+else, then obviously have to substitute that.  The same applies to the
+string @code{lib} and the variables @code{user-init-file} and @code{user-emacs-directory},
+which also might not be appropriate depending on your choices.)
 
 @menu
 * Bootstrapping using a seed::
@@ -200,7 +201,7 @@ itself, namely @code{magit}, @code{epkg}, @code{use-package}, @code{auto-compile
 @code{diff-hl}, as well as their dependencies.  These drones are not required
 by @code{borg} but their use is highly recommended.
 
-Clone the @code{emacs.g} repository to either @code{~/.emacs.d}, or for testing
+Clone the @code{emacs.g} repository to either @code{~/.config/emacs}, or for testing
 purposes to any other location.  This repository contains a @code{Makefile}
 that imports @code{lib/borg/borg.mk} and defines an additional target whose
 purpose is to make that file and @code{lib/borg/borg.sh} available.  Run @code{make
@@ -211,14 +212,14 @@ run @code{make bootstrap} to get and configure all submodules (including the
 @code{borg} submodule) and to build all drones.
 
 @example
-git clone git@@github.com:emacscollective/emacs.g.git ~/.emacs.d
-cd ~/.emacs.d
+git clone git@@github.com:emacscollective/emacs.g.git ~/.config/emacs
+cd ~/.config/emacs
 make bootstrap-borg
 make bootstrap
 @end example
 
-If you cloned to somewhere other than @code{~/.emacs.d}, then you can use
-that configuration using @code{emacs -Q --load /path/to/emacs.g/init.el}.
+If you cloned to somewhere other than @code{~/.config/emacs}, then you can
+use that configuration using @code{emacs -Q --load /path/to/emacs.g/init.el}.
 
 For drones whose upstream repositories are located on Github or Gitlab
 the @code{emacs.g} collective uses the @code{ssh} protocol by default, which is a
@@ -251,8 +252,8 @@ starter-kit described in the previous section, then you have
 to do a few things manually.
 
 @example
-git init ~/.emacs.d
-cd ~/.emacs.d
+git init ~/.config/emacs
+cd ~/.config/emacs
 @end example
 
 By default Borg installs packages inside the @code{lib/} subdirectory, but
@@ -391,7 +392,7 @@ During bootstrapping you have to change the URLs for packages that
 are assimilated by default.
 
 @example
-cd ~/.emacs.d
+cd ~/.config/emacs
 sed -i "s|git@@github.com:|https://github.com/|g" .gitmodules
 sed -i "s|git@@gitlab.com:|https://gitlab.com/|g" .gitmodules
 git commit -m "Use https URLs for Github and Gitlab"
@@ -401,7 +402,7 @@ If you have already run @code{make bootstrap}, then you also have to edit
 @code{.git/config}.
 
 @example
-cd ~/.emacs.d
+cd ~/.config/emacs
 sed -i "s|git@@github.com:|https://github.com/|g" .git/config
 sed -i "s|git@@gitlab.com:|https://gitlab.com/|g" .git/config
 @end example
@@ -421,7 +422,7 @@ Some commit is missing:
 @example
 --- [hl-todo] ---
 
-Cloning into '/home/you/.emacs.d/lib/hl-todo'...
+Cloning into '/home/you/.config/emacs/lib/hl-todo'...
 remote: Enumerating objects: 44, done.
 remote: Counting objects: 100% (44/44), done.
 remote: Compressing objects: 100% (29/29), done.
@@ -438,13 +439,13 @@ Some repository is missing:
 @example
 --- [paren-face] ---
 
-Cloning into '/home/you/.emacs.d/lib/paren-face'...
+Cloning into '/home/you/.config/emacs/lib/paren-face'...
 ERROR: Repository not found.
 fatal: Could not read from remote repository.
 
 Please make sure you have the correct access rights
 and the repository exists.
-fatal: clone of 'git@@github.com:tarsius/broken-url.git' into submodule path '/home/you/.emacs.d/lib/paren-face' failed
+fatal: clone of 'git@@github.com:tarsius/broken-url.git' into submodule path '/home/you/.config/emacs/lib/paren-face' failed
 futile: Clone of any remote into submodule path 'lib/paren-face' failed
 @end example
 
@@ -517,7 +518,7 @@ The repository was moved.  Update the url and resume the bootstrap.
 $ git config --file .gitmodules submodule.paren-face.url git@@github.com:tarsius/paren-face.git
 $ git submodule update --init lib/paren-face
 Submodule 'paren-face' (git@@github.com:tarsius/paren-face.git) registered for path 'lib/paren-face'
-Cloning into '/home/you/.emacs.d/lib/paren-face'...
+Cloning into '/home/you/.config/emacs/lib/paren-face'...
 Submodule path 'lib/paren-face': checked out 'eb4a51b8ef455e0914108105e7c0008d675457cc'
 $ git add .gitmodules
 $ git commit -m "paren-face: Update url"
@@ -535,7 +536,7 @@ $ git commit -m "Remove goner"
 @node Startup
 @chapter Startup
 
-The @code{user-init-file}, @code{~/.emacs.d/init.el}, has to contain a call to
+The @code{user-init-file}, @code{~/.config/emacs/init.el}, has to contain a call to
 @code{borg-initialize}.  It should also set @code{package-enable-at-startup} to @code{nil}
 unless you really want to use both @code{borg} and @code{package} at the same time.
 
@@ -544,7 +545,7 @@ This function initializes assimilated drones using @code{borg-activate}.
 
 To skip the activation of the drone named DRONE, temporarily disable
 it by setting the value of the Git variable @code{submodule.DRONE.disabled}
-to true in @code{~/.emacs.d/.gitmodules}.
+to true in @code{~/.config/emacs/.gitmodules}.
 @end defun
 
 @deffn Command borg-activate clone
@@ -561,7 +562,7 @@ have not been assimilated.
 @chapter Assimilation
 
 A third-party package is assimilated by adding it as a submodule and,
-if necessary, by configuring it in @code{~/.emacs.d/init.el}.  Built-in
+if necessary, by configuring it in @code{~/.config/emacs/init.el}.  Built-in
 packages are assimilated merely by configuring them.
 
 To begin the assimilation of a third-party package use the command
@@ -730,18 +731,18 @@ Borg does not provide an update command.  By not doing so, it empowers
 you to update to exactly the commit you wish to update to, instead of
 to "the" new version.
 
-To determine the drones which you @emph{might} want to update, visit the Magit
-status buffer of the @code{~/.emacs.d} repository and press @code{f m} to fetch
-inside all submodules.  After you have done so, and provided there
-actually are any modules with new upstream commits, a section titled
-"Modules unpulled from @@@{upstream@}" appears.
+To determine the drones which you @emph{might} want to update, visit the
+Magit status buffer of the @code{~/.config/emacs} repository and press @code{f m} to
+fetch inside all submodules.  After you have done so, and provided
+there actually are any modules with new upstream commits, a section
+titled "Modules unpulled from @@@{upstream@}" appears.
 
 Each subsection of that section represents a submodule with new
 upstream commits.  Expanding such a subsection lists the new upstream
 commits.  These commits can be visited by pressing @code{RET}, and the status
 buffer of a submodule can be visited by pressing @code{RET} while point is
 inside the heading of the respective submodule section.  To return to
-the status buffer of @code{~/.emacs.d} press @code{q}.
+the status buffer of @code{~/.config/emacs} press @code{q}.
 
 Inside the status buffer of a submodule, you can pull the upstream
 changes as usual, using @code{F u}.  If you wish you can inspect the changes
@@ -786,8 +787,9 @@ If you created some commits in a drone repository and are the
 maintainer of the respective package, then you can just push your
 changes to the "origin" remote.  You don't have to do this every time
 you created some commits, but at important checkpoints, such as after
-creating a release, you should record the changes in the @code{~/.emacs.d}
-repository.  To do so proceed as described in @ref{Updating drones}.
+creating a release, you should record the changes in the
+@code{~/.config/emacs} repository.  To do so proceed as described in
+@ref{Updating drones}.
 
 But for most packages you are not the maintainer and if you create
 commits for such drones, then you have to create a fork and push there
@@ -797,10 +799,10 @@ After you have done that you can continue to pull from the upstream
 using @code{F u} in Magit and you can also push to your fork using @code{P p}.
 
 Of course you should also occasionally record the changes in the
-@code{~/.emacs.d} repository.  Additionally, and ideally when you first
+@code{~/.config/emacs} repository.  Additionally, and ideally when you first
 fork a drone, you should also record information about your personal
 remote in the super-repository by setting @code{submodule.DRONE.remote} in
-@code{~/.emacs.d/.gitmodules}.
+@code{~/.config/emacs/.gitmodules}.
 
 @defvar submodule.DRONE.remote "NAME URL"
 This variable specifies an additional remote named NAME that is
@@ -830,8 +832,8 @@ setting @code{remote.pushDefault} to FORK@.
 @chapter Make targets
 
 The following @code{make} targets are available by default.  To use them you
-have to be in @code{~/.emacs.d} in a shell.  They are implemented in @code{borg.mk},
-which is part of the @code{borg} package.
+have to be in @code{~/.config/emacs} in a shell.  They are implemented in
+@code{borg.mk}, which is part of the @code{borg} package.
 
 @anchor{Help targets}
 @heading Help targets
@@ -855,7 +857,7 @@ config files.
 
 To ensure a clean build, this target should always be run before
 @code{build}, so you might want to add a default target that does just
-that.  To do so, add this to @code{~/.emacs.d/etc/borg/config.mk}:
+that.  To do so, add this to @code{~/.config/emacs/etc/borg/config.mk}:
 
 @example
 .DEFAULT_GOAL := all
@@ -944,11 +946,11 @@ variable @code{INIT_FILES}; or if that is unspecified @code{init.el} and @code{L
 (where @code{LOGIN} is the value of the variable @code{user-real-login-name}).
 If an init file does not exist, then that is silently ignored.
 
-If you publish your @code{~/.emacs.d} repository but would like to keep
-some settings private, then you can do so by putting them in a file
-@code{~/.emacs.d/LOGIN.el}.  The downside of this approach is that you will
-have to somehow synchronize that file between your machines without
-checking it into Git.
+If you publish your @code{~/.config/emacs} repository but would like to
+keep some settings private, then you can do so by putting them in a
+file @code{~/.config/emacs/LOGIN.el}.  The downside of this approach is
+that you will have to somehow synchronize that file between your
+machines without checking it into Git.
 @end deffn
 
 @anchor{Bootstrap targets}
@@ -980,7 +982,7 @@ that contains the drone submodules.  If specified, the value has to
 be relative to the top-level directory of the repository.
 
 Note that if you change the value of this variable, then you might
-have to additionally edit @code{~/.emacs.d/Makefile}.
+have to additionally edit @code{~/.config/emacs/Makefile}.
 @end defvar
 
 The values of the following variables are set at startup and should
@@ -1006,7 +1008,8 @@ The value of this constant is the @code{.gitmodules} file of the
 super-repository.
 @end defvar
 
-The value of this Make variable has to be set in @code{~/.emacs.d/Makefile}.
+The value of this Make variable has to be set in
+@code{~/.config/emacs/Makefile}.
 
 @defvar INIT​_FILES
 A list of init files to be build by the Make targets @code{build} and
@@ -1014,7 +1017,7 @@ A list of init files to be build by the Make targets @code{build} and
 @end defvar
 
 The values of these borg-specific Git variables have to be set in the
-file @code{~/.emacs.d/.gitmodules}.  The variables @code{borg.pushDefault} and
+file @code{~/.config/emacs/.gitmodules}.  The variables @code{borg.pushDefault} and
 @code{submodule.DRONE.remote} are described in @ref{Patching drones}.
 
 Because most repositories used to maintain Emacs packages follow some
@@ -1246,13 +1249,13 @@ defaulting to nil.
 
 @defun borg-get clone variable &optional all
 This function returns the value of the Git variable
-@code{submodule.CLONE.VARIABLE} defined in @code{~/.emacs.d/.gitmodules}.  If
-optional ALL is non-nil, then it returns all values as a list.
+@code{submodule.CLONE.VARIABLE} defined in @code{~/.config/emacs/.gitmodules}.
+If optional ALL is non-nil, then it returns all values as a list.
 @end defun
 
 @defun borg-get-all clone variable
 This function returns all values of the Git variable
-@code{submodule.CLONE.VARIABLE} defined in @code{~/.emacs.d/.gitmodules} as a
+@code{submodule.CLONE.VARIABLE} defined in @code{~/.config/emacs/.gitmodules} as a
 list.
 @end defun
 
