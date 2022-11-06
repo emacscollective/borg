@@ -111,7 +111,7 @@ which it was announced.
 @chapter Installation
 
 Borg can be used by itself, in which case it has to be bootstrapped.
-This is how Borg originally was intended to be used exclusively but
+This is how Borg originally was intended to be used exclusively, but
 nowadays you may also choose to use it merely as a secondary package
 manager, in which case Borg itself is installed using Package.
 
@@ -142,7 +142,7 @@ of this to your init file:
  '(package-selected-packages '(borg)))
 @end lisp
 
-Then you have to make the two package managers aware of one another by
+Then you have to make the two package managers aware of each other by
 replacing the call to @code{package-initialize} in your init file with this:
 
 @lisp
@@ -206,10 +206,12 @@ purposes to any other location.  This repository contains a @code{Makefile}
 that imports @code{lib/borg/borg.mk} and defines an additional target whose
 purpose is to make that file and @code{lib/borg/borg.sh} available.  Run @code{make
 bootstrap-borg} to clone the @code{borg} repository.  That does not completely
-setup the @code{borg} repository but it makes the latest version of the
-mentioned files available.  Now that these files are available you can
-run @code{make bootstrap} to get and configure all submodules (including the
-@code{borg} submodule) and to build all drones.
+setup @code{borg} but it makes the latest version of the mentioned files
+available.
+
+Now that these files are available you can run @code{make bootstrap} to get
+and configure all submodules (including the @code{borg} submodule) and to
+build all drones.
 
 @example
 git clone git@@github.com:emacscollective/emacs.g.git ~/.config/emacs
@@ -219,7 +221,10 @@ make bootstrap
 @end example
 
 If you cloned to somewhere other than @code{~/.config/emacs}, then you can
-use that configuration using @code{emacs -Q --load /path/to/emacs.g/init.el}.
+use that configuration using @code{emacs --init-directory /path/to/emacs.g/},
+provided you are using Emacs 29 or later.  Otherwise you have to
+resort to @code{emacs -Q -l /path/to/emacs.g/early-init.el -l
+/path/to/emacs.g/init.el}.
 
 For drones whose upstream repositories are located on Github or Gitlab
 the @code{emacs.g} collective uses the @code{ssh} protocol by default, which is a
@@ -537,8 +542,10 @@ $ git commit -m "Remove goner"
 @chapter Startup
 
 The @code{user-init-file}, @code{~/.config/emacs/init.el}, has to contain a call to
-@code{borg-initialize}.  It should also set @code{package-enable-at-startup} to @code{nil}
-unless you really want to use both @code{borg} and @code{package} at the same time.
+@code{borg-initialize}.
+
+You should also set @code{package-enable-at-startup} to @code{nil}.  If you use
+Emacs 27 or later, then do so in @code{early-init.el}, otherwise in @code{init.el}.
 
 @defun borg-initialize
 This function initializes assimilated drones using @code{borg-activate}.
@@ -571,16 +578,16 @@ and attempts to build the drone.
 
 A safer alternative is to first clone the package without assimilating
 it, using @code{borg-clone}.  This gives you an opportunity to inspect the
-cloned package for broken or malicious code before it gets a chance to
-run arbitrary code.  Later you can proceed with the assimilation using
-@code{borg-assimilate}, or remove the clone using @code{borg-remove}.
+cloned package for broken or malicious code, before it gets a chance
+to run arbitrary code.  Later you can proceed with the assimilation
+using @code{borg-assimilate}, or remove the clone using @code{borg-remove}.
 
 Building the drone can fail, for example due to missing dependencies.
 Failure to build a drone is not considered as a failure to assimilate.
 If a build fails, then a buffer containing information about the
 issue pops up.  If the failure is due to unsatisfied dependencies,
-then assimilate those too, and then build any drone which previously
-couldn't be built by using the Emacs command @code{borg-build} or @code{make
+then assimilate those too, and then build any drone, which previously
+couldn't be built, by using the Emacs command @code{borg-build} or @code{make
 lib/DRONE}.  Alternatively you can just rebuild everything using @code{make
 build}.
 
@@ -588,7 +595,7 @@ If you wish to avoid such complications, you should use the command
 @code{epkg-describe-package} before assimilating a package.  Among other
 useful information, it also provides a dependency tree.
 
-Once the packages have been added as submodules and the drones have
+Once the packages have been added as a submodules and the drones have
 been built, the assimilation is completed by creating an assimilation
 commit.
 
@@ -610,7 +617,8 @@ Assimilate baz v0.1.0
 @end example
 
 It's usually a good idea not to assimilate unrelated packages in the
-same commit, but something like this might make sense:
+same commit, but doing it for related packages, which do not strictly
+depend on one another, it might make sense:
 
 @example
 Assimilate ido and extensions
@@ -731,11 +739,11 @@ Borg does not provide an update command.  By not doing so, it empowers
 you to update to exactly the commit you wish to update to, instead of
 to "the" new version.
 
-To determine the drones which you @emph{might} want to update, visit the
-Magit status buffer of the @code{~/.config/emacs} repository and press @code{f m} to
-fetch inside all submodules.  After you have done so, and provided
-there actually are any modules with new upstream commits, a section
-titled "Modules unpulled from @@@{upstream@}" appears.
+To determine the drones that you @emph{might} want to update, visit the Magit
+status buffer of the @code{~/.config/emacs} repository and press @code{f m} to fetch
+inside all submodules.  After you have done so, and provided there
+actually are any modules with new upstream commits, a section titled
+"Modules unpulled from @@@{upstream@}" appears.
 
 Each subsection of that section represents a submodule with new
 upstream commits.  Expanding such a subsection lists the new upstream
@@ -750,10 +758,10 @@ before doing so.  And you can also choose to check out another commit
 instead of the upstream @code{HEAD}.
 
 Once you have "updated" to a new commit, you should also rebuild the
-drone using the command @code{borg-build}.  This may fail, e.g. due to new
+drone using the command @code{borg-build}.  This may fail, e.g., due to new
 dependencies.
 
-Once you have resolved all issues you should create an "update
+Once you have resolved all issues, you should create an "update
 commit".  You can either create one commit per updated drone or you
 can create a single commit for all updated drones, which ever you find
 more appropriate.  However it is recommended that you use a message
@@ -785,17 +793,18 @@ you can also keep track of those patches and share them with others.
 
 If you created some commits in a drone repository and are the
 maintainer of the respective package, then you can just push your
-changes to the "origin" remote.  You don't have to do this every time
-you created some commits, but at important checkpoints, such as after
-creating a release, you should record the changes in the
-@code{~/.config/emacs} repository.  To do so proceed as described in
-@ref{Updating drones}.
+changes to the "origin" remote.
+
+You don't have to do this every time you created some commits, but at
+important checkpoints, such as after creating a release, you should
+record the changes in the @code{~/.config/emacs} repository.  To do so
+proceed as described in @ref{Updating drones}.
 
 But for most packages you are not the maintainer and if you create
 commits for such drones, then you have to create a fork and push there
 instead.  You should configure that remote as the push-remote using
 @code{git config remote.pushDefault FORK}, or by pressing @code{b C M-p} in Magit.
-After you have done that you can continue to pull from the upstream
+After you have done that, you can continue to pull from the upstream
 using @code{F u} in Magit and you can also push to your fork using @code{P p}.
 
 Of course you should also occasionally record the changes in the
