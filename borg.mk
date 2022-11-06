@@ -79,9 +79,6 @@ help helpall::
 	$(info )
 	$(info Bootstrapping)
 	$(info -------------)
-ifneq "$(BORG_SECONDARY_P)" "true"
-	$(info make bootstrap-borg  = bootstrap borg itself)
-endif
 	$(info make bootstrap       = bootstrap collective or new drones)
 	@printf "\n"
 
