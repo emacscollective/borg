@@ -11,12 +11,17 @@ toplevel=$(git rev-parse --show-toplevel)
 test -n "$toplevel" || exit 2
 cd "$toplevel"
 
-git submodule--helper list |
+module_name () {
+    git config -f .gitmodules --list |
+        sed -n "s|^submodule.\([^.]*\).path=$1\$|\1|p"
+}
+
+git ls-files -s | grep ^160000 |
 while read -r mode hash stage path
 do
     if test -e "$path"
     then
-        name=$(git submodule--helper name "$path")
+        name=$(module_name "$path")
 
         echo "--- [$name] ---"
 
