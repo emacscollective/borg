@@ -27,10 +27,9 @@ do
 
         if ! test -e "$path"/.git
         then
-            git submodule--helper clone \
-                --name "$name" \
-                --path "$path" \
-                --url "$(git config --includes -f .gitmodules submodule.$name.url)"
+            git clone \
+                "$(git config --includes -f .gitmodules submodule.$name.url)" \
+                "$path" --separate-git-dir ".git/modules/$name"
         fi
 
         git config --includes -f .gitmodules --get-all submodule.$name.remote |
@@ -38,10 +37,8 @@ do
         do
             if ! test -e "$path"/.git
             then
-                git submodule--helper clone \
-                    --name "$name" \
-                    --path "$path" \
-                    --url "$remote_url" &&
+                git clone "$remote_url" "$path" \
+                    --separate-git-dir ".git/modules/$name" &&
                 git remote rename origin "$remote"
             else
                 cd "$path"
