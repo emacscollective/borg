@@ -33,7 +33,7 @@ dir: $(PKG).info
 
 html-dir: $(PKG).texi
 	@printf "Generating $(PKG)/*.html\n"
-	@$(MAKEINFO) --html $(MANUAL_HTML_ARGS) $<
+	@$(MAKEINFO) --html -o $(PKG)/ $(MANUAL_HTML_ARGS) $<
 
 %.pdf: %.texi
 	@printf "Generating $@\n"
