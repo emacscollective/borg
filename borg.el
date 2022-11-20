@@ -45,7 +45,8 @@
 
 ;;; Code:
 
-(require 'autoload)
+(with-suppressed-warnings ((obsolete autoload))
+  (require 'autoload))
 (require 'bytecomp)
 (require 'cl-lib)
 (require 'info)

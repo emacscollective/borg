@@ -40,7 +40,8 @@
 (require 'seq)
 (require 'subr-x)
 
-(require 'borg)
+(with-suppressed-warnings ((obsolete autoload))
+  (require 'borg))
 (require 'package)
 
 ;; Do not require `epkg' to avoid forcing all `borg' users
