@@ -63,7 +63,7 @@
                          nil))) ; Just hope that it is installed using elpa.
                    '("emacsql" "closql" "epkg"))
                   load-path)))
-      (require (quote epkg))))
+      (require (quote epkg) nil t)))
   (borg-initialize)
   (package-initialize))
 
@@ -80,7 +80,7 @@
   "For a Borg-installed package, use information from the Epkgs database."
   (if-let ((dir (package--borg-clone-p pkg-dir)))
       (let* ((name (file-name-nondirectory (directory-file-name dir)))
-             (epkg (epkg name))
+             (epkg (and (fboundp 'epkg) (epkg name)))
              (desc (package-process-define-package
                     (list 'define-package
                           name
@@ -88,7 +88,10 @@
                           (if epkg
                               (or (oref epkg summary)
                                   "[No summary]")
-                            "[Installed using Borg, but not in Epkgs database]")
+                            (format "[Installed using Borg, but %s]"
+                                    (if (featurep 'epkg)
+                                        "not in Epkgs database"
+                                      "Epkg database not available")))
                           ()))))
         (setf (package-desc-dir desc) pkg-dir)
         desc)
