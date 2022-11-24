@@ -160,7 +160,11 @@ init-build: init-clean
 bootstrap:
 	@printf "\n=== Running 'git submodule init' ===\n\n"
 	@git submodule init
-	@printf "\n=== Running '$(BORG_DIR)borg.sh' ===\n"
-	@$(BORG_DIR)borg.sh --reset-hard
+	@printf "\n=== Running '$(BORG_DIR)borg.sh clone' ===\n"
+	@$(BORG_DIR)borg.sh clone
+	@printf "\n=== Running '$(BORG_DIR)borg.sh checkout' ===\n"
+	@$(BORG_DIR)borg.sh checkout --reset-hard
 	@printf "\n=== Running 'make build' ===\n\n"
 	@make build
+	@printf "\n=== Bootstrapping finished ===\n\n"
+	@git submodule status

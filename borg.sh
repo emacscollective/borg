@@ -5,95 +5,243 @@
 # Author: Jonas Bernoulli <jonas@bernoul.li>
 # SPDX-License-Identifier: GPL-3.0-or-later
 
-push_remote=$(git config -f .gitmodules borg.pushDefault)
+script=$(basename $0)
+USAGE="$script clone [<drone>...]
+   or: $script checkout [--reset-hard] [<drone>...]"
+OPTIONS_SPEC=
+SUBDIRECTORY_OK=Yes
+. "$(git --exec-path)/git-sh-setup"
+require_work_tree
+wt_prefix=$(git rev-parse --show-prefix)
+cd_to_toplevel
 
-toplevel=$(git rev-parse --show-toplevel)
-test -n "$toplevel" || exit 2
-cd "$toplevel"
+GIT_PROTOCOL_FROM_USER=0
+export GIT_PROTOCOL_FROM_USER
+
+set -eu
+
+usage() { die "usage: $USAGE"; }
+
+super=$(pwd)
+command=
+path=
+reset_hard=1
 
 module_name () {
     git config -f .gitmodules --list |
         sed -n "s|^submodule.\([^.]*\).path=$1\$|\1|p"
 }
 
-git ls-files -s | grep ^160000 |
-while read -r mode hash stage path
-do
-    if test -e "$path"
+module_hash () {
+    git submodule foreach 'echo $path $sha1' |
+        sed -n "s|^$1 \([^.]*\)|\1|p"
+}
+
+clone () {
+    path="$1"
+    shift
+    echo "--- [$path] ---"
+
+    cd "$super"
+
+    name=$(module_name "$path")
+    push_remote=$(git config --includes -f .gitmodules remote.pushDefault || true)
+    push_match=$(git config --includes -f .gitmodules --get-all remote.pushMatch || true)
+
+    if [ "$(git config submodule.$name.active)" != true ]
     then
-        name=$(module_name "$path")
-
-        echo "--- [$name] ---"
-
-        if ! test -e "$path"/.git
+        echo "Skipping $path (not initialized)"
+    else
+        if [ ! -e "$path"/.git ]
         then
-            git clone \
-                "$(git config --includes -f .gitmodules submodule.$name.url)" \
-                "$path" --separate-git-dir ".git/modules/$name"
+            url=$(git config --includes -f .gitmodules submodule.$name.url)
+            args=
+            rename=
+            echo "Cloning $path from origin ($url)"
+            case "$name,$url" in
+            elpa-admin,*git.savannah.gnu.org*/git/emacs/elpa.git)
+                args="--no-tags --single-branch --branch $name"
+                rename=$name
+                ;;
+            *,*git.savannah.gnu.org*/git/emacs/elpa.git)
+                args="--no-tags --single-branch --branch externals/$name"
+                rename=externals/$name
+                ;;
+            *,*git.savannah.gnu.org*/git/emacs/nongnu.git)
+                args="--no-tags --single-branch --branch elpa/$name"
+                rename=elpa/$name
+                ;;
+            esac
+
+            git clone "$url" "$path" $args \
+                --separate-git-dir ".git/modules/$name" ||
+                echo "Cloning failed"
+
+            if [ -n "$rename" ]
+            then
+                cd "$path"
+                echo "Renaming branch $rename to main"
+                git branch -m $rename main
+            fi
         fi
 
         git config --includes -f .gitmodules --get-all submodule.$name.remote |
-        while read -r remote remote_url
+        while read -r remote url refspec
         do
-            if ! test -e "$path"/.git
+            cd "$super"
+
+            if [ ! -e "$path"/.git ]
             then
-                git clone "$remote_url" "$path" \
-                    --separate-git-dir ".git/modules/$name" &&
-                git remote rename origin "$remote"
+                echo "Cloning $path from $remote ($url)"
+
+                if git clone "$remote_url" "$path" \
+                       --separate-git-dir ".git/modules/$name"
+                then
+                    git remote rename origin "$remote"
+                else
+                    echo "Cloning failed"
+                fi
             else
                 cd "$path"
-                if ! $(git remote | grep -q "^$remote\$" )
+
+                if ! git remote | grep -q "^$remote\$"
                 then
-                    git remote add "$remote" "$remote_url"
-                    git fetch "$remote"
+                    echo "Augmenting $path with remote $remote ($url)"
+                    args=
+                    case "$url" in
+                    *git.savannah.gnu.org*/git/emacs/elpa.git)
+                        args="--no-tags -t externals/$name" ;;
+                    *git.savannah.gnu.org*/git/emacs/nongnu.git)
+                        args="--no-tags -t elpa/$name" ;;
+                    esac
+                    git remote add "$remote" "$url" $args
+                    git fetch "$remote" || echo "fetch failed"
                 fi
-                cd "$toplevel"
             fi
 
-            if test -e "$path"/.git
+            if [ -e "$super/$path/.git" ]
             then
-                cd "$path"
-                if test "$remote" = "$push_remote"
+                cd "$super/$path"
+
+                if ! git config remote.pushDefault > /dev/null &&
+                        [ "$remote" = "$push_remote" ]
                 then
+                    echo "Setting remote.pushDefault for $path to $remote"
                     git config remote.pushDefault "$remote"
                 fi
-                cd "$toplevel"
             fi
         done
 
-        if test -e "$path"/.git
+        if [ -e "$super/$path/.git" ]
         then
-            cd "$path"
-            head=$(git rev-parse HEAD)
-            if test "$head" != "$hash"
+            cd "$super/$path"
+
+            if [ -z "$(git config remote.pushDefault)" ]
             then
-                if test "$1" != "--reset-hard"
-                then
-                    echo -e "\033[0;31mSkipping checkout\033[0m (--reset-hard not specified)"
-                    echo "(If you have already committed in modules since running"
-                    echo "'make boostrap', then you should not use that argument.)"
-                    echo "    HEAD: $head"
-                    echo "expected: $hash"
-                elif test -n "$(git status --porcelain=v1 --ignored)"
-                then
-                    echo -e "\033[0;31mSkipping checkout\033[0m (due to uncommitted changes)"
-                    echo "    HEAD: $head"
-                    echo "expected: $hash"
-                    git status --porcelain=v1 --ignored
-                else
-                    prev=$(git log --no-walk --format='%h %s' HEAD)
-                    if git reset --hard "$hash"
-                    then
-                        echo -e "\033[1mHEAD was $prev\033[0m"
-                    else
-                        echo -e "\033[0;31mCheckout of $hash for $name failed\033[0m"
-                    fi
-                fi
+                url=$(git config remote.origin.url)
+                for p in $push_match
+                do
+                    case $url in
+                    *$p*)
+                        echo "Setting remote.pushDefault for $path to origin"
+                        git config remote.pushDefault origin ;;
+                    esac
+                done
             fi
-            cd "$toplevel"
         else
-            echo >&2 "futile: Clone of any remote into submodule path '$path' failed"
-            exit 1
+            git config submodule.$name.active false
         fi
     fi
-done
+    echo
+}
+
+checkout () {
+    path="$1"
+    shift
+    echo "--- [$path] ---"
+
+    cd "$super"
+
+    name=$(module_name "$path")
+    hash=$(module_hash "$path")
+
+    if [ "$(git config submodule.$name.active)" != "true" ]
+    then
+        echo "Skipping $path (submodule inactive)"
+    else
+        cd "$path"
+
+        head=$(git rev-parse HEAD)
+        if [ "$head" != "$hash" ]
+        then
+            if [ -z "$reset_hard" ]
+            then
+                echo "Skipping $path (--reset-hard not specified)"
+                echo "    HEAD: $head"
+                echo "expected: $hash"
+            elif [ -n "$(git status --porcelain=v1 --ignored)" ]
+            then
+                echo "Skipping $path (due to uncommitted changes)"
+                echo "    HEAD: $head"
+                echo "expected: $hash"
+                git status --porcelain=v1 --ignored
+            else
+                echo "Checkout $path ($hash)"
+                echo "HEAD was $(git log --no-walk --format='%h %s' HEAD)"
+                if ! git reset --hard "$hash"
+                then
+                    echo "Checkout of '$hash' into submodule path '$path' failed"
+                fi
+            fi
+        fi
+    fi
+    echo
+}
+
+cmd_clone () {
+    while [ $# -ne 0 ]
+    do
+        case "$1" in
+        --) shift; break;;
+        -*) usage;;
+        *)  break;;
+        esac
+        shift
+    done
+
+    if [ $# -ne 0 ]
+    then
+        for path in "$@"; do clone $path; done
+    else
+        git ls-files -s | grep ^160000 | cut -f2 |
+            while read path; do clone $path; done
+    fi
+}
+
+cmd_checkout () {
+    while [ $# -ne 0 ]
+    do
+        case "$1" in
+        --reset-hard) reset_hard=1 ;;
+        --) shift; break;;
+        -*) usage;;
+        *)  break;;
+        esac
+        shift
+    done
+
+    if [ $# -ne 0 ]
+    then
+        for path in "$@"; do checkout $path; done
+    else
+        git ls-files -s | grep ^160000 | cut -f2 |
+            while read path; do checkout $path; done
+    fi
+}
+
+command=$1
+
+case "$command" in
+    clone|checkout) shift; "cmd_$command" "$@" ;;
+    *) usage ;;
+esac
