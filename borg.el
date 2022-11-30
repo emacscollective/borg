@@ -740,10 +740,7 @@ and optional NATIVE are both non-nil, then also compile natively."
           ;; borg-autoloads.el while let-bound!" warnings, which
           ;; I believe are harmless.
           (version-control 'never)
-          (noninteractive t)
-          ;; I don't want to see the resulting warning again.
-          (autoload-compute-prefixes
-           (and (not (equal clone "ht")) autoload-compute-prefixes)))
+          (noninteractive t))
       (with-temp-buffer ; Kludge for #128.
         (let ((coding-system-for-write 'utf-8-emacs-unix))
           (write-region (autoload-rubric file "package" nil)
