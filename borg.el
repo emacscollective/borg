@@ -45,13 +45,17 @@
 
 ;;; Code:
 
-(with-suppressed-warnings ((obsolete autoload))
-  (require 'autoload))
 (require 'bytecomp)
 (require 'cl-lib)
 (require 'info)
 (require 'pcase)
 (require 'subr-x)
+
+(unless (require 'loaddefs-gen nil t)
+  (with-suppressed-warnings ((obsolete autoload))
+    (require 'autoload)))
+(defvar generated-autoload-file)
+(defvar autoload-excludes)
 
 (declare-function eieio-oref "eieio-core" (obj slot))
 (declare-function epkg "epkg" (name))
@@ -716,39 +720,56 @@ and optional NATIVE are both non-nil, then also compile natively."
 
 (defun borg-update-autoloads (clone &optional path)
   "Update autoload files for the clone named CLONE in the directories in PATH."
-  (setq path (borg--expand-load-path clone path))
-  (let ((autoload-excludes
-         (nconc (mapcar #'expand-file-name
-                        (borg-get-all clone "no-byte-compile"))
-                (cl-mapcan
-                 (lambda (dir)
-                   (list (expand-file-name (concat clone "-pkg.el") dir)
-                         (expand-file-name (concat clone "-test.el") dir)
-                         (expand-file-name (concat clone "-tests.el") dir)))
-                 path)
-                autoload-excludes))
-        (file (expand-file-name (format "%s-autoloads.el" clone) (car path))))
+  (let* ((path (borg--expand-load-path clone path))
+         (file (expand-file-name (format "%s-autoloads.el" clone) (car path)))
+         (excludes (nconc
+                    (mapcar #'expand-file-name
+                            (borg-get-all clone "no-byte-compile"))
+                    (cl-mapcan
+                     (lambda (dir)
+                       (list (expand-file-name (concat clone "-pkg.el") dir)
+                             (expand-file-name (concat clone "-test.el") dir)
+                             (expand-file-name (concat clone "-tests.el") dir)))
+                     path))))
     (message " Creating %s..." file)
     ;; Stay close to what `package-generate-autoloads' does.
-    (let (;; This currently defaults to `nil' anyway and there is no
-          ;; need to double down on that.  By not doing so we avoid
-          ;; a warning on Emacs 25 and we keep it possible for users
-          ;; to change the value.
-          ;; (autoload-timestamps nil)
-          (backup-inhibited t)
-          ;; On Emacs 25 we get "Making version-control local to
-          ;; borg-autoloads.el while let-bound!" warnings, which
-          ;; I believe are harmless.
-          (version-control 'never)
-          (noninteractive t))
-      (with-temp-buffer ; Kludge for #128.
-        (let ((coding-system-for-write 'utf-8-emacs-unix))
-          (write-region (autoload-rubric file "package" nil)
-                        nil file nil 'silent)))
-      (cl-letf (((symbol-function 'progress-reporter-do-update) (lambda (&rest _)))
-                ((symbol-function 'progress-reporter-done) (lambda (_))))
-        (let ((generated-autoload-file file))
-          (apply 'update-directory-autoloads path))))
+    (cond
+     ((functionp 'loaddefs-generate)
+      ;; Suppress "Scraping files for loaddefs" and
+      ;; "  GEN      NAME-autoloads.el" messages.
+      (cl-letf* (((symbol-function 'progress-reporter-do-update) (lambda (&rest _)))
+                 ((symbol-function 'progress-reporter-done) (lambda (_)))
+                 ((symbol-function 'borg--byte-compile-info)
+                  (symbol-function 'byte-compile-info))
+                 ((symbol-function 'byte-compile-info)
+                  (lambda (string &optional _message type)
+                    (with-no-warnings
+                     (borg--byte-compile-info string nil type)))))
+        (loaddefs-generate path file excludes)))
+     ((let (;; This defaults to `nil' on Emacs 26 through 28, there
+            ;; is no need to double down on the default, and by not
+            ;; doing that, we avoid a warning on Emacs 25.
+            ;; (autoload-timestamps nil)
+            (backup-inhibited t)
+            ;; On Emacs 25 this causes "Making version-control local
+            ;; to NAME-autoloads.el while let-bound!" warnings, but
+            ;; I believe those are harmless.
+            (version-control 'never)
+            (noninteractive t)
+            (autoload-excludes
+             (nconc excludes (bound-and-true-p autoload-excludes))))
+        ;; Since 35cd9197fc `package-autoload-ensure-default-file' sets
+        ;; the coding-system to fix bug#53529.  Doing that here as well
+        ;; caused #128 and to prevent that we use `with-temp-buffer'.
+        (with-temp-buffer
+          (let ((coding-system-for-write 'utf-8-emacs-unix))
+            (write-region (and (functionp 'autoload-rubric)
+                               (autoload-rubric file "package" nil))
+                          nil file nil 'silent)))
+        (cl-letf (((symbol-function 'progress-reporter-do-update) (lambda (&rest _)))
+                  ((symbol-function 'progress-reporter-done) (lambda (_))))
+          (let ((generated-autoload-file file))
+            (apply 'update-directory-autoloads path))))))
     (when-let ((buf (find-buffer-visiting file)))
       (kill-buffer buf))))
 
