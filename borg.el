@@ -311,8 +311,7 @@ the overall return value."
          (prefix (file-relative-name borg-drones-directory)))
     (if include-variables
         (let (drones)
-          (dolist (line (and (file-exists-p borg-gitmodules-file)
-                             (borg--module-config "--list")))
+          (dolist (line (borg--module-config "--list"))
             (when (string-match
                    "\\`submodule\\.\\([^.]+\\)\\.\\([^=]+\\)=\\(.+\\)\\'"
                    line)
@@ -1201,9 +1200,12 @@ Formatting is according to the commit message conventions."
   (borg--git-success "ls-files" "--error-unmatch" file))
 
 (defun borg--module-config (&rest args)
-  (apply #'process-lines "git" "config"
-         "--includes" "--file" borg-gitmodules-file
-         args))
+  (and (file-exists-p borg-gitmodules-file)
+       (let ((default-directory borg-top-level-directory))
+         (ignore-errors
+           (apply #'process-lines "git" "config"
+                  "--includes" "--file" borg-gitmodules-file
+                  args)))))
 
 (defun borg--refresh-magit ()
   (when (and (derived-mode-p 'magit-mode)
