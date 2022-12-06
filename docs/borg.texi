@@ -930,9 +930,16 @@ Each COMMAND can be one of the default steps, an S-expression, or
 a shell command.  The COMMANDs are executed in the specified order.
 
 If a COMMAND matches one of default steps, then it is evaluated with
-the appropriate arguments.  Otherwise if the COMMAND begins with a
-parenthesis, then it is evaluated as a lisp expression.  Otherwise
-it is assumed to be a shell command and executed with @code{shell-command}.
+the appropriate arguments.
+
+If a COMMAND begins with a parenthesis, then it is evaluated as
+a lisp expression.  In that case the variable @code{epkg-clone} holds
+the name of the package that is being build.  To make a function
+available in this context, you usually have to define or load it
+in @samp{etc/borg/config.el}, relative to @code{borg-user-emacs-directory}.
+
+Otherwise COMMAND is assumed to be a shell command and is executed
+with @code{shell-command}.
 
 @example
 [submodule "mu4e"]

@@ -180,6 +180,9 @@ nil disables the export of any Org files.")
 Drones that depend on an Emacs release higher than the currently
 used release are automatically disabled.")
 
+(defvar borg-clone nil
+  "While running a build step, the package currently being build.")
+
 ;;; Utilities
 
 (defun borg-worktree (clone)
@@ -615,7 +618,8 @@ and optional NATIVE are both non-nil, then also compile natively."
                          "borg-byte-compile"))
            (funcall (intern cmd) clone))
           ((string-prefix-p "(" cmd)
-           (eval (read cmd)))
+           (let ((borg-clone clone))
+             (eval (read cmd))))
           (build-command
            (when (or (stringp build-command)
                      (setq build-command (funcall build-command clone cmd)))
