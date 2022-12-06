@@ -605,7 +605,10 @@ and optional NATIVE are both non-nil, then also compile natively."
         (borg-update-autoloads clone path)
         (borg-compile clone path)
         (borg-maketexi clone)
-        (borg-makeinfo clone)))))
+        (borg-makeinfo clone)))
+    (when-let ((commands
+                (borg--module-config "--get-all" "borg.extra-build-step")))
+      (borg--run-build-commands clone commands build-cmd))))
 
 (defun borg--run-build-commands (clone commands build-command)
   (dolist (cmd commands)

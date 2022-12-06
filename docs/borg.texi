@@ -971,6 +971,8 @@ necessarily have to use it.
 Even if @code{make} generates the Info file, you might still have to add
 @code{borg-makeinfo} as an additional build-step because the former might
 not generate an Info index file (named @code{dir}), which Borg relies on.
+
+Also see @code{borg.extra-build-step} below.
 @end defvar
 
 @defvar borg-build-shell-command
@@ -1077,6 +1079,22 @@ to compile all drones recursively.  Doing so is discouraged.
 @defvar borg-native-compile-deny-list
 This variable lists the names of files to be excluded from native
 compilation.
+@end defvar
+
+@defvar borg.extra-build-step COMMAND
+This variable instructs Borg to execute COMMAND after the default
+build-steps for each DRONE (or after @code{submodule.DRONE.build-step,} if
+that specified).  It has to be set in @code{borg-gitmodules-file} and can
+have multiple values.
+
+If a COMMAND begins with a parenthesis, then it is evaluated as
+a lisp expression.  In that case the variable @code{epkg-clone} holds
+the name of the package that is being build.  To make a function
+available in this context, you usually have to define or load it
+in @samp{etc/borg/config.el}, relative to @code{borg-user-emacs-directory}.
+
+Otherwise COMMAND is assumed to be a shell command and is executed
+with @code{shell-command}.
 @end defvar
 
 @defvar submodule.DRONE.info-path PATH

@@ -891,6 +891,8 @@ variables you can tell Borg how to build such packages.
   ~borg-makeinfo~ as an additional build-step because the former might
   not generate an Info index file (named ~dir~), which Borg relies on.
 
+  Also see ~borg.extra-build-step~ below.
+
 - Variable: borg-build-shell-command ::
 
   This variable can be used to change how shell commands specified
@@ -996,6 +998,22 @@ variables you can tell Borg how to build such packages.
 
   This variable lists the names of files to be excluded from native
   compilation.
+
+- Variable: borg.extra-build-step COMMAND ::
+
+  This variable instructs Borg to execute COMMAND after the default
+  build-steps for each DRONE (or after ~submodule.DRONE.build-step,~ if
+  that specified).  It has to be set in ~borg-gitmodules-file~ and can
+  have multiple values.
+
+  If a COMMAND begins with a parenthesis, then it is evaluated as
+  a lisp expression.  In that case the variable ~epkg-clone~ holds
+  the name of the package that is being build.  To make a function
+  available in this context, you usually have to define or load it
+  in =etc/borg/config.el=, relative to ~borg-user-emacs-directory~.
+
+  Otherwise COMMAND is assumed to be a shell command and is executed
+  with ~shell-command~.
 
 - Variable: submodule.DRONE.info-path PATH ::
 
