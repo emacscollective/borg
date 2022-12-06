@@ -338,23 +338,14 @@ the overall return value."
                                            path))))
                     drones)
                    #'string< :key #'car))
-      (if (version< (borg--git-version) "2.38.0")
-          (let ((offset (+ (length prefix) 50)))
-            (cl-mapcan
-             (lambda (line)
-               (and (ignore-errors
-                      (string-equal (substring line 50 offset) prefix))
-                    (list (substring line offset))))
-             (process-lines "git" "submodule--helper" "list")))
-        ;; This is much slower, so hopefully the helper's
-        ;; "list" subcommand will be restored.  See #131.
-        (let ((offset (length prefix)))
-          (cl-mapcan
-           (lambda (line)
-             (and (ignore-errors
-                    (string-equal (substring line 0 offset) prefix))
-                  (list (substring line offset))))
-           (process-lines "git" "submodule" "foreach" "-q" "echo $sm_path")))))))
+      ;; If "git submodule" gets a list command, we
+      ;; might want to start using that.  See #131.
+      (let ((offset (length prefix)))
+        (cl-mapcan (lambda (line)
+                     (pcase-let ((`(,mode ,_ ,_ ,file) (split-string line)))
+                       (and (equal mode "160000")
+                            (list (substring file offset)))))
+                   (process-lines "git" "ls-files" "-s"))))))
 
 (defun borg-clones ()
   "Return a list of cloned packages.
