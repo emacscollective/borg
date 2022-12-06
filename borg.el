@@ -593,38 +593,40 @@ and optional NATIVE are both non-nil, then also compile natively."
         (build-cmd (if (functionp borg-build-shell-command)
                        (funcall borg-build-shell-command clone)
                      borg-build-shell-command))
-        (build (borg-get-all clone "build-step"))
         (config (borg--config-file)))
     (when (file-exists-p config)
       (load config nil t t))
-    (if build
-        (dolist (cmd build)
-          (message "  Running `%s'..." cmd)
-          (cond ((member cmd '("borg-update-autoloads"
-                               "borg-compile"
-                               "borg-maketexi"
-                               "borg-makeinfo"
-                               ;; For backward compatibility.
-                               "borg-byte-compile"))
-                 (funcall (intern cmd) clone))
-                ((string-prefix-p "(" cmd)
-                 (eval (read cmd)))
-                (build-cmd
-                 (when (or (stringp build-cmd)
-                           (setq build-cmd (funcall build-cmd clone cmd)))
-                   (require 'format-spec)
-                   (shell-command
-                    (format-spec build-cmd
-                                 `((?s . ,cmd)
-                                   (?S . ,(shell-quote-argument cmd)))))))
-                (t
-                 (shell-command cmd)))
-          (message "  Running `%s'...done" cmd))
+    (if-let ((commands (borg-get-all clone "build-step")))
+        (borg--run-build-commands clone commands build-cmd)
       (let ((path (mapcar #'file-name-as-directory (borg-load-path clone))))
         (borg-update-autoloads clone path)
         (borg-compile clone path)
         (borg-maketexi clone)
         (borg-makeinfo clone)))))
+
+(defun borg--run-build-commands (clone commands build-command)
+  (dolist (cmd commands)
+    (message "  Running `%s'..." cmd)
+    (cond ((member cmd '("borg-update-autoloads"
+                         "borg-compile"
+                         "borg-maketexi"
+                         "borg-makeinfo"
+                         ;; For backward compatibility.
+                         "borg-byte-compile"))
+           (funcall (intern cmd) clone))
+          ((string-prefix-p "(" cmd)
+           (eval (read cmd)))
+          (build-command
+           (when (or (stringp build-command)
+                     (setq build-command (funcall build-command clone cmd)))
+             (require 'format-spec)
+             (shell-command
+              (format-spec build-command
+                           `((?s . ,cmd)
+                             (?S . ,(shell-quote-argument cmd)))))))
+          (t
+           (shell-command cmd)))
+    (message "  Running `%s'...done" cmd)))
 
 (defun borg--build-interactive (clone)
   (save-some-buffers
