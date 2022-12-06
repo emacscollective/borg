@@ -285,8 +285,9 @@ list of directories containing a file named \"dir\"."
 If set in \".gitmodules\", then return the value
 of `submodule.NAME.path', nil otherwise."
   (let ((default-directory borg-top-level-directory))
-    (car (process-lines "git" "submodule--helper" "config"
-                        (format "submodule.%s.path" name)))))
+    (ignore-errors
+      (car (process-lines "git" "config" "--file" ".gitmodules"
+                          (format "submodule.%s.path" name))))))
 
 (defun borg-drones (&optional include-variables)
   "Return a list of all assimilated drones.
