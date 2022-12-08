@@ -852,7 +852,7 @@ variables you can tell Borg how to build such packages.
   the appropriate arguments.
 
   If a COMMAND begins with a parenthesis, then it is evaluated as
-  a lisp expression.  In that case the variable ~epkg-clone~ holds
+  a lisp expression.  In that case the variable ~borg-clone~ holds
   the name of the package that is being build.  To make a function
   available in this context, you usually have to define or load it
   in =etc/borg/config.el=, relative to ~borg-user-emacs-directory~.
@@ -1007,7 +1007,7 @@ variables you can tell Borg how to build such packages.
   have multiple values.
 
   If a COMMAND begins with a parenthesis, then it is evaluated as
-  a lisp expression.  In that case the variable ~epkg-clone~ holds
+  a lisp expression.  In that case the variable ~borg-clone~ holds
   the name of the package that is being build.  To make a function
   available in this context, you usually have to define or load it
   in =etc/borg/config.el=, relative to ~borg-user-emacs-directory~.

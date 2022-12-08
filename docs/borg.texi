@@ -933,7 +933,7 @@ If a COMMAND matches one of default steps, then it is evaluated with
 the appropriate arguments.
 
 If a COMMAND begins with a parenthesis, then it is evaluated as
-a lisp expression.  In that case the variable @code{epkg-clone} holds
+a lisp expression.  In that case the variable @code{borg-clone} holds
 the name of the package that is being build.  To make a function
 available in this context, you usually have to define or load it
 in @samp{etc/borg/config.el}, relative to @code{borg-user-emacs-directory}.
@@ -1088,7 +1088,7 @@ that specified).  It has to be set in @code{borg-gitmodules-file} and can
 have multiple values.
 
 If a COMMAND begins with a parenthesis, then it is evaluated as
-a lisp expression.  In that case the variable @code{epkg-clone} holds
+a lisp expression.  In that case the variable @code{borg-clone} holds
 the name of the package that is being build.  To make a function
 available in this context, you usually have to define or load it
 in @samp{etc/borg/config.el}, relative to @code{borg-user-emacs-directory}.
