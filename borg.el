@@ -586,10 +586,15 @@ and optional NATIVE are both non-nil, then also compile natively."
         (message "WARNING: Using `%s' instead of unsuitable `%s'"
                  'borg-byte+native-compile borg-compile-function)
         (setq borg-compile-function #'borg-byte+native-compile)))
-    (borg--build-noninteractive clone))
-   ((borg--build-interactive clone)))
-  (when activate
-    (borg-activate clone)))
+    (borg--build-noninteractive clone)
+    (when activate
+      (borg-activate clone)))
+   ((let ((process (borg--build-interactive clone)))
+      (when activate
+        (add-function :after (process-sentinel process)
+                      (lambda (_process event)
+                        (when (string-equal event "finished\n")
+                          (borg-activate clone)))))))))
 
 (defun borg--build-noninteractive (clone)
   (let ((default-directory (borg-worktree clone))
@@ -1028,8 +1033,7 @@ build and activate the drone."
     (borg--call-git package "add" ".gitmodules")
     (borg--maybe-absorb-gitdir package))
   (unless partially
-    (borg-build package)
-    (borg-activate package))
+    (borg-build package t))
   (borg--refresh-magit)
   (message "Assimilating %s...done" package))
 
