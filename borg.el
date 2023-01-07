@@ -670,7 +670,21 @@ and optional NATIVE are both non-nil, then also compile natively."
             `("--batch" ,@borg-emacs-arguments
               "-L" ,(file-name-directory (locate-library "borg"))
               "--eval" ,(if (featurep 'borg-elpa)
-                            (format "(progn
+                            (borg--build-expression-elpa clone)
+                          (borg--build-expression clone))))
+     #'borg--build-process-filter)))
+
+(defun borg--build-expression (clone)
+  (format "(progn
+  (require 'borg)
+  (borg-initialize)
+  (setq borg-build-shell-command (quote %S))
+  (borg-build %S))"
+          borg-build-shell-command
+          clone))
+
+(defun borg--build-expression-elpa (clone)
+  (format "(progn
   (setq user-emacs-directory %S)
   (require 'package)
   (package-initialize 'no-activate)
@@ -678,13 +692,10 @@ and optional NATIVE are both non-nil, then also compile natively."
   (require 'borg-elpa)
   (borg-elpa-initialize)
   (setq borg-build-shell-command (quote %S))
-  (borg-build %S))" borg-user-emacs-directory borg-build-shell-command clone)
-                          (format "(progn
-  (require 'borg)
-  (borg-initialize)
-  (setq borg-build-shell-command (quote %S))
-  (borg-build %S))" borg-build-shell-command clone))))
-     'borg--build-process-filter)))
+  (borg-build %S))"
+          borg-user-emacs-directory
+          borg-build-shell-command
+          clone))
 
 (defun borg--build-process-filter (process string)
   (when (buffer-live-p (process-buffer process))
