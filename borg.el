@@ -744,7 +744,7 @@ and optional NATIVE are both non-nil, then also compile natively."
                  ((symbol-function 'byte-compile-info)
                   (lambda (string &optional _message type)
                     (with-no-warnings
-                     (borg--byte-compile-info string nil type)))))
+                      (borg--byte-compile-info string nil type)))))
         (loaddefs-generate path file excludes)))
      ((let (;; This defaults to `nil' on Emacs 26 through 28, there
             ;; is no need to double down on the default, and by not
@@ -881,8 +881,7 @@ and optional NATIVE are both non-nil, then also compile natively."
              (temp-modes (logand default-modes #o600))
              (desired-modes (logand default-modes #o666))
              (kill-emacs-hook
-              (cons (lambda () (ignore-errors
-                            (delete-file tempfile)))
+              (cons (lambda () (ignore-errors (delete-file tempfile)))
                     kill-emacs-hook)))
         (unless (= temp-modes desired-modes)
           (set-file-modes tempfile desired-modes 'nofollow))
