@@ -662,17 +662,16 @@ and optional NATIVE are both non-nil, then also compile natively."
         (insert (format "(%s) Building %s\n\n"
                         (format-time-string "%H:%M:%S")
                         clone))))
-    (set-process-filter
-     (apply #'start-process
-            (format "emacs ... --eval (borg-build %S)" clone)
-            buffer
-            (expand-file-name invocation-name invocation-directory)
-            `("--batch" ,@borg-emacs-arguments
-              "-L" ,(file-name-directory (locate-library "borg"))
-              "--eval" ,(if (featurep 'borg-elpa)
-                            (borg--build-expression-elpa clone)
-                          (borg--build-expression clone))))
-     #'borg--build-process-filter)))
+    (make-process
+     :name (format "emacs ... --eval (borg-build %S)" clone)
+     :buffer buffer
+     :command `(,(expand-file-name invocation-name invocation-directory)
+                "--batch" ,@borg-emacs-arguments
+                "-L" ,(file-name-directory (locate-library "borg"))
+                "--eval" ,(if (featurep 'borg-elpa)
+                              (borg--build-expression-elpa clone)
+                            (borg--build-expression clone)))
+     :filter #'borg--build-process-filter)))
 
 (defun borg--build-expression (clone)
   (format "(progn
