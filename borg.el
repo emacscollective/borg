@@ -586,10 +586,10 @@ and optional NATIVE are both non-nil, then also compile natively."
         (message "WARNING: Using `%s' instead of unsuitable `%s'"
                  'borg-byte+native-compile borg-compile-function)
         (setq borg-compile-function #'borg-byte+native-compile)))
-    (borg--build-noninteractive clone))
-   ((borg--build-interactive clone)))
-  (when activate
-    (borg-activate clone)))
+    (borg--build-noninteractive clone)
+    (when activate
+      (borg-activate clone)))
+   ((borg--build-interactive clone activate))))
 
 (defun borg--build-noninteractive (clone)
   (let ((default-directory (borg-worktree clone))
@@ -635,7 +635,7 @@ and optional NATIVE are both non-nil, then also compile natively."
            (shell-command cmd)))
     (message "  Running `%s'...done" cmd)))
 
-(defun borg--build-interactive (clone)
+(defun borg--build-interactive (clone &optional activate)
   (save-some-buffers
    nil (let ((top default-directory))
          (lambda ()
@@ -645,7 +645,8 @@ and optional NATIVE are both non-nil, then also compile natively."
                   (file-in-directory-p file top))))))
   (let ((buffer (get-buffer-create "*Borg Build*"))
         (config (borg--config-file))
-        (process-connection-type nil))
+        (process-connection-type nil)
+        process sentinel)
     (pop-to-buffer-same-window buffer)
     (with-current-buffer buffer
       (setq default-directory borg-user-emacs-directory)
@@ -662,15 +663,15 @@ and optional NATIVE are both non-nil, then also compile natively."
         (insert (format "(%s) Building %s\n\n"
                         (format-time-string "%H:%M:%S")
                         clone))))
-    (set-process-filter
-     (apply #'start-process
-            (format "emacs ... --eval (borg-build %S)" clone)
-            buffer
-            (expand-file-name invocation-name invocation-directory)
-            `("--batch" ,@borg-emacs-arguments
-              "-L" ,(file-name-directory (locate-library "borg"))
-              "--eval" ,(if (featurep 'borg-elpa)
-                            (format "(progn
+    (setq process
+          (apply #'start-process
+                 (format "emacs ... --eval (borg-build %S)" clone)
+                 buffer
+                 (expand-file-name invocation-name invocation-directory)
+                 `("--batch" ,@borg-emacs-arguments
+                   "-L" ,(file-name-directory (locate-library "borg"))
+                   "--eval" ,(if (featurep 'borg-elpa)
+                                 (format "(progn
   (setq user-emacs-directory %S)
   (require 'package)
   (package-initialize 'no-activate)
@@ -679,12 +680,19 @@ and optional NATIVE are both non-nil, then also compile natively."
   (borg-elpa-initialize)
   (setq borg-build-shell-command (quote %S))
   (borg-build %S))" borg-user-emacs-directory borg-build-shell-command clone)
-                          (format "(progn
+                               (format "(progn
   (require 'borg)
   (borg-initialize)
   (setq borg-build-shell-command (quote %S))
-  (borg-build %S))" borg-build-shell-command clone))))
-     'borg--build-process-filter)))
+  (borg-build %S))" borg-build-shell-command clone)))))
+    (setq sentinel (process-sentinel process))
+    (set-process-sentinel process
+                          (lambda (process event)
+                            (when sentinel
+                              (funcall sentinel process event))
+                            (when (string= event "finished\n")
+                              (borg-activate clone))))
+    (set-process-filter process 'borg--build-process-filter)))
 
 (defun borg--build-process-filter (process string)
   (when (buffer-live-p (process-buffer process))
@@ -1018,8 +1026,7 @@ build and activate the drone."
     (borg--call-git package "add" ".gitmodules")
     (borg--maybe-absorb-gitdir package))
   (unless partially
-    (borg-build package)
-    (borg-activate package))
+    (borg-build package t))
   (borg--refresh-magit)
   (message "Assimilating %s...done" package))
 
