@@ -645,8 +645,7 @@ and optional NATIVE are both non-nil, then also compile natively."
                   (file-in-directory-p file top))))))
   (let ((buffer (get-buffer-create "*Borg Build*"))
         (config (borg--config-file))
-        (process-connection-type nil)
-        process sentinel)
+        (process-connection-type nil))
     (pop-to-buffer-same-window buffer)
     (with-current-buffer buffer
       (setq default-directory borg-user-emacs-directory)
@@ -663,15 +662,14 @@ and optional NATIVE are both non-nil, then also compile natively."
         (insert (format "(%s) Building %s\n\n"
                         (format-time-string "%H:%M:%S")
                         clone))))
-    (setq process
-          (apply #'start-process
-                 (format "emacs ... --eval (borg-build %S)" clone)
-                 buffer
-                 (expand-file-name invocation-name invocation-directory)
-                 `("--batch" ,@borg-emacs-arguments
-                   "-L" ,(file-name-directory (locate-library "borg"))
-                   "--eval" ,(if (featurep 'borg-elpa)
-                                 (format "(progn
+    (make-process
+     :name (format "emacs ... --eval (borg-build %S)" clone)
+     :buffer buffer
+     :command `(,(expand-file-name invocation-name invocation-directory)
+                "--batch" ,@borg-emacs-arguments
+                "-L" ,(file-name-directory (locate-library "borg"))
+                "--eval" ,(if (featurep 'borg-elpa)
+                              (format "(progn
   (setq user-emacs-directory %S)
   (require 'package)
   (package-initialize 'no-activate)
@@ -680,19 +678,15 @@ and optional NATIVE are both non-nil, then also compile natively."
   (borg-elpa-initialize)
   (setq borg-build-shell-command (quote %S))
   (borg-build %S))" borg-user-emacs-directory borg-build-shell-command clone)
-                               (format "(progn
+                            (format "(progn
   (require 'borg)
   (borg-initialize)
   (setq borg-build-shell-command (quote %S))
-  (borg-build %S))" borg-build-shell-command clone)))))
-    (setq sentinel (process-sentinel process))
-    (set-process-sentinel process
-                          (lambda (process event)
-                            (when sentinel
-                              (funcall sentinel process event))
-                            (when (string= event "finished\n")
-                              (borg-activate clone))))
-    (set-process-filter process 'borg--build-process-filter)))
+  (borg-build %S))" borg-build-shell-command clone)))
+     :filter 'borg--build-process-filter
+     :sentinel (lambda (process event)
+                 (when (string= event "finished\n")
+                   (borg-activate clone))))))
 
 (defun borg--build-process-filter (process string)
   (when (buffer-live-p (process-buffer process))
