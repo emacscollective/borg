@@ -1,7 +1,7 @@
 name: Statistics
 on:
   push:
-    branches: master
+    branches: main
 jobs:
   stats:
     name: Statistics
