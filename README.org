@@ -9,3 +9,9 @@ submodules.  An assimilated package is called a drone and a borg-based
 =~/.emacs.d= repository is called a collective.
 
 /For more information see the [[https://emacsair.me/2016/05/17/assimilate-emacs-packages-as-git-submodules][announcement]] and the [[https://emacsmirror.net/manual/borg][manual]]./
+
+#+html: <br><br>
+#+html: <a href="https://github.com/emacscollective/borg/actions/workflows/compile.yml"><img alt="Compile" src="https://github.com/emacscollective/borg/actions/workflows/compile.yml/badge.svg"/></a>
+#+html: <a href="https://github.com/emacscollective/borg/actions/workflows/manual.yml"><img alt="Compile" src="https://github.com/emacscollective/borg/actions/workflows/manual.yml/badge.svg"/></a>
+#+html: <a href="https://stable.melpa.org/#/borg"><img alt="MELPA Stable" src="https://stable.melpa.org/packages/borg-badge.svg"/></a>
+#+html: <a href="https://melpa.org/#/borg"><img alt="MELPA" src="https://melpa.org/packages/borg-badge.svg"/></a>
