@@ -12,6 +12,6 @@ submodules.  An assimilated package is called a drone and a borg-based
 
 #+html: <br><br>
 #+html: <a href="https://github.com/emacscollective/borg/actions/workflows/compile.yml"><img alt="Compile" src="https://github.com/emacscollective/borg/actions/workflows/compile.yml/badge.svg"/></a>
-#+html: <a href="https://github.com/emacscollective/borg/actions/workflows/manual.yml"><img alt="Compile" src="https://github.com/emacscollective/borg/actions/workflows/manual.yml/badge.svg"/></a>
+#+html: <a href="https://github.com/emacscollective/borg/actions/workflows/manual.yml"><img alt="Manual" src="https://github.com/emacscollective/borg/actions/workflows/manual.yml/badge.svg"/></a>
 #+html: <a href="https://stable.melpa.org/#/borg"><img alt="MELPA Stable" src="https://stable.melpa.org/packages/borg-badge.svg"/></a>
 #+html: <a href="https://melpa.org/#/borg"><img alt="MELPA" src="https://melpa.org/packages/borg-badge.svg"/></a>
