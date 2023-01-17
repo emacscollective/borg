@@ -899,7 +899,11 @@ and optional NATIVE are both non-nil, then also compile natively."
               (cons (lambda () (ignore-errors (delete-file tempfile)))
                     kill-emacs-hook)))
         (unless (= temp-modes desired-modes)
-          (set-file-modes tempfile desired-modes 'nofollow))
+          (with-no-warnings
+            ;; Native compilation, and thus this function, may only
+            ;; be used for Emacs > 28.1.  So don't warn about third
+            ;; argument that does exist in older releases.
+            (set-file-modes tempfile desired-modes 'nofollow)))
         (write-region (point-min) (point-max) tempfile nil 1)
         (if byte-native-compiling
             (setf byte-to-native-output-buffer-file
@@ -996,7 +1000,7 @@ doesn't do anything."
 (defun borg-clean (drone)
   (let ((dir (borg-worktree drone)))
     (dolist (el (directory-files-recursively dir "\\.el\\'" nil t))
-      (let ((elc (file-name-with-extension el "elc"))
+      (let ((elc (concat (file-name-sans-extension el) ".elc"))
             (eln (and (file-readable-p el)
                       (fboundp 'comp-el-to-eln-filename)
                       (comp-el-to-eln-filename el))))
