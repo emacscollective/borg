@@ -8,7 +8,7 @@
 
 ;; Package-Version: 3.3.1.50-git
 ;; Package-Requires: (
-;;     (emacs "26")
+;;     (emacs "27.1")
 ;;     (epkg "3.3.3")
 ;;     (magit "3.3.0"))
 
