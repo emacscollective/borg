@@ -448,7 +448,7 @@ exists."
         (initialized 0))
     (borg-do-drones (drone)
       (cond
-       ((equal (borg-get drone "disabled") "true")
+       ((borg--drone-disabled-p drone)
         (cl-incf skipped))
        ((not (file-exists-p (borg-worktree drone)))
         (cl-incf skipped))
@@ -536,7 +536,7 @@ otherwise."
     (unless (member drone '("borg" "compat"))
       (message "\n--- [%s] ---\n" drone)
       (cond
-       ((equal (borg-get drone "disabled") "true")
+       ((borg--drone-disabled-p drone)
         (message "Skipped (Disabled)"))
        ((let ((min (cdr (assoc drone borg-minimal-emacs-alist))))
           (and min (version< emacs-version min)
@@ -982,7 +982,7 @@ doesn't do anything."
         (message "  Running `%s'...done" cmd)))))
 
 (defun borg--remove-autoloads (drone &optional quick)
-  (unless (or (equal (borg-get drone "disabled") "true")
+  (unless (or (borg--drone-disabled-p drone)
               (not (file-exists-p (borg-worktree drone)))
               (and quick (borg-get-all drone "build-step")))
     (dolist (dir (borg-load-path drone))
@@ -1152,7 +1152,7 @@ Formatting is according to the commit message conventions."
 
 (defun borg-propertize-module-path (path)
   (and (file-in-directory-p (expand-file-name path) borg-drone-directory)
-       (equal (borg-get (file-name-nondirectory path) "disabled") "true")
+       (borg--drone-disabled-p (file-name-nondirectory path))
        (propertize path 'face 'font-lock-warning-face)))
 
 (add-hook 'magit-submodule-list-format-path-functions
@@ -1232,6 +1232,9 @@ Formatting is according to the commit message conventions."
            (apply #'process-lines "git" "config"
                   "--includes" "--file" borg-gitmodules-file
                   args)))))
+
+(defun borg--drone-disabled-p (drone)
+  (equal (borg-get drone "disabled") "true"))
 
 (defun borg--refresh-magit ()
   (when (and (derived-mode-p 'magit-mode)
