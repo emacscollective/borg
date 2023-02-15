@@ -1234,7 +1234,11 @@ Formatting is according to the commit message conventions."
                   args)))))
 
 (defun borg--drone-disabled-p (drone)
-  (equal (borg-get drone "disabled") "true"))
+  (and-let* ((value (borg-get drone "disabled")))
+    (or (equal value "true")
+        (and (string-match-p "\\`(.+)\\'" value)
+             (with-demoted-errors "Error in submodule.DRONE.disabled: %S"
+               (eval (read value)))))))
 
 (defun borg--refresh-magit ()
   (when (and (derived-mode-p 'magit-mode)
