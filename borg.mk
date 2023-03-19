@@ -109,7 +109,7 @@ native: init-clean
 
 ## Batch Quick
 
-quick-clean: clean-init
+quick-clean: init-clean
 	@$(EMACS) $(EMACS_ARGUMENTS) $(EMACS_EXTRA) $(SILENCIO) \
 	$(BORG_ARGUMENTS) \
 	--eval '(borg--batch-clean t)' 2>&1
