@@ -109,8 +109,9 @@
          (topdir (file-name-directory (directory-file-name libdir))))
     (or (ignore-errors
           (let ((default-directory topdir))
-            (expand-file-name
-             (car (process-lines "git" "config" "borg.drones-directory")))))
+            (file-name-as-directory
+             (expand-file-name
+              (car (process-lines "git" "config" "borg.drones-directory"))))))
         (if (ignore-errors
               (file-equal-p libdir (bound-and-true-p package-user-dir)))
             (expand-file-name (file-name-as-directory "borg") topdir)
@@ -311,7 +312,8 @@ name isn't a member of `borg--multi-value-variables' but it does
 have multiple values anyway, then the last value is included in
 the overall return value."
   (let* ((default-directory borg-top-level-directory)
-         (prefix (file-relative-name borg-drones-directory)))
+         (prefix (file-relative-name
+                  (file-name-as-directory borg-drones-directory))))
     (if include-variables
         (let (drones)
           (dolist (line (borg--module-config "--list"))

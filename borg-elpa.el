@@ -52,7 +52,8 @@
 
 (defun borg-elpa-initialize ()
   "Initialize Borg and Elpa in the correct order."
-  (add-to-list 'package-directory-list borg-drones-directory)
+  (add-to-list 'package-directory-list
+               (directory-file-name borg-drones-directory))
   (unless (featurep 'epkg)
     (let ((load-path
            (nconc (cl-mapcan
