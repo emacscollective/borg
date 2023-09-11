@@ -653,7 +653,6 @@ and optional NATIVE are both non-nil, then also compile natively."
   (let ((buffer (get-buffer-create "*Borg Build*"))
         (config (borg--config-file))
         (process-connection-type nil))
-    (pop-to-buffer-same-window buffer)
     (with-current-buffer buffer
       (setq default-directory borg-user-emacs-directory)
       (borg-build-mode)
@@ -669,6 +668,7 @@ and optional NATIVE are both non-nil, then also compile natively."
         (insert (format "(%s) Building %s\n\n"
                         (format-time-string "%H:%M:%S")
                         clone))))
+    (pop-to-buffer-same-window buffer)
     (make-process
      :name (format "emacs ... --eval (borg-build %S)" clone)
      :buffer buffer
