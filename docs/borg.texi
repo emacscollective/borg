@@ -340,9 +340,9 @@ make build
 git commit -m "Assimilate epkg and dependencies"
 @end example
 
-Once you have done that and restarted Emacs, then you can Magit using
-Borg as described in @ref{Assimilation}.  As part of that you should tell
-Magit status buffers to display submodules:
+Once you have done that and have restarted Emacs, you can install
+Magit using Borg, as described in @ref{Assimilation}.  You should also
+configure Magit status buffers to display submodules:
 
 @lisp
 (with-eval-after-load 'magit
