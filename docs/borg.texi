@@ -953,7 +953,7 @@ with @code{shell-command}.
         load-path = mu4e
 @end example
 
-To skip generating "autoloads" (e.g. using @code{use-package} to create
+To skip generating "autoloads" (e.g., using @code{use-package} to create
 "autoloads" on the fly), just provide the required build steps to
 build the package, omitting @code{borg-update-autoloads}. Borg silently
 ignores a missing "autoloads" file during initialization

@@ -872,7 +872,7 @@ variables you can tell Borg how to build such packages.
             load-path = mu4e
   #+END_SRC
 
-  To skip generating "autoloads" (e.g. using ~use-package~ to create
+  To skip generating "autoloads" (e.g., using ~use-package~ to create
   "autoloads" on the fly), just provide the required build steps to
   build the package, omitting ~borg-update-autoloads~. Borg silently
   ignores a missing "autoloads" file during initialization
