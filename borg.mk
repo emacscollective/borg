@@ -22,7 +22,7 @@ else
 endif
 
 EMACS           ?= emacs
-EMACS_ARGUMENTS ?= -Q --batch
+EMACS_ARGUMENTS ?= --batch
 
 EMACS_EXTRA ?=
 
