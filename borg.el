@@ -384,10 +384,11 @@ to variable `borg-rewrite-urls-alist' (which see)."
              (pkg  (epkg name))
              (url  (and pkg
                         (with-no-warnings
-                          (if (or (epkg-git-package-p pkg)
-                                  (epkg-github-package-p pkg)
-                                  (epkg-orphaned-package-p pkg)
-                                  (epkg-gitlab-package-p pkg))
+                          (if (and (epkg-git-package--eieio-childp pkg)
+                                   (not (or (epkg-subtree-package-p pkg)
+                                            (epkg-nongnu-elpa-package-p pkg)
+                                            (epkg-gnu-elpa-package-p pkg)
+                                            (epkg-wiki-package-p pkg))))
                               (eieio-oref pkg 'url)
                             (eieio-oref pkg 'mirror-url))))))
         (when url
