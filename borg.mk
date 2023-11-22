@@ -165,6 +165,6 @@ bootstrap:
 	@printf "\n=== Running '$(BORG_DIR)borg.sh checkout' ===\n"
 	@$(BORG_DIR)borg.sh checkout --reset-hard
 	@printf "\n=== Running 'make build' ===\n\n"
-	@make build
+	@$(MAKE) build
 	@printf "\n=== Bootstrapping finished ===\n\n"
 	@git submodule status
