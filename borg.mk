@@ -32,6 +32,7 @@ EMACS_EXTRA ?=
 
 SILENCIO  = --load subr-x
 SILENCIO += --eval "(setq byte-compile-warnings '(not docstrings))"
+SILENCIO += --eval "(remhash (indirect-function 'derived-mode-p) advertised-signature-table))"
 SILENCIO += --eval "(fset 'original-message (symbol-function 'message))"
 SILENCIO += --eval "(fset 'message\
 (lambda (format &rest args)\
