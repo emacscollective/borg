@@ -8,6 +8,7 @@ all: lisp docs
 help:
 	$(info make all          - generate lisp and manual)
 	$(info make lisp         - generate byte-code and autoloads)
+	$(info make redo         - re-generate byte-code and autoloads)
 	$(info make docs         - generate most manual formats)
 	$(info make texi         - generate texi manual (see comments))
 	$(info make info         - generate info manual)
@@ -21,6 +22,7 @@ help:
 	$(info make clean        - remove most generated files)
 	@printf "\n"
 
+redo: clean-lisp lisp
 lisp: $(ELCS) loaddefs check-declare
 
 docs:
@@ -46,9 +48,11 @@ stats:
 stats-upload:
 	@$(MAKE) -C docs stats-upload
 
-clean:
+clean: clean-lisp clean-docs
+clean-lisp:
 	@printf " Cleaning *...\n"
 	@rm -rf $(ELCS) $(PKG)-autoloads.el
+clean-docs:
 	@$(MAKE) -C docs clean
 
 loaddefs: $(PKG)-autoloads.el
