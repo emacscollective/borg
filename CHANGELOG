@@ -1,5 +1,69 @@
 # -*- mode: org -*-
-* v3.3.2    UNRELEASED
+* v4.0.0    UNRELEASED
+
+- Dropped support for Emacs 26. fd9d044
+
+- The bootstrapping process has been improved.  e27463e
+
+- Added support for including other files in
+  ~~/.config/emacs/.gitmodules~ and use that to separate essential
+  module configuration (still in ~.gitmodules~), additional remotes
+  (now in ~.gitremotes~) and build configuration (now in ~.borgconfig~).
+  f9a9140
+
+- ~borg-read-package~ used to suggest the Emacsmirror URL for packages
+  from many forges, when it should have suggested the upstream URL
+  instead.  d8aecb0
+
+- When building an individual drone, it is now cleaned first, just
+  like it was always done when building all drones at once.  b8f7561
+
+- While a build step is running, the new ~borg-clone~ variable is bound
+  to the package currently being build.  c0ad642
+
+- Added new variable ~borg.extra-build-step~ which allows specifying
+  additional build steps to be used when building any drone.  2f41ec4
+
+- The value of a ~submodule.DRONE.disabled~ variable can now be a lisp
+  expression.  15a8905
+
+- Added new variable ~borg-minimal-emacs-alist~, used to disable drones
+  that require a more recent Emacs release than what is currently
+  being used.  00132c1
+
+- Added support for exporting Org files to Texinfo.  #121
+
+- When building only most drones using the ~quick~ make target, drones
+  that aren't going to be re-build are no longer cleaned.  5647cd7
+
+- Stopped using ~git submodule--helper~ subcommands, which were removed
+  in Git v2.38.0.  78a1c87 8d00bb8 etc.
+
+- Renamed many ~make~ targets.  Made ~help~ the default target.  Removed
+  the ~all~ target (since there is no one-fits-all).  Added ~clean-force~
+  target.  675d97a 41d8ba4 d843820 3dc7068 d873be8 etc.
+
+- Improved support for native compilation.  c166368 40b0664 2520ae9
+  21acd89 etc.
+
+- Use ~loaddefs-generate~ in Emacs 29 and later.  14c140d
+
+- The format of the raw output of ~borg-drones~ changed.  47122b6
+
+- Disabled drones are now highlighted in Magit's tabulated module lists.
+  d3cdc17
+
+- 7baf949 borg-makeinfo: Do not regenerate tracked but missing file
+- 04df5ca borg-build: Remove trailing slash from clone name
+- 1f87dfc borg--build-interactive: Use pop-to-buffer-same-window
+- 9e59c64 Handle autoloads and load-path more robustly
+- 7ef6a70 make: No longer hardcode drone directory in target names
+- cb198c7 borg.sh: Improve safety outside initial "make bootstrap"
+- 3cd6b4f make: Explicitly specify output directory for makeinfo --html
+- c83238b borg-elpa: Don't assume epkg is available
+- a337603 Ensure activation happens only after building is done
+- e29d983 borg-drones: Append slash to borg-drones-directory if necessary
+- 8a5a718 Display build buffer after setting major-mode
 
 * v3.3.1    2022-02-16
 
