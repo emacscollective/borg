@@ -524,31 +524,19 @@ otherwise."
     ;; not being so.
     (let ((default-directory (borg-worktree "org")))
       (shell-command "make autoloads")))
-  ;; Building `borg' first isn't strictly necessary, but since we have
-  ;; to build compat out of order, we might as well do it for borg too.
-  (message "\n--- [borg] ---\n")
-  (borg-build "borg")
-  ;; `compat' has to be build before the first package that depends on
-  ;; it is loaded.  Otherwise we would get errors about the fact that
-  ;; lib/<package(sic)>/compat-24.el does not exist, which is expected
-  ;; and correct, but also fatal.
-  (when (borg-dronep "compat")
-    (message "\n--- [compat] ---\n")
-    (borg-build "compat"))
   (borg-do-drones (drone)
-    (unless (member drone '("borg" "compat"))
-      (message "\n--- [%s] ---\n" drone)
-      (cond
-       ((borg--drone-disabled-p drone)
-        (message "Skipped (Disabled)"))
-       ((let ((min (cdr (assoc drone borg-minimal-emacs-alist))))
-          (and min (version< emacs-version min)
-               (message "Skipped (Requires Emacs >= %s)" min))))
-       ((not (file-exists-p (borg-worktree drone)))
-        (message "Skipped (Missing)"))
-       ((and quick (borg-get-all drone "build-step"))
-        (message "Skipped (Expensive to build)"))
-       ((borg-build drone nil native)))))
+    (message "\n--- [%s] ---\n" drone)
+    (cond
+     ((borg--drone-disabled-p drone)
+      (message "Skipped (Disabled)"))
+     ((let ((min (cdr (assoc drone borg-minimal-emacs-alist))))
+        (and min (version< emacs-version min)
+             (message "Skipped (Requires Emacs >= %s)" min))))
+     ((not (file-exists-p (borg-worktree drone)))
+      (message "Skipped (Missing)"))
+     ((and quick (borg-get-all drone "build-step"))
+      (message "Skipped (Expensive to build)"))
+     ((borg-build drone nil native))))
   (borg-batch-rebuild-init))
 
 (defun borg-batch-rebuild-init ()
