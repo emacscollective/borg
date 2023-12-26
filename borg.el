@@ -567,19 +567,20 @@ and optional NATIVE are both non-nil, then also compile natively."
   (borg-clean clone)
   (cond
    (noninteractive
-    (when (fboundp 'comp-ensure-native-compiler)
-      (when native
-        (setq borg-compile-function
-              (if (functionp native) native #'borg-byte+native-compile)))
-      (when (memq borg-compile-function '( borg--native-compile
-                                           native-compile
-                                           native-compile-async))
-        (message "WARNING: Using `%s' instead of unsuitable `%s'"
-                 'borg-byte+native-compile borg-compile-function)
-        (setq borg-compile-function #'borg-byte+native-compile)))
-    (borg--build-noninteractive clone)
-    (when activate
-      (borg-activate clone)))
+    (let ((borg-compile-function borg-compile-function))
+      (when (fboundp 'comp-ensure-native-compiler)
+        (when native
+          (setq borg-compile-function
+                (if (functionp native) native #'borg-byte+native-compile)))
+        (when (memq borg-compile-function '( borg--native-compile
+                                             native-compile
+                                             native-compile-async))
+          (message "WARNING: Using `%s' instead of unsuitable `%s'"
+                   'borg-byte+native-compile borg-compile-function)
+          (setq borg-compile-function #'borg-byte+native-compile)))
+      (borg--build-noninteractive clone)
+      (when activate
+        (borg-activate clone))))
    ((let ((process (borg--build-interactive clone)))
       (when activate
         (add-function :after (process-sentinel process)
