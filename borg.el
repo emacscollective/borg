@@ -211,7 +211,7 @@ Evaluate BODY with VAR bound to each drone, in turn.
 Inside BODY variables set in \".gitmodules\" are cached.
 Then evaluate RESULT to get return value, default nil.
 \n(fn (VAR [RESULT]) BODY...)"
-  (declare (indent 1))
+  (declare (indent 1) (debug (sexp body)))
   (let ((var (car spec))
         (result (cadr spec)))
     `(let ((borg--gitmodule-cache (borg-drones 'raw)))
