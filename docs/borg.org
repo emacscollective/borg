@@ -677,13 +677,13 @@ have to be in ~~/.config/emacs~ in a shell.  They are implemented in
 
   This target byte-compiles Borg and Compat first, followed by all
   other drones in alphabetic order.  After that it also byte-compiles
-  the user init files, like ~build-init~ does.
+  the user init files, like ~init-build~ does.
 
 - Command: native ::
 
   This target byte-compiles and natively compiles Borg and Compat
   first, followed by all other drones in alphabetic order.  After that
-  it also byte-compiles the user init files, like ~build-init~ does.
+  it also byte-compiles the user init files, like ~init-build~ does.
 
 ** Quick batch targets
 :PROPERTIES:
