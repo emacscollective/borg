@@ -8,7 +8,7 @@
 
 @copying
 @quotation
-Copyright (C) 2016-2023 Jonas Bernoulli <jonas@@bernoul.li>
+Copyright (C) 2016-2024 Jonas Bernoulli <jonas@@bernoul.li>
 
 You can redistribute this document and/or modify it under the terms
 of the GNU General Public License as published by the Free Software
@@ -765,13 +765,13 @@ target makes it possible to recover from such an incompatibility.
 @deffn Command build
 This target byte-compiles Borg and Compat first, followed by all
 other drones in alphabetic order.  After that it also byte-compiles
-the user init files, like @code{build-init} does.
+the user init files, like @code{init-build} does.
 @end deffn
 
 @deffn Command native
 This target byte-compiles and natively compiles Borg and Compat
 first, followed by all other drones in alphabetic order.  After that
-it also byte-compiles the user init files, like @code{build-init} does.
+it also byte-compiles the user init files, like @code{init-build} does.
 @end deffn
 
 @anchor{Quick batch targets}
