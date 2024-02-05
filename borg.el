@@ -752,7 +752,15 @@ and optional NATIVE are both non-nil, then also compile natively."
                   (lambda (string &optional _message type)
                     (with-no-warnings
                       (borg--byte-compile-info string nil type)))))
-        (loaddefs-generate path file excludes)))
+        (loaddefs-generate
+         path file excludes
+         ;; Same kludge as used in `package-generate-autoloads'.
+         (prin1-to-string
+          '(add-to-list 'load-path
+                        (or (and load-file-name
+                                 (directory-file-name
+                                  (file-name-directory load-file-name)))
+                            (car load-path)))))))
      ((let (;; This defaults to `nil' on Emacs 26 through 28, there
             ;; is no need to double down on the default, and by not
             ;; doing that, we avoid a warning on Emacs 25.
