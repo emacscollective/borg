@@ -483,15 +483,13 @@ if it exists."
   (cl-flet
       ((activate (dir part)
          (let ((file (expand-file-name (format "%s-%s.el" clone part) dir)))
-           (and (file-exists-p file)
-                (with-demoted-errors "Error loading autoloads: %s"
-                  (load file nil t))
-                ;; We cannot rely on the autoloads file doing that.
-                (add-to-list 'load-path dir)))))
+           (when (file-exists-p file)
+             (with-demoted-errors "Error loading autoloads: %s"
+               (load file nil t))))))
     (dolist (dir (borg-load-path clone))
+      (add-to-list 'load-path dir)
       (or (activate dir "autoloads")
-          (activate dir "loaddefs")       ; `org' uses a different name.
-          (add-to-list 'load-path dir)))) ; There might be no autoloads file.
+          (activate dir "loaddefs"))))    ; `org' uses a different name.
   (dolist (dir (borg-info-path clone))
     (push  dir Info-directory-list)))
 
