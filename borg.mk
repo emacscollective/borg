@@ -96,7 +96,8 @@ else
 endif
 
 clean-force:
-	@find . -name '*.elc' -exec rm '{}' ';'
+	@find . -name '*.elc' -exec rm -v '{}' ';'
+	@find . -name '*-autoloads.el' -exec rm -v '{}' ';'
 
 build: init-clean
 	@$(EMACS) $(EMACS_ARGUMENTS) $(EMACS_EXTRA) $(SILENCIO) \
