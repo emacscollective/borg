@@ -92,13 +92,13 @@ ifeq "$(BORG_CLEAN_ELN)" "true"
 	$(BORG_ARGUMENTS) \
 	--funcall borg--batch-clean 2>&1
 else
-	@find . -name '*.elc' -exec rm '{}' ';'
-	@find . -name '*-autoloads.el' -exec rm -v '{}' ';'
+	@find . -name '*.elc'          -printf 'removed %p\n' -delete
+	@find . -name '*-autoloads.el' -printf 'removed %p\n' -delete
 endif
 
 clean-force:
-	@find . -name '*.elc' -exec rm -v '{}' ';'
-	@find . -name '*-autoloads.el' -exec rm -v '{}' ';'
+	@find . -name '*.elc'          -printf 'removed %p\n' -delete
+	@find . -name '*-autoloads.el' -printf 'removed %p\n' -delete
 
 build: init-clean
 	@$(EMACS) $(EMACS_ARGUMENTS) $(EMACS_EXTRA) $(SILENCIO) \
