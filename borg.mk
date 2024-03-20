@@ -93,6 +93,7 @@ ifeq "$(BORG_CLEAN_ELN)" "true"
 	--funcall borg--batch-clean 2>&1
 else
 	@find . -name '*.elc' -exec rm '{}' ';'
+	@find . -name '*-autoloads.el' -exec rm -v '{}' ';'
 endif
 
 clean-force:
