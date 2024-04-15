@@ -1,7 +1,7 @@
 #+title: Borg User Manual
 :PREAMBLE:
 #+author: Jonas Bernoulli
-#+email: jonas@bernoul.li
+#+email: emacs.borg@jonas.bernoulli.dev
 #+date: 2018-{{{year}}}
 
 #+texinfo_dir_category: Emacs
@@ -1184,7 +1184,7 @@ being noted in the change log.
 :END:
 
 #+begin_quote
-Copyright (C) 2016-{{{year}}} Jonas Bernoulli <jonas@bernoul.li>
+Copyright (C) 2016-{{{year}}} Jonas Bernoulli <emacs.borg@jonas.bernoulli.dev>
 
 You can redistribute this document and/or modify it under the terms
 of the GNU General Public License as published by the Free Software
