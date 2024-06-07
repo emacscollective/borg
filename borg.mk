@@ -30,8 +30,7 @@ EMACS_EXTRA ?=
         init-clean init-build bootstrap bootstrap-borg
 .FORCE:
 
-SILENCIO  = --load subr-x
-SILENCIO += --eval "(setq byte-compile-warnings '(not docstrings))"
+SILENCIO  = --eval "(setq byte-compile-warnings '(not docstrings))"
 SILENCIO += --eval "(progn (require 'gv) (put 'buffer-substring 'byte-obsolete-generalized-variable nil))"
 SILENCIO += --eval "(fset 'original-message (symbol-function 'message))"
 SILENCIO += --eval "(fset 'message\
