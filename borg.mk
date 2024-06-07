@@ -32,13 +32,11 @@ EMACS_EXTRA ?=
 
 SILENCIO  = --eval "(setq byte-compile-warnings '(not docstrings))"
 SILENCIO += --eval "(progn (require 'gv) (put 'buffer-substring 'byte-obsolete-generalized-variable nil))"
-SILENCIO += --eval "(fset 'original-message (symbol-function 'message))"
-SILENCIO += --eval "(fset 'message\
-(lambda (format &rest args)\
+SILENCIO += --eval "(define-advice message (:around (fn format &rest args) silencio)\
   (unless (or (equal format \"Not registering prefix \\\"%s\\\" from %s.  Affects: %S\")\
               (and (stringp (car args))\
                    (string-match-p \"Scraping files for\" (car args))))\
-    (apply 'original-message format args))))"
+    (apply fn format args)))"
 
 ## Help
 
