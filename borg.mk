@@ -30,7 +30,7 @@ EMACS_EXTRA ?=
         init-clean init-build bootstrap bootstrap-borg
 .FORCE:
 
-SILENCIO  = --eval "(setq byte-compile-warnings '(not docstrings))"
+SILENCIO += --eval "(setq byte-compile-warnings '(not docstrings))"
 SILENCIO += --eval "(progn (require 'gv) (put 'buffer-substring 'byte-obsolete-generalized-variable nil))"
 SILENCIO += --eval "(define-advice message (:around (fn format &rest args) silencio)\
   (unless (or (equal format \"Not registering prefix \\\"%s\\\" from %s.  Affects: %S\")\
