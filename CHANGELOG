@@ -53,6 +53,13 @@
 - Disabled drones are now highlighted in Magit's tabulated module lists.
   d3cdc17
 
+- ~make clean~ and ~make force-clean~ now also remove autoload files.
+  1172842, 52234b0
+
+- Values added to ~SILENCIO~ in ~borg.mk~ are no longer discarded.  This
+  variable can be used to suppress warnings when compiling drones.
+  72000eb
+
 - 7baf949 borg-makeinfo: Do not regenerate tracked but missing file
 - 04df5ca borg-build: Remove trailing slash from clone name
 - 1f87dfc borg--build-interactive: Use pop-to-buffer-same-window
@@ -64,6 +71,8 @@
 - a337603 Ensure activation happens only after building is done
 - e29d983 borg-drones: Append slash to borg-drones-directory if necessary
 - 8a5a718 Display build buffer after setting major-mode
+- 1b4efad #157 borg-build: let-bind borg-compile-function
+- 94b9be7 borg-update-autoloads: Add to load-path again
 
 * v3.3.1    2022-02-16
 
