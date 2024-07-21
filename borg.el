@@ -569,7 +569,7 @@ and optional NATIVE are both non-nil, then also compile natively."
   (cond
    (noninteractive
     (let ((borg-compile-function borg-compile-function))
-      (when (fboundp 'comp-ensure-native-compiler)
+      (when (native-comp-available-p)
         (when native
           (setq borg-compile-function
                 (if (functionp native) native #'borg-byte+native-compile)))
@@ -858,8 +858,7 @@ and optional NATIVE are both non-nil, then also compile natively."
         (member (file-name-nondirectory file)
                 borg-native-compile-deny-list))
     (byte-compile-file file))
-   ((and (fboundp 'comp--native-compile)
-         (fboundp 'comp-ensure-native-compiler))
+   ((native-comp-available-p)
     (comp-ensure-native-compiler)
     (let* ((byte+native-compile t)
            (byte-to-native-output-buffer-file nil)
@@ -879,7 +878,7 @@ and optional NATIVE are both non-nil, then also compile natively."
 (defun borg-byte+native-compile-async (file)
   (byte-compile-file file)
   (cond
-   ((fboundp 'native-compile-async)
+   ((native-comp-available-p)
     (native-compile-async file))
    ((error "Emacs %s does not support native compilation" emacs-version))))
 
@@ -1003,6 +1002,9 @@ doesn't do anything."
     (dolist (el (directory-files-recursively dir "\\.el\\'" nil t))
       (let ((elc (concat (file-name-sans-extension el) ".elc"))
             (eln (and (file-readable-p el)
+                      ;; (native-comp-available-p) doesn't work here
+                      ;; because the bytecompiler only ignores
+                      ;; guarded sections that use  fboundp
                       (fboundp 'comp-el-to-eln-filename)
                       (comp-el-to-eln-filename el))))
         (when (file-writable-p elc)
