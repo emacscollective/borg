@@ -46,6 +46,7 @@
 ;;; Code:
 
 (require 'bytecomp)
+(require 'comp nil t)
 (require 'cl-lib)
 (require 'info)
 (require 'pcase)
