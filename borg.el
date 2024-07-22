@@ -74,9 +74,6 @@
 (declare-function org-texinfo-export-to-texinfo "ox-texinfo"
                   (&optional async subtreep visible-only body-only ext-plist))
 
-(when (< emacs-major-version 26)
-  (defun register-definition-prefixes (_file _prefixes)))
-
 (when (eval '(< emacs-major-version 28) t)
   (defalias 'native-comp-available-p #'ignore)
   (defvar byte+native-compile)
