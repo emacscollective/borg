@@ -47,6 +47,7 @@
 
 (require 'bytecomp)
 (require 'cl-lib)
+(require 'comp nil t)
 (require 'info)
 (require 'pcase)
 (require 'subr-x)
