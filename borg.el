@@ -77,7 +77,8 @@
 (when (< emacs-major-version 26)
   (defun register-definition-prefixes (_file _prefixes)))
 
-(when (< emacs-major-version 28)
+(when (eval '(< emacs-major-version 28) t)
+  (defalias 'native-comp-available-p #'ignore)
   (defvar byte+native-compile)
   (defvar comp-files-queue))
 
@@ -569,7 +570,7 @@ and optional NATIVE are both non-nil, then also compile natively."
   (cond
    (noninteractive
     (let ((borg-compile-function borg-compile-function))
-      (when (fboundp 'comp-ensure-native-compiler)
+      (when (native-comp-available-p)
         (when native
           (setq borg-compile-function
                 (if (functionp native) native #'borg-byte+native-compile)))
