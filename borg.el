@@ -880,7 +880,9 @@ and optional NATIVE are both non-nil, then also compile natively."
 (defun borg-byte+native-compile-async (file)
   (byte-compile-file file)
   (cond
-   ((fboundp 'native-compile-async)
+   ((and (fboundp 'native-compile-async)
+         (fboundp 'comp-ensure-native-compiler))
+    (comp-ensure-native-compiler)
     (native-compile-async file))
    ((error "Emacs %s does not support native compilation" emacs-version))))
 
