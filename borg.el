@@ -74,11 +74,8 @@
 (declare-function org-texinfo-export-to-texinfo "ox-texinfo"
                   (&optional async subtreep visible-only body-only ext-plist))
 
-(when (eval '(< emacs-major-version 28) t)
-  (defalias 'native-comp-available-p #'ignore)
-  (defvar byte+native-compile)
-  (defvar comp-files-queue))
-
+(defvar byte+native-compile) ; for Emacs 27
+(defvar comp-files-queue)    ; for Emacs 27
 (defvar native-comp-eln-load-path)
 (defvar native-compile-target-directory)
 
@@ -567,7 +564,8 @@ and optional NATIVE are both non-nil, then also compile natively."
   (cond
    (noninteractive
     (let ((borg-compile-function borg-compile-function))
-      (when (native-comp-available-p)
+      (when (and (fboundp 'native-comp-available-p)
+                 (native-comp-available-p))
         (when native
           (setq borg-compile-function
                 (if (functionp native) native #'borg-byte+native-compile)))
