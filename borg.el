@@ -655,7 +655,7 @@ and optional NATIVE are both non-nil, then also compile natively."
         (insert (format "(%s) Building %s\n\n"
                         (format-time-string "%H:%M:%S")
                         clone))))
-    (pop-to-buffer-same-window buffer)
+    (display-buffer buffer '(nil (post-command-select-window . t)))
     (make-process
      :name (format "emacs ... --eval (borg-build %S)" clone)
      :buffer buffer
