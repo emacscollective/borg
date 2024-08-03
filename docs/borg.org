@@ -748,7 +748,12 @@ those are the drones that take longer to build.
 - Command: init-tangle ::
 
   This target tangles (creates) ~init.el~ from ~init.org~.  You obviously
-  don't have to use such a file if you don't want to.
+  don't have to use such a file, if you don't want to.
+
+  Note that this target is *not* a dependency of ~init-build~, because it
+  necessarily has to depend on ~init.org~, which for most people does
+  not exist.  So you have to run this target explicitly after making
+  changes to ~init.org~.
 
 - Command: init-build ::
 
