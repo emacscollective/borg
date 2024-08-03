@@ -147,7 +147,7 @@ init.el: init.org
 	--load org \
 	--eval '(org-babel-tangle-file "init.org")' 2>&1
 
-init-build: init-clean
+init-build: init-clean init.el
 	@$(EMACS) $(EMACS_ARGUMENTS) $(EMACS_EXTRA) \
 	$(BORG_ARGUMENTS) \
 	--funcall borg-batch-rebuild-init $(INIT_FILES) 2>&1
