@@ -632,6 +632,9 @@ The following ~make~ targets are available by default.  To use them you
 have to be in ~~/.config/emacs~ in a shell.  They are implemented in
 ~borg.mk~, which is part of the ~borg~ package.
 
+To show the commands that are run, use ~V=1 make ...~.  Otherwise only
+their output is shown.
+
 ** Help targets
 :PROPERTIES:
 :UNNUMBERED: notoc

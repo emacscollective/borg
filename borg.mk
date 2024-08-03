@@ -11,6 +11,12 @@ help::
 
 -include etc/borg/config.mk
 
+ifeq ($(V),1)
+  Q=
+else
+  Q=@
+endif
+
 ifeq "$(BORG_SECONDARY_P)" "true"
   DRONES_DIR ?= $(shell git config "borg.drones-directory" || echo "elpa")
   BORG_ARGUMENTS = -L $(BORG_DIR) --load borg-elpa \
@@ -81,38 +87,38 @@ help helpall::
 
 clean:
 ifeq "$(BORG_CLEAN_ELN)" "true"
-	@rm -f init.elc $(INIT_FILES:.el=.elc)
-	@$(EMACS) $(EMACS_ARGUMENTS) $(EMACS_EXTRA) $(SILENCIO) \
+	$(Q)rm -f init.elc $(INIT_FILES:.el=.elc)
+	$(Q)$(EMACS) $(EMACS_ARGUMENTS) $(EMACS_EXTRA) $(SILENCIO) \
 	$(BORG_ARGUMENTS) \
 	--funcall borg--batch-clean 2>&1
 else
-	@find . -name '*.elc'          -printf 'removed %p\n' -delete
-	@find . -name '*-autoloads.el' -printf 'removed %p\n' -delete
+	$(Q)find . -name '*.elc'          -printf 'removed %p\n' -delete
+	$(Q)find . -name '*-autoloads.el' -printf 'removed %p\n' -delete
 endif
 
 clean-force:
-	@find . -name '*.elc'          -printf 'removed %p\n' -delete
-	@find . -name '*-autoloads.el' -printf 'removed %p\n' -delete
+	$(Q)find . -name '*.elc'          -printf 'removed %p\n' -delete
+	$(Q)find . -name '*-autoloads.el' -printf 'removed %p\n' -delete
 
 build: init-clean
-	@$(EMACS) $(EMACS_ARGUMENTS) $(EMACS_EXTRA) $(SILENCIO) \
+	$(Q)$(EMACS) $(EMACS_ARGUMENTS) $(EMACS_EXTRA) $(SILENCIO) \
 	$(BORG_ARGUMENTS) \
 	--funcall borg-batch-rebuild $(INIT_FILES) 2>&1
 
 native: init-clean
-	@$(EMACS) $(EMACS_ARGUMENTS) $(EMACS_EXTRA) $(SILENCIO) \
+	$(Q)$(EMACS) $(EMACS_ARGUMENTS) $(EMACS_EXTRA) $(SILENCIO) \
 	$(BORG_ARGUMENTS) \
 	--eval "(borg-batch-rebuild nil t)" $(INIT_FILES) 2>&1
 
 ## Batch Quick
 
 quick-clean: init-clean
-	@$(EMACS) $(EMACS_ARGUMENTS) $(EMACS_EXTRA) $(SILENCIO) \
+	$(Q)$(EMACS) $(EMACS_ARGUMENTS) $(EMACS_EXTRA) $(SILENCIO) \
 	$(BORG_ARGUMENTS) \
 	--eval '(borg--batch-clean t)' 2>&1
 
 quick-build:
-	@$(EMACS) $(EMACS_ARGUMENTS) $(EMACS_EXTRA) $(SILENCIO) \
+	$(Q)$(EMACS) $(EMACS_ARGUMENTS) $(EMACS_EXTRA) $(SILENCIO) \
 	$(BORG_ARGUMENTS) \
 	--eval '(borg-batch-rebuild t)' $(INIT_FILES) 2>&1
 
@@ -121,47 +127,47 @@ quick: quick-clean quick-build
 ## Per-Clone
 
 clean/%: .FORCE
-	@$(EMACS) $(EMACS_ARGUMENTS) $(EMACS_EXTRA) $(SILENCIO) \
+	$(Q)$(EMACS) $(EMACS_ARGUMENTS) $(EMACS_EXTRA) $(SILENCIO) \
 	$(BORG_ARGUMENTS) \
 	--eval '(borg-clean "$*")' 2>&1
 
 $(BORG_DIR)borg.mk: ;
 build/% $(DRONES_DIR)/% : .FORCE
-	@$(EMACS) $(EMACS_ARGUMENTS) $(EMACS_EXTRA) $(SILENCIO) \
+	$(Q)$(EMACS) $(EMACS_ARGUMENTS) $(EMACS_EXTRA) $(SILENCIO) \
 	$(BORG_ARGUMENTS) \
 	--eval '(borg-build "$*")' 2>&1
 
 native/%: .FORCE
-	@$(EMACS) $(EMACS_ARGUMENTS) $(EMACS_EXTRA) $(SILENCIO) \
+	$(Q)$(EMACS) $(EMACS_ARGUMENTS) $(EMACS_EXTRA) $(SILENCIO) \
 	$(BORG_ARGUMENTS) \
 	--eval '(borg-build "$*" nil t)' 2>&1
 
 ## Init Files
 
 init-clean:
-	@rm -f init.elc $(INIT_FILES:.el=.elc)
+	$(Q)rm -f init.elc $(INIT_FILES:.el=.elc)
 
 init-tangle: init.el
 init.el: init.org
-	@$(EMACS) $(EMACS_ARGUMENTS) $(EMACS_EXTRA) \
+	$(Q)$(EMACS) $(EMACS_ARGUMENTS) $(EMACS_EXTRA) \
 	--load org \
 	--eval '(org-babel-tangle-file "init.org")' 2>&1
 
 init-build: init-clean
-	@$(EMACS) $(EMACS_ARGUMENTS) $(EMACS_EXTRA) \
+	$(Q)$(EMACS) $(EMACS_ARGUMENTS) $(EMACS_EXTRA) \
 	$(BORG_ARGUMENTS) \
 	--funcall borg-batch-rebuild-init $(INIT_FILES) 2>&1
 
 ## Bootstrap
 
 bootstrap:
-	@printf "\n=== Running 'git submodule init' ===\n\n"
-	@git submodule init
-	@printf "\n=== Running '$(BORG_DIR)borg.sh clone' ===\n"
-	@$(BORG_DIR)borg.sh clone
-	@printf "\n=== Running '$(BORG_DIR)borg.sh checkout' ===\n"
-	@$(BORG_DIR)borg.sh checkout --reset-hard
-	@printf "\n=== Running 'make build' ===\n\n"
-	@$(MAKE) build
-	@printf "\n=== Bootstrapping finished ===\n\n"
-	@git submodule status
+	$(Q)printf "\n=== Running 'git submodule init' ===\n\n"
+	$(Q)git submodule init
+	$(Q)printf "\n=== Running '$(BORG_DIR)borg.sh clone' ===\n"
+	$(Q)$(BORG_DIR)borg.sh clone
+	$(Q)printf "\n=== Running '$(BORG_DIR)borg.sh checkout' ===\n"
+	$(Q)$(BORG_DIR)borg.sh checkout --reset-hard
+	$(Q)printf "\n=== Running 'make build' ===\n\n"
+	$(Q)$(MAKE) build
+	$(Q)printf "\n=== Bootstrapping finished ===\n\n"
+	$(Q)git submodule status

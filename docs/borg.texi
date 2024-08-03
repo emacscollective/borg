@@ -725,6 +725,9 @@ The following @code{make} targets are available by default.  To use them you
 have to be in @code{~/.config/emacs} in a shell.  They are implemented in
 @code{borg.mk}, which is part of the @code{borg} package.
 
+To show the commands that are run, use @code{V=1 make ...}.  Otherwise only
+their output is shown.
+
 @anchor{Help targets}
 @heading Help targets
 
