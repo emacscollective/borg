@@ -831,11 +831,6 @@ This target removes byte-code files for init files.
 @deffn Command init-tangle
 This target tangles (creates) @code{init.el} from @code{init.org}.  You obviously
 don't have to use such a file, if you don't want to.
-
-Note that this target is @strong{not} a dependency of @code{init-build}, because it
-necessarily has to depend on @code{init.org}, which for most people does
-not exist.  So you have to run this target explicitly after making
-changes to @code{init.org}.
 @end deffn
 
 @deffn Command init-build

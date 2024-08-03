@@ -158,6 +158,10 @@ init-build: init-clean
 	$(BORG_ARGUMENTS) \
 	--funcall borg-batch-rebuild-init $(INIT_FILES) 2>&1
 
+ifeq ($(wildcard init.org), init.org)
+init-build: init.el
+endif
+
 ## Bootstrap
 
 bootstrap:
