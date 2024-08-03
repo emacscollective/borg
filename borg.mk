@@ -147,8 +147,8 @@ native/%: .FORCE
 init-clean:
 	$(Q)rm -f init.elc $(INIT_FILES:.el=.elc)
 
-init-tangle: init.el
-init.el: init.org
+init-tangle: init.org
+	@printf "%s\n" "--- [init.org] ---"
 	$(Q)$(EMACS) $(EMACS_ARGUMENTS) $(EMACS_EXTRA) \
 	--load org \
 	--eval '(org-babel-tangle-file "init.org")' 2>&1
@@ -159,7 +159,7 @@ init-build: init-clean
 	--funcall borg-batch-rebuild-init $(INIT_FILES) 2>&1
 
 ifeq ($(wildcard init.org), init.org)
-init-build: init.el
+init-build: init-tangle
 endif
 
 ## Bootstrap
