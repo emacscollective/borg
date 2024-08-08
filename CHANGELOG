@@ -1,5 +1,5 @@
 # -*- mode: org -*-
-* v4.0.0    UNRELEASED
+* v4.0.0    2024-08-08
 
 - Dropped support for Emacs 26. fd9d044
 
