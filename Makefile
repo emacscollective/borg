@@ -44,7 +44,7 @@ pdf:
 publish:
 	@$(MAKE) -C docs publish
 release:
-	@$(MAKE) VERSION=$(VERSION) -C docs release
+	@$(MAKE) -C docs release
 
 stats:
 	@$(MAKE) -C docs stats
