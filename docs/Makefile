@@ -3,15 +3,20 @@ include ../default.mk
 
 docs: texi info html html-dir pdf
 
-texi: $(PKG).texi
-info: $(PKG).info dir
-html: $(PKG).html
-pdf:  $(PKG).pdf
+texi:     $(PKG).texi
+info:     $(PKG).info dir
+html:     $(PKG).html
+html-dir: $(PKG)/index.html
+pdf:      $(PKG).pdf
 
 ORG_ARGS  = --batch -Q $(ORG_LOAD_PATH)
 ORG_EVAL += --eval "(setq indent-tabs-mode nil)"
 ORG_EVAL += --eval "(setq org-src-preserve-indentation nil)"
 ORG_EVAL += --funcall org-texinfo-export-to-texinfo
+
+redo-docs:
+	@touch $(PKG).org
+	@make docs
 
 %.texi: %.org
 	@printf "Generating $@\n"
@@ -29,8 +34,9 @@ dir: $(PKG).info
 	@printf "Generating $@\n"
 	@$(MAKEINFO) --html --no-split $(MANUAL_HTML_ARGS) $<
 
-html-dir: $(PKG).texi
+%/index.html: %.texi
 	@printf "Generating $(PKG)/*.html\n"
+	@rm -rf $(PKG)
 	@$(MAKEINFO) --html -o $(PKG)/ $(MANUAL_HTML_ARGS) $<
 
 %.pdf: %.texi
@@ -48,7 +54,7 @@ comma := ,
 empty :=
 space := $(empty) $(empty)
 
-publish: html html-dir pdf
+publish: redo-docs
 	@aws s3 cp $(PKG).html $(PUBLISH_TARGET)
 	@aws s3 cp $(PKG).pdf  $(PUBLISH_TARGET)
 	@aws s3 sync $(PKG)    $(PUBLISH_TARGET)$(PKG)/
@@ -56,7 +62,7 @@ publish: html html-dir pdf
 	@aws cloudfront create-invalidation --distribution-id $(CFRONT_DIST) --paths \
 	"$(subst $(space),$(comma),$(addprefix $(PUBLISH_PATH),$(CFRONT_PATHS)))" > /dev/null
 
-release: html html-dir pdf
+release: redo-docs
 	@aws s3 cp $(PKG).html $(RELEASE_TARGET)
 	@aws s3 cp $(PKG).pdf  $(RELEASE_TARGET)
 	@aws s3 sync $(PKG)    $(RELEASE_TARGET)$(PKG)/

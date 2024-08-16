@@ -9,7 +9,8 @@ help:
 	$(info make all          - generate lisp and manual)
 	$(info make lisp         - generate byte-code and autoloads)
 	$(info make redo         - re-generate byte-code and autoloads)
-	$(info make docs         - generate most manual formats)
+	$(info make docs         - generate all manual formats)
+	$(info make redo-docs    - re-generate all manual formats)
 	$(info make texi         - generate texi manual)
 	$(info make info         - generate info manual)
 	$(info make html         - generate html manual file)
@@ -22,11 +23,13 @@ help:
 	$(info make clean        - remove most generated files)
 	@printf "\n"
 
-redo: clean-lisp lisp
 lisp: $(ELCS) loaddefs check-declare
+redo: clean-lisp lisp
 
 docs:
 	@$(MAKE) -C docs docs
+redo-docs:
+	@$(MAKE) -C docs redo-docs
 texi:
 	@$(MAKE) -C docs texi
 info:
