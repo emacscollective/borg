@@ -39,7 +39,8 @@ module_hash () {
 
 clone () {
     path="$1"
-    shift
+    modsdir="$2/modules"
+    shift 2
     echo "--- [$path] ---"
 
     cd "$super"
@@ -73,8 +74,9 @@ clone () {
                 ;;
             esac
 
+            mkdir -p "$modsdir"
             git clone "$url" "$path" $args \
-                --separate-git-dir ".git/modules/$name" ||
+                --separate-git-dir "$modsdir/$name" ||
                 echo "Cloning failed"
 
             if [ -n "$rename" ]
@@ -94,8 +96,9 @@ clone () {
             then
                 echo "Cloning $path from $remote ($url)"
 
+                mkdir -p "$modsdir"
                 if git clone "$remote_url" "$path" \
-                       --separate-git-dir ".git/modules/$name"
+                       --separate-git-dir "$modsdir/$name"
                 then
                     git remote rename origin "$remote"
                 else
@@ -209,12 +212,14 @@ cmd_clone () {
         shift
     done
 
+    gitdir="$(realpath --relative-to=. "$(git rev-parse --git-dir)")"
+
     if [ $# -ne 0 ]
     then
-        for path in "$@"; do clone $path; done
+        for path in "$@"; do clone $path $gitdir; done
     else
         git ls-files -s | grep ^160000 | cut -f2 |
-            while read path; do clone $path; done
+            while read path; do clone $path $gitdir; done
     fi
 }
 
