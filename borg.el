@@ -96,40 +96,71 @@
 
 ;;; Variables
 
-(defvar borg-drones-directory
-  (let* ((libdir (file-name-directory (directory-file-name
-                                       (file-name-directory
-                                        (file-truename
-                                         (or load-file-name
-                                             buffer-file-name))))))
-         (topdir (file-name-directory (directory-file-name libdir))))
-    (or (ignore-errors
-          (let ((default-directory topdir))
+(defvar borg-drones-directory)
+(defvar borg-user-emacs-directory)
+(defvar borg-top-level-directory)
+
+(let* ((libdir (file-name-directory
+                (directory-file-name
+                 (file-name-directory
+                  (file-truename (or load-file-name buffer-file-name))))))
+       (topdir (ignore-errors
+                 (let ((default-directory libdir))
+                   (file-name-as-directory
+                    (car (process-lines
+                          "git" "rev-parse" "--show-toplevel"))))))
+       (setdir (ignore-errors
+                 (let ((default-directory libdir))
+                   (file-name-as-directory
+                    (car (process-lines
+                          "git" "config" "borg.drones-directory")))))))
+
+  (defconst borg-drones-directory
+    (or (and-let* ((dir (and topdir setdir (expand-file-name setdir topdir))))
+          (if (file-directory-p dir)
+              dir
+            (message "Ignoring borg.drones-directory=%S; does not exist" dir)
+            nil))
+        (and-let* ((dir (and topdir
+                             (file-equal-p libdir
+                                           (bound-and-true-p package-user-dir))
+                             (expand-file-name (file-name-as-directory "borg")
+                                               topdir))))
+          (and (file-directory-p dir) dir))
+        (and (file-directory-p libdir) libdir)
+        (error "Could not determine `borg-drones-directory'"))
+    "Directory beneath which drone submodules are placed.
+This is automatically set based on the location of the `borg' library.
+The Git variable `borg.drones-directory' can be used to override the
+default value.")
+
+  (defconst borg-user-emacs-directory
+    (or (and (equal topdir (file-name-directory
+                            (directory-file-name borg-drones-directory)))
+             topdir)
+        (locate-dominating-file borg-drones-directory "init.el")
+        (and (or (file-in-directory-p libdir user-emacs-directory)
+                 (equal (getenv "CI") "true"))
+             user-emacs-directory)
+        (error "Could not determine `borg-user-emacs-directory'"))
+    "Directory beneath which additional per-user Emacs-specific files are placed.
+The same as `user-emacs-directory', except if Emacs was started with
+something like \"emacs -q -l /path/to/init.el\".  When using Emacs 29.1
+or later, instead use \"emacs --init-directory=/path/to\", ensuring the
+values of these variables are the same, even though a non-standard init
+directory is used.")
+
+  (defconst borg-top-level-directory
+    (or topdir
+        (ignore-errors
+          (let ((default-directory borg-user-emacs-directory))
             (file-name-as-directory
-             (expand-file-name
-              (car (process-lines "git" "config" "borg.drones-directory"))))))
-        (if (ignore-errors
-              (file-equal-p libdir (bound-and-true-p package-user-dir)))
-            (expand-file-name (file-name-as-directory "borg") topdir)
-          libdir)))
-  "Directory beneath which drone submodules are placed.
-If you need to change this, then do so before loading `borg'.")
-
-(defconst borg-user-emacs-directory
-  (file-name-directory (directory-file-name borg-drones-directory))
-  "Directory beneath which additional per-user Emacs-specific files are placed.
-
-The value of this variable is usually the same as that of
-`user-emacs-directory', except when Emacs is started with
-`emacs -q -l /path/to/init.el'.")
-
-(defconst borg-top-level-directory
-  (or (ignore-errors
-        (let ((default-directory borg-user-emacs-directory))
-          (file-name-as-directory
-           (car (process-lines "git" "rev-parse" "--show-toplevel")))))
-      borg-user-emacs-directory)
-  "The top-level of repository containing `borg-user-emacs-directory'.")
+             (car (process-lines
+                   "git" "rev-parse" "--show-toplevel")))))
+        (and (not (equal (getenv "CI") "true"))
+             (error "Could not determine `borg-top-level-directory'")))
+    "The top-level of repository containing `borg-user-emacs-directory'.")
+  )
 
 (defconst borg-gitmodules-file
   (expand-file-name ".gitmodules" borg-top-level-directory)
