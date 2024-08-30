@@ -1,4 +1,16 @@
 # -*- mode: org -*-
+* v4.0.1    UNRELEASED
+
+- The robustness of the code used to set ~borg-drones-directory~,
+  ~borg-user-emacs-directory~ and ~borg-top-level-directory~ has been
+  increased.  As a result ~borg-drones-directory~ no longer has to
+  be a direct subdirectory of ~borg-user-emacs-directory~.  #144
+
+- The Emacs configuration repository can now itself be a submodule.
+  #154
+
+- Updated tooling.
+
 * v4.0.0    2024-08-08
 
 - Dropped support for Emacs 26. fd9d044
