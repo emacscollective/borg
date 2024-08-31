@@ -1,5 +1,5 @@
 # -*- mode: org -*-
-* v4.0.1    UNRELEASED
+* v4.1.0    2024-09-01
 
 - The robustness of the code used to set ~borg-drones-directory~,
   ~borg-user-emacs-directory~ and ~borg-top-level-directory~ has been
