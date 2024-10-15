@@ -787,7 +787,7 @@ those are the drones that take longer to build.
 @deffn Command quick
 This target cleans and builds most drones.
 
-It also cleans and builds the init files as described as for @code{build}.
+It also cleans and builds the init files as described for @code{build}.
 @end deffn
 
 @deffn Command quick-clean
@@ -798,7 +798,7 @@ It also remove the byte-code files of the config files.
 @deffn Command quick-build
 This target builds @emph{most} drones and the config files
 
-It also builds the init files as described as for @code{build}.
+It also builds the init files as described for @code{build}.
 @end deffn
 
 @anchor{Drone targets}

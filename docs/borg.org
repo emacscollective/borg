@@ -701,7 +701,7 @@ those are the drones that take longer to build.
 
   This target cleans and builds most drones.
 
-  It also cleans and builds the init files as described as for ~build~.
+  It also cleans and builds the init files as described for ~build~.
 
 - Command: quick-clean ::
 
@@ -712,7 +712,7 @@ those are the drones that take longer to build.
 
   This target builds /most/ drones and the config files
 
-  It also builds the init files as described as for ~build~.
+  It also builds the init files as described for ~build~.
 
 ** Drone targets
 :PROPERTIES:
