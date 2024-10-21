@@ -131,7 +131,11 @@ clean/%: .FORCE
 	$(BORG_ARGUMENTS) \
 	--eval '(borg-clean "$*")' 2>&1
 
-$(BORG_DIR)borg.mk: ;
+# Make tries to rebuild included files.  Since the next rule
+# would be used in this case, we need a no-op rule to prevent that.
+# https://github.com/magit/magit/issues/3318#issuecomment-357548808
+$(DRONES_DIR)/borg/borg.mk: ;
+
 $(DRONES_DIR)/% : .FORCE
 	$(Q)$(EMACS) $(EMACS_ARGUMENTS) $(EMACS_EXTRA) $(SILENCIO) \
 	$(BORG_ARGUMENTS) \
