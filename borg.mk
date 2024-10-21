@@ -132,10 +132,18 @@ clean/%: .FORCE
 	--eval '(borg-clean "$*")' 2>&1
 
 $(BORG_DIR)borg.mk: ;
-build/% $(DRONES_DIR)/% : .FORCE
+$(DRONES_DIR)/% : .FORCE
 	$(Q)$(EMACS) $(EMACS_ARGUMENTS) $(EMACS_EXTRA) $(SILENCIO) \
 	$(BORG_ARGUMENTS) \
 	--eval '(borg-build "$*")' 2>&1
+
+# Define the "aliases" separately to avoid warnings about "peer
+# targets" not being updated.
+build/%: .FORCE
+	$(Q)$(EMACS) $(EMACS_ARGUMENTS) $(EMACS_EXTRA) $(SILENCIO) \
+	$(BORG_ARGUMENTS) \
+	--eval '(borg-build "$*")' 2>&1
+
 
 native/%: .FORCE
 	$(Q)$(EMACS) $(EMACS_ARGUMENTS) $(EMACS_EXTRA) $(SILENCIO) \
