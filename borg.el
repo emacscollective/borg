@@ -984,8 +984,9 @@ doesn't do anything."
                                    (borg--file-tracked-p export))
                         (message "Exporting %s..." file)
                         (require (quote ox))
-                        (ignore-errors (org-texinfo-export-to-texinfo))
-                        (message "Exporting %s...done" file))))))
+                        (with-demoted-errors "Export error: %S"
+                          (org-texinfo-export-to-texinfo)
+                          (message "Exporting %s...done" file)))))))
               (unless buffer
                 (kill-buffer (current-buffer))))))))))
 
