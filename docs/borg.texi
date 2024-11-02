@@ -1158,7 +1158,7 @@ when CLONE's Git directory is actually located inside the working
 tree.
 @end defun
 
-@defmac borg-do-drones (var [result]) body...)
+@defmac borg-do-drones (var [result]) body@dots{})
 This macro loop over drones.  BODY is evaluated with VAR bound to
 each drone, in turn.  Inside BODY variables set in @code{.gitmodules} are
 cached.  Then RESULT is evaluated to get the return value,
