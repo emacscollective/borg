@@ -212,7 +212,7 @@ cmd_clone () {
         shift
     done
 
-    gitdir="$(realpath --relative-to=. "$(git rev-parse --git-dir)")"
+    gitdir="$(realpath "$(git rev-parse --git-dir)")"
 
     if [ $# -ne 0 ]
     then
