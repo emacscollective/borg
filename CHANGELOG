@@ -1,4 +1,8 @@
 # -*- mode: org -*-
+* v4.1.2    UNRELEASED
+
+- Stopped using a ~realpath~ gnu-ism.  #167
+
 * v4.1.1    2024-11-02
 
 - Org export errors are now being demoted instead of being ignored
