@@ -56,7 +56,7 @@
                (directory-file-name borg-drones-directory))
   (unless (featurep 'epkg)
     (let ((load-path
-           (nconc (cl-mapcan
+           (nconc (mapcan
                    (lambda (name)
                      (let ((dir (expand-file-name name borg-drones-directory)))
                        (if (file-directory-p dir)

@@ -289,7 +289,7 @@ containing org, texinfo and/or info files.  Otherwise return a
 list of directories containing a file named \"dir\"."
   (let ((repo (borg-worktree clone))
         (path (borg-get-all clone "info-path")))
-    (cl-mapcan
+    (mapcan
      (if setup
          (lambda (d)
            (setq d (file-name-as-directory d))
@@ -373,11 +373,11 @@ the overall return value."
       ;; If "git submodule" gets a list command, we
       ;; might want to start using that.  See #131.
       (let ((offset (length prefix)))
-        (cl-mapcan (lambda (line)
-                     (pcase-let ((`(,mode ,_ ,_ ,file) (split-string line)))
-                       (and (equal mode "160000")
-                            (list (substring file offset)))))
-                   (process-lines "git" "ls-files" "-s"))))))
+        (mapcan (lambda (line)
+                  (pcase-let ((`(,mode ,_ ,_ ,file) (split-string line)))
+                    (and (equal mode "160000")
+                         (list (substring file offset)))))
+                (process-lines "git" "ls-files" "-s"))))))
 
 (defun borg-clones ()
   "Return a list of cloned packages.
@@ -385,10 +385,10 @@ the overall return value."
 The returned value includes the names of all packages that were
 cloned into `borg-drones-directory', including clones that have
 not been assimilated yet."
-  (cl-mapcan (lambda (file)
-               (and (file-directory-p file)
-                    (list (file-name-nondirectory file))))
-             (directory-files borg-drones-directory t "\\`[^.]")))
+  (mapcan (lambda (file)
+            (and (file-directory-p file)
+                 (list (file-name-nondirectory file))))
+          (directory-files borg-drones-directory t "\\`[^.]")))
 
 (defun borg-read-package (prompt &optional edit-url)
   "Read a package name and URL, and return them as a list.
@@ -760,7 +760,7 @@ and optional NATIVE are both non-nil, then also compile natively."
          (excludes (nconc
                     (mapcar #'expand-file-name
                             (borg-get-all clone "no-byte-compile"))
-                    (cl-mapcan
+                    (mapcan
                      (lambda (dir)
                        (list (expand-file-name (concat clone "-pkg.el") dir)
                              (expand-file-name (concat clone "-test.el") dir)
@@ -954,7 +954,7 @@ doesn't do anything."
     (let ((repo (borg-worktree clone))
           (exclude (borg-get-all clone "no-maketexi")))
       (dolist (file (or files
-                        (cl-mapcan
+                        (mapcan
                          (lambda (dir)
                            (directory-files
                             dir t (format borg-maketexi-filename-regexp clone)))
