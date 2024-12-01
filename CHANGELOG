@@ -1,5 +1,5 @@
 # -*- mode: org -*-
-* v4.1.2    UNRELEASED
+* v4.1.2    2024-12-01
 
 - Stopped using a ~realpath~ gnu-ism.  #167
 
