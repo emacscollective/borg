@@ -571,7 +571,7 @@ otherwise."
 
 This function is to be used only with `--batch'."
   (unless noninteractive
-    (error "borg-batch-recompile-init is to be used only with --batch"))
+    (error "`borg-batch-recompile-init' is to be used only with --batch"))
   (borg-silencio "\\`%s\\.\\.\\.\\(done\\)?" ; silence use-package
     (let ((default-directory borg-user-emacs-directory))
       (dolist (file (or command-line-args-left
