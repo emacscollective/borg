@@ -1,4 +1,8 @@
 # -*- mode: org -*-
+* v4.1.3    2025-03-02
+
+Thoughts and whitespace.
+
 * v4.1.2    2024-12-01
 
 - Stopped using a ~realpath~ gnu-ism.  #167
