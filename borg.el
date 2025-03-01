@@ -9,8 +9,8 @@
 ;; Package-Version: 4.1.2
 ;; Package-Requires: (
 ;;     (emacs "27.1")
-;;     (epkg "4.0.2")
-;;     (magit "4.1.2"))
+;;     (epkg "4.0.4")
+;;     (magit "4.3.1"))
 
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 
