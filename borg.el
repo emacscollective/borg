@@ -631,7 +631,7 @@ and optional NATIVE are both non-nil, then also compile natively."
         (borg-compile clone path)
         (borg-maketexi clone)
         (borg-makeinfo clone)))
-    (when-let ((commands
+    (when-let* ((commands
                 (borg--module-config "--get-all" "borg.extra-build-step")))
       (borg--run-build-commands clone commands build-cmd))))
 
@@ -813,7 +813,7 @@ and optional NATIVE are both non-nil, then also compile natively."
                   ((symbol-function 'progress-reporter-done) (lambda (_))))
           (let ((generated-autoload-file file))
             (apply 'update-directory-autoloads path))))))
-    (when-let ((buf (find-buffer-visiting file)))
+    (when-let* ((buf (find-buffer-visiting file)))
       (kill-buffer buf))))
 
 (defun borg-compile (clone &optional path)
@@ -1129,7 +1129,7 @@ The Git directory is not removed."
   "Insert information about drones that are changed in the index.
 Formatting is according to the commit message conventions."
   (interactive)
-  (when-let ((alist (borg--drone-states)))
+  (when-let* ((alist (borg--drone-states)))
     (let ((width (apply #'max (mapcar (lambda (e) (length (car e))) alist)))
           (align (cl-member-if (pcase-lambda (`(,_ ,_ ,version))
                                  (and version
