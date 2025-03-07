@@ -76,7 +76,7 @@
 
 (define-advice package-load-descriptor (:around (fn pkg-dir) borg-use-database)
   "For a Borg-installed package, use information from the Epkgs database."
-  (if-let ((dir (package--borg-clone-p pkg-dir)))
+  (if-let* ((dir (package--borg-clone-p pkg-dir)))
       (let* ((name (file-name-nondirectory (directory-file-name dir)))
              (epkg (and (fboundp 'epkg) (epkg name)))
              (desc (package-process-define-package

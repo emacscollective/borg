@@ -38,7 +38,7 @@ EMACS_EXTRA ?=
 
 SILENCIO += --eval "(progn (require 'gv) (put 'buffer-substring 'byte-obsolete-generalized-variable nil))"
 SILENCIO += --eval "(progn \
-  (put 'if-let 'byte-obsolete-info nil) \
+  (put 'if-let* 'byte-obsolete-info nil) \
   (put 'when-let 'byte-obsolete-info nil))"
 SILENCIO += --eval "(define-advice message (:around (fn format &rest args) silencio)\
   (unless (or (equal format \"Not registering prefix \\\"%s\\\" from %s.  Affects: %S\")\

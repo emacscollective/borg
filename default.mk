@@ -18,8 +18,8 @@ REVDESC := $(shell test -e $(TOP).git && git describe --tags)
 
 EMACS      ?= emacs
 EMACS_ARGS ?= --eval "(progn \
-  (put 'if-let 'byte-obsolete-info nil) \
-  (put 'when-let 'byte-obsolete-info nil))"
+  (put 'if-let* 'byte-obsolete-info nil) \
+  (put 'when-let* 'byte-obsolete-info nil))"
 
 LOAD_PATH  ?= $(addprefix -L ../,$(DEPS))
 LOAD_PATH  += -L .

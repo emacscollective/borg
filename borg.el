@@ -624,7 +624,7 @@ and optional NATIVE are both non-nil, then also compile natively."
         (config (borg--config-file)))
     (when (file-exists-p config)
       (load config nil t t))
-    (if-let ((commands (borg-get-all clone "build-step")))
+    (if-let* ((commands (borg-get-all clone "build-step")))
         (borg--run-build-commands clone commands build-cmd)
       (let ((path (mapcar #'file-name-as-directory (borg-load-path clone))))
         (borg-update-autoloads clone path)
@@ -834,7 +834,7 @@ and optional NATIVE are both non-nil, then also compile natively."
          (let ((file-relative (file-relative-name file topdir))
                (name (file-name-nondirectory file)))
            (if (file-directory-p file)
-               (when (and (if-let ((v (borg-get
+               (when (and (if-let* ((v (borg-get
                                        clone "recursive-byte-compile")))
                               (member v '("yes" "on" "true" "1"))
                             borg-compile-recursively)
