@@ -97,7 +97,7 @@ clone () {
                 echo "Cloning $path from $remote ($url)"
 
                 mkdir -p "$modsdir"
-                if git clone "$remote_url" "$path" \
+                if git clone "$url" "$path" \
                        --separate-git-dir "$modsdir/$name"
                 then
                     git remote rename origin "$remote"
