@@ -49,6 +49,11 @@ clone () {
     push_remote=$(git config --includes -f .gitmodules remote.pushDefault || true)
     push_match=$(git config --includes -f .gitmodules --get-all remote.pushMatch || true)
 
+    if [ -z "$(git config submodule.$name.active)" ]
+    then
+        git config submodule.$name.active true
+    fi
+
     if [ "$(git config submodule.$name.active)" != true ]
     then
         echo "Skipping $path (not initialized)"
@@ -167,6 +172,11 @@ checkout () {
 
     name=$(module_name "$path")
     hash=$(module_hash "$path")
+
+    if [ -z "$(git config submodule.$name.active)" ]
+    then
+        git config submodule.$name.active true
+    fi
 
     if [ "$(git config submodule.$name.active)" != "true" ]
     then

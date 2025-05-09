@@ -772,18 +772,39 @@ those are the drones that take longer to build.
 
   This target bootstraps ~borg~ itself.
 
+- Command: clone ::
+
+  Clone any drone which is activate but not initialized.
+
+  For all activate drones with the ~remote~ variable set,
+  initialized or not, the specified git remote if not
+  already added. New remotes which have been added
+  this way will be fetched.
+
+  If ~remote.pushDefault~ is set and equal to the name
+  specified in a drones ~remote~ then the drone's
+  pushDefault remote is set to ~remote~.
+
+  See: [[*Patching Drones]]
+
+- Command: checkout ::
+
+  Checkout all active drones, do a hard reset for each drone.
+  Note this will remove any uncommited changes. The git repository
+  of the drone will be reset if the head doesn't match it's commit.
+
 - Command: bootstrap ::
 
   This target attempts to bootstrap the drones.  To do so it runs
-  ~git submodule init~, ~borg.sh~ (which see), and ~make build~.
+  ~git submodule init~, ~make clone~, ~make checkout~, and ~make build~.
 
-  If an error occurs during the ~borg.sh~ phase, then you can just run
-  that command again to process the remaining drones.  The drones that
-  have already been bootstrapped or that have previously failed will
-  be skipped.  If a drone cannot be cloned from any of the known
-  remotes, then you should temporarily remove it using ~git submodule
-  deinit lib/DRONE~.  When done with ~borg.sh~ also manually run ~make
-  build~ again.
+  If an error occurs during the ~make clone~ or ~make checkout~ phase,
+  then you can just run that command again to process the remaining
+  drones. The drones that have already been bootstrapped or that have
+  previously failed will be skipped.  If a drone cannot be cloned
+  from any of the known remotes, then you should temporarily remove
+  it using ~git submodule deinit lib/DRONE~.  When done
+  with ~make clone~ and ~make checkout~ also manually run ~make build~ again.
 
 * Variables
 

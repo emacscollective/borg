@@ -12,10 +12,10 @@ Copyright (C) 2016-2025 Jonas Bernoulli <emacs.borg@@jonas.bernoulli.dev>
 
 You can redistribute this document and/or modify it under the terms
 of the GNU General Public License as published by the Free Software
-Foundation, either version 3 of the License, or (at your option) any
+Foundation@comma{} either version 3 of the License@comma{} or (at your option) any
 later version.
 
-This document is distributed in the hope that it will be useful,
+This document is distributed in the hope that it will be useful@comma{}
 but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE@.  See the GNU
 General Public License for more details.
@@ -84,9 +84,9 @@ The Borg assimilate Emacs packages as Git submodules.
 
 Borg is a bare-bones package manager for Emacs packages.  It provides
 only a few essential features and should be combined with other tools
-such as Magit, @code{epkg}, @code{use-package}, and @code{auto-compile}.
+such as Magit@comma{} @code{epkg}@comma{} @code{use-package}@comma{} and @code{auto-compile}.
 
-Borg assimilates packages into the @code{~/.config/emacs} @footnote{Or @code{~/.emacs.d} of course, if you prefer that or have to use the
+Borg assimilates packages into the @code{~/.config/emacs} @footnote{Or @code{~/.emacs.d} of course@comma{} if you prefer that or have to use the
 old location because you still have to support older Emacs releases.} repository
 as Git submodules.  An assimilated package is called a drone and a
 borg-based @code{~/.config/emacs} repository is called a collective.
@@ -94,16 +94,16 @@ borg-based @code{~/.config/emacs} repository is called a collective.
 It is possible to clone a package repository without assimilating it.
 A cloned package is called a clone.
 
-To learn more about this project, also read the blog post @footnote{@uref{https://emacsair.me/2016/05/17/assimilate-emacs-packages-as-git-submodules}.} in
+To learn more about this project@comma{} also read the blog post @footnote{@uref{https://emacsair.me/2016/05/17/assimilate-emacs-packages-as-git-submodules}.} in
 which it was announced.
 
 @node Installation
 @chapter Installation
 
-Borg can be used by itself, in which case it has to be bootstrapped.
-This is how Borg originally was intended to be used exclusively, but
+Borg can be used by itself@comma{} in which case it has to be bootstrapped.
+This is how Borg originally was intended to be used exclusively@comma{} but
 nowadays you may also choose to use it merely as a secondary package
-manager, in which case Borg itself is installed using Package.
+manager@comma{} in which case Borg itself is installed using Package.
 
 @menu
 * Use as secondary package manager::
@@ -113,9 +113,9 @@ manager, in which case Borg itself is installed using Package.
 @node Use as secondary package manager
 @section Use as secondary package manager
 
-To use Borg as a secondary package manager alongside Package, begin by
+To use Borg as a secondary package manager alongside Package@comma{} begin by
 installing the former using the latter.  Borg is only available from
-Melpa, so you have to add that first.
+Melpa@comma{} so you have to add that first.
 
 @lisp
 (add-to-list 'package-archives
@@ -141,10 +141,10 @@ replacing the call to @code{package-initialize} in your init file with this:
   (package-initialize))
 @end lisp
 
-Just like Package (aka Elpa) defaults to installing packages in @code{elpa/},
+Just like Package (aka Elpa) defaults to installing packages in @code{elpa/}@comma{}
 Borg defaults to installing them in @code{borg/}.  (When using both package
-managers, that is.  If used by itself, then Borg defaults to using
-@code{lib/}.)  If you want to use another directory, then you can do so by
+managers@comma{} that is.  If used by itself@comma{} then Borg defaults to using
+@code{lib/}.)  If you want to use another directory@comma{} then you can do so by
 setting the Git variable @code{borg.drones-directory}.
 
 You should also add a @code{Makefile} containing:
@@ -155,7 +155,7 @@ include $(shell find -L elpa -maxdepth 1 -regex '.*/borg-[.0-9]*' |\
   sort | tail -n 1)/borg.mk
 @end example
 
-Despite its title, many things mentioned in the next section are
+Despite its title@comma{} many things mentioned in the next section are
 relevant even when Borg was installed the way we just did.  Just
 saying.
 
@@ -165,8 +165,8 @@ saying.
 (As mentioned in the next section you can use a location other than
 @code{~/.config/emacs} (or @code{~/.emacs.d}). Nevertheless most of the subsequent
 examples just talk about @code{~/.config/emacs} and if you use something
-else, then obviously have to substitute that.  The same applies to the
-string @code{lib} and the variables @code{user-init-file} and @code{user-emacs-directory},
+else@comma{} then obviously have to substitute that.  The same applies to the
+string @code{lib} and the variables @code{user-init-file} and @code{user-emacs-directory}@comma{}
 which also might not be appropriate depending on your choices.)
 
 @anchor{Bootstrapping using a seed}
@@ -178,11 +178,11 @@ Borg as the package manager.  Most users end up using @code{emacs.g} merely
 as a bootstrapping seed and do not merge upstream changes after that.
 
 This collective already assimilates a few drones in addition to @code{borg}
-itself, namely @code{magit}, @code{epkg}, @code{use-package}, @code{auto-compile}, @code{git-modes} and
-@code{diff-hl}, as well as their dependencies.  These drones are not required
+itself@comma{} namely @code{magit}@comma{} @code{epkg}@comma{} @code{use-package}@comma{} @code{auto-compile}@comma{} @code{git-modes} and
+@code{diff-hl}@comma{} as well as their dependencies.  These drones are not required
 by @code{borg} but their use is highly recommended.
 
-Clone the @code{emacs.g} repository to either @code{~/.config/emacs}, or for testing
+Clone the @code{emacs.g} repository to either @code{~/.config/emacs}@comma{} or for testing
 purposes to any other location.  This repository contains a @code{Makefile}
 that imports @code{lib/borg/borg.mk} and defines an additional target whose
 purpose is to make that file and @code{lib/borg/borg.sh} available.  Run @code{make
@@ -201,32 +201,32 @@ make bootstrap-borg
 make bootstrap
 @end example
 
-If you have assimilated many packages, you might want to use @code{make
+If you have assimilated many packages@comma{} you might want to use @code{make
 bootstrap | tee bootstrap.log}.
 
-The last command run during bootstrap is @code{git submodule status}, which
-prints one line per module.  If a line is prefixed with @samp{+}, that means
-that it was not possible to checkout the recorded commit, and @code{-} means
+The last command run during bootstrap is @code{git submodule status}@comma{} which
+prints one line per module.  If a line is prefixed with @samp{+}@comma{} that means
+that it was not possible to checkout the recorded commit@comma{} and @code{-} means
 that the module could not be cloned.  Even if some module could not be
-cloned, that usually does not render a configuration unusable, so just
-run @code{emacs} now, and then investigate any issues from the comfort of
+cloned@comma{} that usually does not render a configuration unusable@comma{} so just
+run @code{emacs} now@comma{} and then investigate any issues from the comfort of
 Magit.
 
-If you cloned to somewhere other than @code{~/.config/emacs}, then you can
-use that configuration using @code{emacs --init-directory /path/to/emacs.g/},
+If you cloned to somewhere other than @code{~/.config/emacs}@comma{} then you can
+use that configuration using @code{emacs --init-directory /path/to/emacs.g/}@comma{}
 provided you are using Emacs 29 or later.  Otherwise you have to
 resort to @code{emacs -Q -l /path/to/emacs.g/early-init.el -l
 /path/to/emacs.g/init.el}.
 
 For drones whose upstream repositories are located on Github or Gitlab
-the @code{emacs.g} collective uses the @code{ssh} protocol by default, which is a
+the @code{emacs.g} collective uses the @code{ssh} protocol by default@comma{} which is a
 problem if you don't have accounts there and have not properly setup
 your keys.  See @ref{Using https URLs}.
 
 During package compilation you may notice the submodules relating to
 those packages become dirty due to the compilation outputs not being
 ignored in those submodules.  For this reason it is useful to ignore
-these outputs globally, for example in your @code{~/.config/git/ignore}
+these outputs globally@comma{} for example in your @code{~/.config/git/ignore}
 file:
 
 @example
@@ -242,7 +242,7 @@ you use @code{borg}.
 @subsection Bootstrapping from scratch
 
 If you don't want to base your configuration on the @code{emacs.g}
-starter-kit described in the previous section, then you have
+starter-kit described in the previous section@comma{} then you have
 to do a few things manually.
 
 @example
@@ -250,8 +250,8 @@ git init ~/.config/emacs
 cd ~/.config/emacs
 @end example
 
-By default Borg installs packages inside the @code{lib/} subdirectory, but
-since you are starting from scratch, you may choose something else
+By default Borg installs packages inside the @code{lib/} subdirectory@comma{} but
+since you are starting from scratch@comma{} you may choose something else
 by setting the Git variable @code{borg.drones-directory} locally for this
 repository.
 
@@ -269,8 +269,8 @@ bootstrap-borg:
         @@cd $(DRONES_DIR)/borg; git reset --hard HEAD
 @end example
 
-Now you are probably tempted to run @code{make bootstrap-borg}, but that is
-for bootstrapping @emph{from a seed}, and what we are doing right now is to
+Now you are probably tempted to run @code{make bootstrap-borg}@comma{} but that is
+for bootstrapping @emph{from a seed}@comma{} and what we are doing right now is to
 bootstrap @emph{from scratch}.  In the process we are creating a seed but we
 are not there yet.  Instead run this:
 
@@ -292,8 +292,8 @@ adding a simple @code{init.el} file containing at least:
 (borg-initialize)
 @end lisp
 
-Beginning with Emacs 27.1, @code{package-enable-at-startup} has to be
-disabled earlier, in @code{early-init.el}:
+Beginning with Emacs 27.1@comma{} @code{package-enable-at-startup} has to be
+disabled earlier@comma{} in @code{early-init.el}:
 
 @lisp
 (setq package-enable-at-startup nil)
@@ -306,8 +306,8 @@ git commit -m "Assimilate borg"
 @end example
 
 Now it is time to assimilate some other essential packages.  You could
-do so using @code{M-x borg-assimilate}, but you would quickly notice that
-doing so without the help of the @code{epkg} package is quite cumbersome,
+do so using @code{M-x borg-assimilate}@comma{} but you would quickly notice that
+doing so without the help of the @code{epkg} package is quite cumbersome@comma{}
 so lets manually install that and its dependency first:
 
 @example
@@ -323,8 +323,8 @@ make build
 git commit -m "Assimilate epkg and dependencies"
 @end example
 
-Once you have done that and have restarted Emacs, you can install
-Magit using Borg, as described in @ref{Assimilation}.  You should also
+Once you have done that and have restarted Emacs@comma{} you can install
+Magit using Borg@comma{} as described in @ref{Assimilation}.  You should also
 configure Magit status buffers to display submodules:
 
 @lisp
@@ -335,7 +335,7 @@ configure Magit status buffers to display submodules:
                           'append))
 @end lisp
 
-Finally (look, nobody forced you to do this from scratch ;-) I
+Finally (look@comma{} nobody forced you to do this from scratch ;-) I
 strongly suggest that you make yourself familiar with my @code{auto-compile}
 package.
 
@@ -343,11 +343,11 @@ package.
 @subsection Migrating a legacy configuration
 
 If you are currently using Package and want to gently ease into using
-Borg alongside that, then you can proceed as described in @ref{Use as secondary package manager}.
+Borg alongside that@comma{} then you can proceed as described in @ref{Use as secondary package manager}.
 
-If on the other hand you are already manually using Git modules,
+If on the other hand you are already manually using Git modules@comma{}
 then you should proceed as described in @ref{Bootstrapping from scratch}.
-Obviously "from scratch" does not apply this time around, so just skip
+Obviously "from scratch" does not apply this time around@comma{} so just skip
 steps like @code{git init}.
 
 @anchor{Using your configuration on another machine}
@@ -362,7 +362,7 @@ repository you start by cloning your own repository.
 @subsection Using https URLs
 
 For drones whose upstream repositories are located on Github or Gitlab
-the @code{emacs.g} collective uses the @code{ssh} protocol by default, which is a
+the @code{emacs.g} collective uses the @code{ssh} protocol by default@comma{} which is a
 problem if you don't have accounts there and have not properly setup
 your keys.
 
@@ -373,7 +373,7 @@ git config --global url.https://github.com/.insteadOf git@@github.com:
 git config --global url.https://gitlab.com/.insteadOf git@@gitlab.com:
 @end lisp
 
-If you don't want to configure this globally, then you can also configure
+If you don't want to configure this globally@comma{} then you can also configure
 Borg itself to prefer the @code{https} URLS@.
 
 @lisp
@@ -393,7 +393,7 @@ sed -i "s|git@@gitlab.com:|https://gitlab.com/|g" .gitmodules
 git commit -m "Use https URLs for Github and Gitlab"
 @end example
 
-If you have already run @code{make bootstrap}, then you also have to edit
+If you have already run @code{make bootstrap}@comma{} then you also have to edit
 @code{.git/config}.
 
 @example
@@ -405,26 +405,26 @@ sed -i "s|git@@gitlab.com:|https://gitlab.com/|g" .git/config
 @node Startup
 @chapter Startup
 
-The @code{user-init-file}, @code{~/.config/emacs/init.el}, has to contain a call to
+The @code{user-init-file}@comma{} @code{~/.config/emacs/init.el}@comma{} has to contain a call to
 @code{borg-initialize}.
 
 You should also set @code{package-enable-at-startup} to @code{nil}.  If you use
-Emacs 27 or later, then do so in @code{early-init.el}, otherwise in @code{init.el}.
+Emacs 27 or later@comma{} then do so in @code{early-init.el}@comma{} otherwise in @code{init.el}.
 
 @defun borg-initialize
 This function initializes assimilated drones using @code{borg-activate}.
 
-To skip the activation of the drone named DRONE, temporarily disable
+To skip the activation of the drone named DRONE@comma{} temporarily disable
 it by setting the value of the Git variable @code{submodule.DRONE.disabled}
 to true in @code{~/.config/emacs/.gitmodules}.
 @end defun
 
 @deffn Command borg-activate clone
 This function activates the clone named CLONE by adding the
-appropriate directories to the @code{load-path} and to @code{Info-directory-list},
-and by loading the autoloads file, if it exists.
+appropriate directories to the @code{load-path} and to @code{Info-directory-list}@comma{}
+and by loading the autoloads file@comma{} if it exists.
 
-Unlike @code{borg-initialize}, this function ignores the Git variable
+Unlike @code{borg-initialize}@comma{} this function ignores the Git variable
 @code{submodule.DRONE.disabled} and can be used to activate clones that
 have not been assimilated.
 @end deffn
@@ -432,45 +432,45 @@ have not been assimilated.
 @node Assimilation
 @chapter Assimilation
 
-A third-party package is assimilated by adding it as a submodule and,
-if necessary, by configuring it in @code{~/.config/emacs/init.el}.  Built-in
+A third-party package is assimilated by adding it as a submodule and@comma{}
+if necessary@comma{} by configuring it in @code{~/.config/emacs/init.el}.  Built-in
 packages are assimilated merely by configuring them.
 
 To begin the assimilation of a third-party package use the command
-@code{borg-assimilate}, which adds the package's repository as a submodule
+@code{borg-assimilate}@comma{} which adds the package's repository as a submodule
 and attempts to build the drone.
 
 A safer alternative is to first clone the package without assimilating
-it, using @code{borg-clone}.  This gives you an opportunity to inspect the
-cloned package for broken or malicious code, before it gets a chance
+it@comma{} using @code{borg-clone}.  This gives you an opportunity to inspect the
+cloned package for broken or malicious code@comma{} before it gets a chance
 to run arbitrary code.  Later you can proceed with the assimilation
-using @code{borg-assimilate}, or remove the clone using @code{borg-remove}.
+using @code{borg-assimilate}@comma{} or remove the clone using @code{borg-remove}.
 
-Building the drone can fail, for example due to missing dependencies.
+Building the drone can fail@comma{} for example due to missing dependencies.
 Failure to build a drone is not considered as a failure to assimilate.
-If a build fails, then a buffer containing information about the
-issue pops up.  If the failure is due to unsatisfied dependencies,
-then assimilate those too, and then build any drone, which previously
-couldn't be built, by using the Emacs command @code{borg-build} or @code{make
+If a build fails@comma{} then a buffer containing information about the
+issue pops up.  If the failure is due to unsatisfied dependencies@comma{}
+then assimilate those too@comma{} and then build any drone@comma{} which previously
+couldn't be built@comma{} by using the Emacs command @code{borg-build} or @code{make
 lib/DRONE}.  Alternatively you can just rebuild everything using @code{make
 build}.
 
-If you wish to avoid such complications, you should use the command
+If you wish to avoid such complications@comma{} you should use the command
 @code{epkg-describe-package} before assimilating a package.  Among other
-useful information, it also provides a dependency tree.
+useful information@comma{} it also provides a dependency tree.
 
 Once the packages have been added as a submodules and the drones have
-been built, the assimilation is completed by creating an assimilation
+been built@comma{} the assimilation is completed by creating an assimilation
 commit.
 
-If you assimilate a single package, then it is recommended that you
+If you assimilate a single package@comma{} then it is recommended that you
 use a message similar to this:
 
 @example
 Assimilate foo v1.0.0
 @end example
 
-Or if one or more dependencies had to be assimilated, something like:
+Or if one or more dependencies had to be assimilated@comma{} something like:
 
 @example
 Assimilate foo and dependencies
@@ -481,8 +481,8 @@ Assimilate baz v0.1.0
 @end example
 
 It's usually a good idea not to assimilate unrelated packages in the
-same commit, but doing it for related packages, which do not strictly
-depend on one another, it might make sense:
+same commit@comma{} but doing it for related packages@comma{} which do not strictly
+depend on one another@comma{} it might make sense:
 
 @example
 Assimilate ido and extensions
@@ -509,12 +509,12 @@ described above.
 @deffn Command borg-assimilate package url &optional partially
 This command assimilates the package named PACKAGE from URL@.
 
-If @code{epkg} is available, then only the name of the package is read in
+If @code{epkg} is available@comma{} then only the name of the package is read in
 the minibuffer and the url stored in the Epkg database is used.  If
-@code{epkg} is unavailable, the package is not in the database, or if a
-prefix argument is used, then the url too is read in the minibuffer.
+@code{epkg} is unavailable@comma{} the package is not in the database@comma{} or if a
+prefix argument is used@comma{} then the url too is read in the minibuffer.
 
-If a negative prefix argument is used, then the submodule is added
+If a negative prefix argument is used@comma{} then the submodule is added
 but the build and activation steps are skipped.  This is useful when
 assimilating a package that requires special build steps.  After
 configuring the build steps use @code{borg-build} to complete the
@@ -522,28 +522,28 @@ assimilation.
 @end deffn
 
 @deffn Command borg-clone package url
-This command clones the package named PACKAGE from URL, without
+This command clones the package named PACKAGE from URL@comma{} without
 assimilating it.  This is useful when you want to inspect the
 package before potentially executing malicious or broken code.
 
-Interactively, when the @code{epkg} package is available, then the name
+Interactively@comma{} when the @code{epkg} package is available@comma{} then the name
 is read in the minibuffer and the url stored in the Epkg database
-is used.  If @code{epkg} is unavailable, the package is unknown, or when
-a prefix argument is used, then the url is also read in the
+is used.  If @code{epkg} is unavailable@comma{} the package is unknown@comma{} or when
+a prefix argument is used@comma{} then the url is also read in the
 minibuffer.
 @end deffn
 
 @deffn Command borg-remove clone
-This command removes the cloned or assimilated package named CLONE,
-by removing the working tree from @code{borg-drones-directory}, regardless
+This command removes the cloned or assimilated package named CLONE@comma{}
+by removing the working tree from @code{borg-drones-directory}@comma{} regardless
 of whether that repository belongs to an assimilated package or a
 package that has only been cloned for review using @code{borg-clone}.  The
 Git directory is not removed.
 @end deffn
 
 @deffn Command borg-build clone &optional activate
-This command builds the clone named CLONE@.  Interactively, or when
-optional ACTIVATE is non-nil, then also activate the drone using
+This command builds the clone named CLONE@.  Interactively@comma{} or when
+optional ACTIVATE is non-nil@comma{} then also activate the drone using
 @code{borg-activate}.
 @end deffn
 
@@ -573,61 +573,61 @@ clone named CLONE@.
 @end defun
 
 @defun borg-batch-rebuild &optional quick
-This function rebuilds all assimilated drones in alphabetic order,
+This function rebuilds all assimilated drones in alphabetic order@comma{}
 except for Org which is rebuilt first.  After that it also builds
 the user init files using @code{borg-batch-rebuild-init}.
 
 This function is not intended for interactive use; instead it is
 used by the Make target @code{build} described in the following section.
 
-When optional QUICK is non-nil, then this function does not build
-drones for which @code{submodule.DRONE.build-step} is set, assuming that
+When optional QUICK is non-nil@comma{} then this function does not build
+drones for which @code{submodule.DRONE.build-step} is set@comma{} assuming that
 those are the drones that take longer to be built.
 @end defun
 
 @defun borg-batch-rebuild-init
 This function builds the init files specified by the Make variable
-@code{INIT_FILES}, or if that is unspecified @code{init.el} and @code{LOGIN.el}, where
+@code{INIT_FILES}@comma{} or if that is unspecified @code{init.el} and @code{LOGIN.el}@comma{} where
 @code{LOGIN} is the value of the variable @code{user-real-login-name}.  If a file
-does not exist, then it is silently ignored.
+does not exist@comma{} then it is silently ignored.
 
 This function is not intended for interactive use; instead it is
-used by the Make targets @code{build-init} and (indirectly) @code{build}, which
+used by the Make targets @code{build-init} and (indirectly) @code{build}@comma{} which
 are described in @ref{Make targets}.
 @end defun
 
 @node Updating drones
 @chapter Updating drones
 
-Borg does not provide an update command.  By not doing so, it empowers
-you to update to exactly the commit you wish to update to, instead of
+Borg does not provide an update command.  By not doing so@comma{} it empowers
+you to update to exactly the commit you wish to update to@comma{} instead of
 to "the" new version.
 
-To determine the drones that you @emph{might} want to update, visit the Magit
+To determine the drones that you @emph{might} want to update@comma{} visit the Magit
 status buffer of the @code{~/.config/emacs} repository and press @code{f m} to fetch
-inside all submodules.  After you have done so, and provided there
-actually are any modules with new upstream commits, a section titled
+inside all submodules.  After you have done so@comma{} and provided there
+actually are any modules with new upstream commits@comma{} a section titled
 "Modules unpulled from @@@{upstream@}" appears.
 
 Each subsection of that section represents a submodule with new
 upstream commits.  Expanding such a subsection lists the new upstream
-commits.  These commits can be visited by pressing @code{RET}, and the status
+commits.  These commits can be visited by pressing @code{RET}@comma{} and the status
 buffer of a submodule can be visited by pressing @code{RET} while point is
 inside the heading of the respective submodule section.  To return to
 the status buffer of @code{~/.config/emacs} press @code{q}.
 
-Inside the status buffer of a submodule, you can pull the upstream
-changes as usual, using @code{F u}.  If you wish you can inspect the changes
+Inside the status buffer of a submodule@comma{} you can pull the upstream
+changes as usual@comma{} using @code{F u}.  If you wish you can inspect the changes
 before doing so.  And you can also choose to check out another commit
 instead of the upstream @code{HEAD}.
 
-Once you have "updated" to a new commit, you should also rebuild the
-drone using the command @code{borg-build}.  This may fail, e.g., due to new
+Once you have "updated" to a new commit@comma{} you should also rebuild the
+drone using the command @code{borg-build}.  This may fail@comma{} e.g.@comma{} due to new
 dependencies.
 
-Once you have resolved all issues, you should create an "update
+Once you have resolved all issues@comma{} you should create an "update
 commit".  You can either create one commit per updated drone or you
-can create a single commit for all updated drones, which ever you find
+can create a single commit for all updated drones@comma{} which ever you find
 more appropriate.  However it is recommended that you use a message
 similar to:
 
@@ -652,28 +652,28 @@ To update the Epkg package database use the command @code{epkg-update}.
 @node Patching drones
 @chapter Patching drones
 
-By using Borg you can not only make changes to assimilated packages,
+By using Borg you can not only make changes to assimilated packages@comma{}
 you can also keep track of those patches and share them with others.
 
 If you created some commits in a drone repository and are the
-maintainer of the respective package, then you can just push your
+maintainer of the respective package@comma{} then you can just push your
 changes to the "origin" remote.
 
-You don't have to do this every time you created some commits, but at
-important checkpoints, such as after creating a release, you should
+You don't have to do this every time you created some commits@comma{} but at
+important checkpoints@comma{} such as after creating a release@comma{} you should
 record the changes in the @code{~/.config/emacs} repository.  To do so
 proceed as described in @ref{Updating drones}.
 
 But for most packages you are not the maintainer and if you create
-commits for such drones, then you have to create a fork and push there
+commits for such drones@comma{} then you have to create a fork and push there
 instead.  You should configure that remote as the push-remote using
-@code{git config remote.pushDefault FORK}, or by pressing @code{b C M-p} in Magit.
-After you have done that, you can continue to pull from the upstream
+@code{git config remote.pushDefault FORK}@comma{} or by pressing @code{b C M-p} in Magit.
+After you have done that@comma{} you can continue to pull from the upstream
 using @code{F u} in Magit and you can also push to your fork using @code{P p}.
 
 Of course you should also occasionally record the changes in the
-@code{~/.config/emacs} repository.  Additionally, and ideally when you first
-fork a drone, you should also record information about your personal
+@code{~/.config/emacs} repository.  Additionally@comma{} and ideally when you first
+fork a drone@comma{} you should also record information about your personal
 remote in the super-repository by setting @code{submodule.DRONE.remote} in
 @code{~/.config/emacs/.gitmodules}.
 
@@ -691,12 +691,12 @@ URL and using the standard value for @code{remote.NAME.fetch}.
 @defvar borg.pushDefault FORK
 This variable specifies a name used for push-remotes.  Because this
 variable can only have one value it is recommended that you use the
-same name, FORK, for your personal remote in all drone repositories
+same name@comma{} FORK@comma{} for your personal remote in all drone repositories
 in which you have created patches that haven't been merged into the
 upstream repository (yet).  A good value may be your username.
 
 For all DRONES for which one value of @code{submodule.DRONE.remote}
-specifies a remote whose NAME matches FORK, @code{make bootstrap}
+specifies a remote whose NAME matches FORK@comma{} @code{make bootstrap}
 automatically configures FORK to be used as the push-remote by
 setting @code{remote.pushDefault} to FORK@.
 @end defvar
@@ -706,9 +706,9 @@ setting @code{remote.pushDefault} to FORK@.
 
 The following @code{make} targets are available by default.  To use them you
 have to be in @code{~/.config/emacs} in a shell.  They are implemented in
-@code{borg.mk}, which is part of the @code{borg} package.
+@code{borg.mk}@comma{} which is part of the @code{borg} package.
 
-To show the commands that are run, use @code{V=1 make ...}.  Otherwise only
+To show the commands that are run@comma{} use @code{V=1 make ...}.  Otherwise only
 their output is shown.
 
 @anchor{Help targets}
@@ -717,7 +717,7 @@ their output is shown.
 @deffn Command help
 This target prints information about most of the following targets.
 
-This is the default target, unless the user sets @code{.DEFAULT_GOAL}.
+This is the default target@comma{} unless the user sets @code{.DEFAULT_GOAL}.
 @end deffn
 
 @deffn Command helpall
@@ -731,9 +731,9 @@ This target prints information about all of the following targets.
 This target removes all byte-code and native files of all drones and
 config files.
 
-To ensure a clean build, this target should always be run before
-@code{build}, so you might want to add a default target that does just
-that.  To do so, add this to @code{~/.config/emacs/etc/borg/config.mk}:
+To ensure a clean build@comma{} this target should always be run before
+@code{build}@comma{} so you might want to add a default target that does just
+that.  To do so@comma{} add this to @code{~/.config/emacs/etc/borg/config.mk}:
 
 @example
 .DEFAULT_GOAL := all
@@ -749,15 +749,15 @@ target makes it possible to recover from such an incompatibility.
 @end deffn
 
 @deffn Command build
-This target byte-compiles Borg and Compat first, followed by all
+This target byte-compiles Borg and Compat first@comma{} followed by all
 other drones in alphabetic order.  After that it also byte-compiles
-the user init files, like @code{init-build} does.
+the user init files@comma{} like @code{init-build} does.
 @end deffn
 
 @deffn Command native
 This target byte-compiles and natively compiles Borg and Compat
-first, followed by all other drones in alphabetic order.  After that
-it also byte-compiles the user init files, like @code{init-build} does.
+first@comma{} followed by all other drones in alphabetic order.  After that
+it also byte-compiles the user init files@comma{} like @code{init-build} does.
 @end deffn
 
 @anchor{Quick batch targets}
@@ -795,7 +795,7 @@ drone named DRONE@.
 @deffn Command build/DRONE
 This target byte-compiles the drone named DRONE@.
 
-@code{lib/DRONE} is an alias for this target; or rather @code{DIR/DRONE}, where
+@code{lib/DRONE} is an alias for this target; or rather @code{DIR/DRONE}@comma{} where
 @code{DIR} is directory containing the drone submodules.
 @end deffn
 
@@ -813,17 +813,17 @@ This target removes byte-code files for init files.
 
 @deffn Command init-tangle
 This target tangles (creates) @code{init.el} from @code{init.org}.  You obviously
-don't have to use such a file, if you don't want to.
+don't have to use such a file@comma{} if you don't want to.
 @end deffn
 
 @deffn Command init-build
 This target byte-compiles the init files specified by the make
 variable @code{INIT_FILES}; or if that is unspecified @code{init.el} and @code{LOGIN.el}
 (where @code{LOGIN} is the value of the variable @code{user-real-login-name}).
-If an init file does not exist, then that is silently ignored.
+If an init file does not exist@comma{} then that is silently ignored.
 
 If you publish your @code{~/.config/emacs} repository but would like to
-keep some settings private, then you can do so by putting them in a
+keep some settings private@comma{} then you can do so by putting them in a
 file @code{~/.config/emacs/LOGIN.el}.  The downside of this approach is
 that you will have to somehow synchronize that file between your
 machines without checking it into Git.
@@ -836,17 +836,38 @@ machines without checking it into Git.
 This target bootstraps @code{borg} itself.
 @end deffn
 
+@deffn Command clone
+Clone any drone which is activate but not initialized.
+
+For all activate drones with the @code{remote} variable set@comma{}
+initialized or not@comma{} the specified git remote if not
+already added. New remotes which have been added
+this way will be fetched.
+
+If @code{remote.pushDefault} is set and equal to the name
+specified in a drones @code{remote} then the drone's
+pushDefault remote is set to @code{remote}.
+
+See: @ref{Patching drones}
+@end deffn
+
+@deffn Command checkout
+Checkout all active drones@comma{} do a hard reset for each drone.
+Note this will remove any uncommited changes. The git repository
+of the drone will be reset if the head doesn't match it's commit.
+@end deffn
+
 @deffn Command bootstrap
 This target attempts to bootstrap the drones.  To do so it runs
-@code{git submodule init}, @code{borg.sh} (which see), and @code{make build}.
+@code{git submodule init}@comma{} @code{make clone}@comma{} @code{make checkout}@comma{} and @code{make build}.
 
-If an error occurs during the @code{borg.sh} phase, then you can just run
-that command again to process the remaining drones.  The drones that
-have already been bootstrapped or that have previously failed will
-be skipped.  If a drone cannot be cloned from any of the known
-remotes, then you should temporarily remove it using @code{git submodule
-  deinit lib/DRONE}.  When done with @code{borg.sh} also manually run @code{make
-  build} again.
+If an error occurs during the @code{make clone} or @code{make checkout} phase@comma{}
+then you can just run that command again to process the remaining
+drones. The drones that have already been bootstrapped or that have
+previously failed will be skipped.  If a drone cannot be cloned
+from any of the known remotes@comma{} then you should temporarily remove
+it using @code{git submodule deinit lib/DRONE}.  When done
+with @code{make clone} and @code{make checkout} also manually run @code{make build} again.
 @end deffn
 
 @node Variables
@@ -854,10 +875,10 @@ remotes, then you should temporarily remove it using @code{git submodule
 
 @defvar borg.drones-directory DIRECTORY
 This Git variable can be used to override the name of the directory
-that contains the drone submodules.  If specified, the value has to
+that contains the drone submodules.  If specified@comma{} the value has to
 be relative to the top-level directory of the repository.
 
-Note that if you change the value of this variable, then you might
+Note that if you change the value of this variable@comma{} then you might
 have to additionally edit @code{~/.config/emacs/Makefile}.
 @end defvar
 
@@ -867,7 +888,7 @@ not be changed by the user.
 @defvar borg-drones-directory
 The value of this constant is the directory beneath which drone
 submodules are placed.  The value is set based on the location of
-the @code{borg} library and the Git variable @code{borg.drones-directory} if set,
+the @code{borg} library and the Git variable @code{borg.drones-directory} if set@comma{}
 and should not be changed.
 @end defvar
 
@@ -875,7 +896,7 @@ and should not be changed.
 The value of this constant is the directory beneath which additional
 per-user Emacs-specific files are placed.  The value is set based on
 the location of the @code{borg} library and should not be changed.  The
-value is usually the same as that of @code{user-emacs-directory}, except
+value is usually the same as that of @code{user-emacs-directory}@comma{} except
 when Emacs is started with @code{emacs -q -l /path/to/init.el}.
 @end defvar
 
@@ -897,33 +918,33 @@ file @code{~/.config/emacs/.gitmodules}.  The variables @code{borg.pushDefault} 
 @code{submodule.DRONE.remote} are described in @ref{Patching drones}.
 
 Because most repositories used to maintain Emacs packages follow some
-common-sense conventions, Borg usually does not have to be told how to
-build a given drone.  Building is done using @code{borg-build}, which in turn
-usually does its work using @code{borg-update-autoloads}, @code{borg-compile},
-@code{borg-maketexi}, and @code{borg-makeinfo}.
+common-sense conventions@comma{} Borg usually does not have to be told how to
+build a given drone.  Building is done using @code{borg-build}@comma{} which in turn
+usually does its work using @code{borg-update-autoloads}@comma{} @code{borg-compile}@comma{}
+@code{borg-maketexi}@comma{} and @code{borg-makeinfo}.
 
 However some packages don't follow the conventions either because they
-are too complex to do so, or for the sake of doing it differently.
+are too complex to do so@comma{} or for the sake of doing it differently.
 But in either case resistance is futile; by using the following
 variables you can tell Borg how to build such packages.
 
 @defvar submodule.DRONE.build-step COMMAND
 By default drones are built using the lisp functions
-@code{borg-update-autoloads}, @code{borg-compile}, @code{borg-maketexi}, and
-@code{borg-makeinfo}, but if this variable has one or more values, then
+@code{borg-update-autoloads}@comma{} @code{borg-compile}@comma{} @code{borg-maketexi}@comma{} and
+@code{borg-makeinfo}@comma{} but if this variable has one or more values@comma{} then
 DRONE is built using these COMMANDs @strong{instead}.
 
-Each COMMAND can be one of the default steps, an S-expression, or
+Each COMMAND can be one of the default steps@comma{} an S-expression@comma{} or
 a shell command.  The COMMANDs are executed in the specified order.
 
-If a COMMAND matches one of default steps, then it is evaluated with
+If a COMMAND matches one of default steps@comma{} then it is evaluated with
 the appropriate arguments.
 
-If a COMMAND begins with a parenthesis, then it is evaluated as
+If a COMMAND begins with a parenthesis@comma{} then it is evaluated as
 a lisp expression.  In that case the variable @code{borg-clone} holds
 the name of the package that is being build.  To make a function
-available in this context, you usually have to define or load it
-in @samp{etc/borg/config.el}, relative to @code{borg-user-emacs-directory}.
+available in this context@comma{} you usually have to define or load it
+in @samp{etc/borg/config.el}@comma{} relative to @code{borg-user-emacs-directory}.
 
 Otherwise COMMAND is assumed to be a shell command and is executed
 with @code{shell-command}.
@@ -939,9 +960,9 @@ with @code{shell-command}.
         load-path = mu4e
 @end example
 
-To skip generating "autoloads" (e.g., using @code{use-package} to create
-"autoloads" on the fly), just provide the required build steps to
-build the package, omitting @code{borg-update-autoloads}. Borg silently
+To skip generating "autoloads" (e.g.@comma{} using @code{use-package} to create
+"autoloads" on the fly)@comma{} just provide the required build steps to
+build the package@comma{} omitting @code{borg-update-autoloads}. Borg silently
 ignores a missing "autoloads" file during initialization
 (@code{borg-initialize}).
 
@@ -952,43 +973,43 @@ ignores a missing "autoloads" file during initialization
         build-step = borg-compile
 @end example
 
-Note that just because a package provides a @code{Makefile}, you do not
+Note that just because a package provides a @code{Makefile}@comma{} you do not
 necessarily have to use it.
 
-Even if @code{make} generates the Info file, you might still have to add
+Even if @code{make} generates the Info file@comma{} you might still have to add
 @code{borg-makeinfo} as an additional build-step because the former might
-not generate an Info index file (named @code{dir}), which Borg relies on.
+not generate an Info index file (named @code{dir})@comma{} which Borg relies on.
 
 Also see @code{borg.extra-build-step} below.
 @end defvar
 
 @defvar borg-build-shell-command
 This variable can be used to change how shell commands specified
-by @code{submodule.DRONE.build-step} are run.  The default value is @code{nil},
+by @code{submodule.DRONE.build-step} are run.  The default value is @code{nil}@comma{}
 meaning that each build step is run unchanged using @code{shell-command}.
 
-If the value is a string, then that is combined with each build step
+If the value is a string@comma{} then that is combined with each build step
 in turn and the results are run using @code{shell-command}.  This string
-must contain either %s, which is replaced with the unchanged build
-step, or %S, which is replaced with the result of quoting the build
+must contain either %s@comma{} which is replaced with the unchanged build
+step@comma{} or %S@comma{} which is replaced with the result of quoting the build
 step using @code{shell-quote-argument}.
 
-If the value is a function, then that is called once with the drone
+If the value is a function@comma{} then that is called once with the drone
 as argument and must return either a string or a function.  If the
-returned value is a string, then that is used as described above.
+returned value is a string@comma{} then that is used as described above.
 
-If the value returned by the first function is another function, then
+If the value returned by the first function is another function@comma{} then
 this second function is called for each build step with the drone and
 the build step as arguments.  It must return a string or @code{nil}.  If the
-returned value is a string, then that is used as described above.
+returned value is a string@comma{} then that is used as described above.
 
 Finally the second function may execute the build step at its own
 discretion and return @code{nil} to indicate that it has done so.
 
-Notice that if the value of this variable is a function, this
+Notice that if the value of this variable is a function@comma{} this
 function must a) be defined in a drone; and b) be registered as an
 autoload.  This is because build happens in a separate Emacs process
-started with @code{-Q --batch}, which only receives the name of the function.
+started with @code{-Q --batch}@comma{} which only receives the name of the function.
 @end defvar
 
 @defvar submodule.DRONE.load-path PATH
@@ -998,10 +1019,10 @@ instructs @code{borg-compile} to compile the libraries in that directory.
 PATH has to be relative to the top-level of the repository of the
 drone named DRONE@.  This variable can be specified multiple times.
 
-Normally Borg uses @code{elisp/} as the drone's @code{load-path}, if that exists;
-otherwise @code{lisp/}, if that exists; or else the top-level directory.
-If this variable is set, then it @emph{overrides} the default location.
-Therefore, to @emph{add} an additional directory, you also have to
+Normally Borg uses @code{elisp/} as the drone's @code{load-path}@comma{} if that exists;
+otherwise @code{lisp/}@comma{} if that exists; or else the top-level directory.
+If this variable is set@comma{} then it @emph{overrides} the default location.
+Therefore@comma{} to @emph{add} an additional directory@comma{} you also have to
 explicitly specify the default location.
 
 @example
@@ -1022,14 +1043,14 @@ the drone named DRONE@.  This variable can be specified multiple
 times.
 
 Sometimes a drone comes with an optional library which adds support
-for some other third-party package, which you don't want to use.
-For example @code{emacsql} comes with a PostgreSQL back-end, which is
-implemented in the library @code{emacsql-pg.el}, which requires the @code{pg}
-package.  The standard Borg collective @code{emacs.g} assimilates @code{emacsql},
-for the sake of the @code{epkg} drone, which only requires the SQLite
-back-end.  To avoid an error about @code{pg} not being available, @code{emacs.g}
+for some other third-party package@comma{} which you don't want to use.
+For example @code{emacsql} comes with a PostgreSQL back-end@comma{} which is
+implemented in the library @code{emacsql-pg.el}@comma{} which requires the @code{pg}
+package.  The standard Borg collective @code{emacs.g} assimilates @code{emacsql}@comma{}
+for the sake of the @code{epkg} drone@comma{} which only requires the SQLite
+back-end.  To avoid an error about @code{pg} not being available@comma{} @code{emacs.g}
 instructs Borg to not compile @code{emacsql-pg.el}.  (Of course if you want
-to use the PostgreSQL back-end and assimilate @code{pg}, then you should
+to use the PostgreSQL back-end and assimilate @code{pg}@comma{} then you should
 undo that.)
 @end defvar
 
@@ -1041,8 +1062,8 @@ than there are repositories that would benefit from doing so.
 
 Unfortunately many packages put problematic test files or (usually
 outdated) copies of third-party libraries into subdirectories.  The
-latter is a highly questionable thing to do, but the former would be
-perfectly fine, if only the non-library lisp files did not provide
+latter is a highly questionable thing to do@comma{} but the former would be
+perfectly fine@comma{} if only the non-library lisp files did not provide
 a feature (which effectively turns them into libraries) and/or if a
 file named @code{.nosearch} existed in the subdirectory.  That file tells
 functions such as @code{normal-top-level-add-subdirs-to-load-path} and
@@ -1051,11 +1072,11 @@ functions such as @code{normal-top-level-add-subdirs-to-load-path} and
 
 @defvar borg-compile-function
 The function used to compile each individual library.
-One of @code{byte-compile-file}, @code{borg-byte+native-compile} or
+One of @code{byte-compile-file}@comma{} @code{borg-byte+native-compile} or
 @code{borg-byte+native-compile-async}.
 
-To enable native compilation when running @code{make}, use one of the
-respective make targets, as described in @ref{Make targets}.
+To enable native compilation when running @code{make}@comma{} use one of the
+respective make targets@comma{} as described in @ref{Make targets}.
 @end defvar
 
 @defvar borg-compile-recursively
@@ -1070,15 +1091,15 @@ compilation.
 
 @defvar borg.extra-build-step COMMAND
 This variable instructs Borg to execute COMMAND after the default
-build-steps for each DRONE (or after @code{submodule.DRONE.build-step,} if
+build-steps for each DRONE (or after @code{submodule.DRONE.build-step@comma{}} if
 that specified).  It has to be set in @code{borg-gitmodules-file} and can
 have multiple values.
 
-If a COMMAND begins with a parenthesis, then it is evaluated as
+If a COMMAND begins with a parenthesis@comma{} then it is evaluated as
 a lisp expression.  In that case the variable @code{borg-clone} holds
 the name of the package that is being build.  To make a function
-available in this context, you usually have to define or load it
-in @samp{etc/borg/config.el}, relative to @code{borg-user-emacs-directory}.
+available in this context@comma{} you usually have to define or load it
+in @samp{etc/borg/config.el}@comma{} relative to @code{borg-user-emacs-directory}.
 
 Otherwise COMMAND is assumed to be a shell command and is executed
 with @code{shell-command}.
@@ -1105,7 +1126,7 @@ specified multiple times.
 @end defvar
 
 @defvar submodule.DRONE.disabled true|false
-If the value of this variable is @code{true}, then it is skipped by
+If the value of this variable is @code{true}@comma{} then it is skipped by
 @code{borg-initialize}.
 @end defvar
 
@@ -1125,7 +1146,7 @@ Setting this to @code{nil} disables the export of any Org files.
 @chapter Low-level functions
 
 You normally should not have to use the following low-level functions
-directly.  That being said, you might want to do so anyway if you
+directly.  That being said@comma{} you might want to do so anyway if you
 build your own tools on top of Borg.
 
 @defun borg-worktree clone
@@ -1136,22 +1157,22 @@ clone named CLONE@.
 @defun borg-gitdir clone
 This function returns the Git directory of the clone named CLONE@.
 
-It always returns @code{BORG-USER-EMACS-DIRECTORY/.git/modules/CLONE}, even
+It always returns @code{BORG-USER-EMACS-DIRECTORY/.git/modules/CLONE}@comma{} even
 when CLONE's Git directory is actually located inside the working
 tree.
 @end defun
 
 @defmac borg-do-drones (var [result]) body@dots{})
 This macro loop over drones.  BODY is evaluated with VAR bound to
-each drone, in turn.  Inside BODY variables set in @code{.gitmodules} are
-cached.  Then RESULT is evaluated to get the return value,
+each drone@comma{} in turn.  Inside BODY variables set in @code{.gitmodules} are
+cached.  Then RESULT is evaluated to get the return value@comma{}
 defaulting to nil.
 @end defmac
 
 @defun borg-get clone variable &optional all
 This function returns the value of the Git variable
 @code{submodule.CLONE.VARIABLE} defined in @code{~/.config/emacs/.gitmodules}.
-If optional ALL is non-nil, then it returns all values as a list.
+If optional ALL is non-nil@comma{} then it returns all values as a list.
 @end defun
 
 @defun borg-get-all clone variable
@@ -1168,7 +1189,7 @@ This function returns the @code{load-path} for the clone named CLONE@.
 This function returns the @code{Info-directory-list} for the clone named
 CLONE@.
 
-If optional SETUP is non-nil, then it returns a list of directories
+If optional SETUP is non-nil@comma{} then it returns a list of directories
 containing @code{texi} and/or @code{info} files.  Otherwise it returns a list of
 directories containing a file named @code{dir}.
 @end defun
@@ -1176,15 +1197,15 @@ directories containing a file named @code{dir}.
 @defun borg-dronep name
 This function returns non-nil if a drone named NAME exists.
 
-If that is set in @code{.gitmodules}, then it returns the value of
-@code{submodule.NAME.path}, nil otherwise.
+If that is set in @code{.gitmodules}@comma{} then it returns the value of
+@code{submodule.NAME.path}@comma{} nil otherwise.
 @end defun
 
 @defun borg-drones &optional include-variables
 This function returns a list of all assimilated drones.
 
 The returned value is a list of the names of the assimilated
-drones, unless optional INCLUDE-VARIABLES is non-nil, in which
+drones@comma{} unless optional INCLUDE-VARIABLES is non-nil@comma{} in which
 case elements of the returned list have the form @code{(NAME . ALIST)}.
 
 ALIST is an association list.  Property names are symbols
@@ -1196,27 +1217,27 @@ INCLUDE-VARIABLES is @code{raw} then all values are lists.  Otherwise a
 property value is only a list if the corresponding property name is
 a member of @code{borg--multi-value-variables}.  If a property name isn't
 a member of @code{borg--multi-value-variables} but it does have multiple
-values anyway, then it is undefined with value is included in the
+values anyway@comma{} then it is undefined with value is included in the
 returned value.
 @end defun
 
 @defun borg-clones
 This function returns a list of all cloned packages.
 
-The returned value includes the names of all drones, as well as the
+The returned value includes the names of all drones@comma{} as well as the
 names of all other repositories that are located directly inside
 @code{borg-drones-directory} but aren't tracked as submodules.
 @end defun
 
 @defun borg-read-package prompt &optional edit-url
 This function reads a package name and the url of its upstream
-repository from the user, and returns them as a list.
+repository from the user@comma{} and returns them as a list.
 
-When the @code{epkg} package is available, then the user is only prompted
-for the name of the package, and the upstream url is retrieved from
+When the @code{epkg} package is available@comma{} then the user is only prompted
+for the name of the package@comma{} and the upstream url is retrieved from
 the Epkg database.  If the package isn't in the database then the
 url has to be provided by the user.  If optional EDIT-URL is
-non-nil, then the url from the database, if any, is provided as
+non-nil@comma{} then the url from the database@comma{} if any@comma{} is provided as
 initial input for the user to edit.
 
 PROMPT is used when prompting for the package name.
@@ -1226,7 +1247,7 @@ PROMPT is used when prompting for the package name.
 This function reads the name of a cloned package from the user.
 @end defun
 
-There exist a few more functions, but those are considered to be
+There exist a few more functions@comma{} but those are considered to be
 internal and might therefore change in incompatible ways without that
 being noted in the change log.
 
