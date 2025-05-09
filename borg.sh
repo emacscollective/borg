@@ -7,7 +7,7 @@
 
 script=$(basename $0)
 USAGE="$script clone [<drone>...]
-   or: $script checkout [--reset-hard] [<drone>...]"
+   or: $script checkout [--force] [<drone>...]"
 OPTIONS_SPEC=
 SUBDIRECTORY_OK=Yes
 . "$(git --exec-path)/git-sh-setup"
@@ -25,7 +25,7 @@ usage() { die "usage: $USAGE"; }
 super=$(pwd)
 command=
 path=
-reset_hard=1
+force=
 
 module_name () {
     git config -f .gitmodules --list |
@@ -175,26 +175,24 @@ checkout () {
         cd "$path"
 
         head=$(git rev-parse HEAD)
-        if [ "$head" != "$hash" ]
+        branch=$(git symbolic-ref HEAD 2> /dev/null)
+        if [ -n "$branch" ] && [ -z "$force" ]
         then
-            if [ -z "$reset_hard" ]
+            echo "Skipping $path (HEAD no longer detached)"
+            echo "    HEAD: $head"
+            echo "expected: $hash"
+        elif [ -n "$(git status --porcelain=v1 --ignored)" ]
+        then
+            echo "Skipping $path (uncommitted changes)"
+            echo "    HEAD: $head"
+            echo "expected: $hash"
+            git status --porcelain=v1 --ignored
+        else
+            echo "Checkout $path ($hash)"
+            echo "HEAD was $(git log --no-walk --format='%h %s' HEAD)"
+            if ! git reset --hard "$hash"
             then
-                echo "Skipping $path (--reset-hard not specified)"
-                echo "    HEAD: $head"
-                echo "expected: $hash"
-            elif [ -n "$(git status --porcelain=v1 --ignored)" ]
-            then
-                echo "Skipping $path (due to uncommitted changes)"
-                echo "    HEAD: $head"
-                echo "expected: $hash"
-                git status --porcelain=v1 --ignored
-            else
-                echo "Checkout $path ($hash)"
-                echo "HEAD was $(git log --no-walk --format='%h %s' HEAD)"
-                if ! git reset --hard "$hash"
-                then
-                    echo "Checkout of '$hash' into submodule path '$path' failed"
-                fi
+                echo "Checkout of '$hash' into submodule path '$path' failed"
             fi
         fi
     fi
@@ -227,7 +225,7 @@ cmd_checkout () {
     while [ $# -ne 0 ]
     do
         case "$1" in
-        --reset-hard) reset_hard=1 ;;
+        --force) force=1 ;;
         --) shift; break;;
         -*) usage;;
         *)  break;;
