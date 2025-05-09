@@ -57,7 +57,7 @@ clone () {
     else
         if [ ! -e "$path"/.git ]
         then
-            url=$(git config --includes -f .gitmodules submodule.$name.url)
+            url=$(git config submodule.$name.url)
             args=
             rename=
             echo "Cloning $path from origin ($url)"
