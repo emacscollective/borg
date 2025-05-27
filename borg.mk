@@ -185,7 +185,7 @@ bootstrap:
 	$(Q)printf "\n=== Running '$(BORG_DIR)borg.sh clone' ===\n"
 	$(Q)$(BORG_DIR)borg.sh clone
 	$(Q)printf "\n=== Running '$(BORG_DIR)borg.sh checkout' ===\n"
-	$(Q)$(BORG_DIR)borg.sh checkout --reset-hard
+	$(Q)$(BORG_DIR)borg.sh checkout
 	$(Q)printf "\n=== Running 'make build' ===\n\n"
 	$(Q)$(MAKE) build
 	$(Q)printf "\n=== Bootstrapping finished ===\n\n"

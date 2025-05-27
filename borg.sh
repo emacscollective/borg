@@ -7,7 +7,7 @@
 
 script=$(basename $0)
 USAGE="$script clone [<drone>...]
-   or: $script checkout [--reset-hard] [<drone>...]"
+   or: $script checkout [<drone>...]"
 OPTIONS_SPEC=
 SUBDIRECTORY_OK=Yes
 . "$(git --exec-path)/git-sh-setup"
@@ -25,7 +25,6 @@ usage() { die "usage: $USAGE"; }
 super=$(pwd)
 command=
 path=
-reset_hard=1
 
 module_name () {
     git config -f .gitmodules --list |
@@ -177,12 +176,7 @@ checkout () {
         head=$(git rev-parse HEAD)
         if [ "$head" != "$hash" ]
         then
-            if [ -z "$reset_hard" ]
-            then
-                echo "Skipping $path (--reset-hard not specified)"
-                echo "    HEAD: $head"
-                echo "expected: $hash"
-            elif [ -n "$(git status --porcelain=v1 --ignored)" ]
+            if [ -n "$(git status --porcelain=v1 --ignored)" ]
             then
                 echo "Skipping $path (due to uncommitted changes)"
                 echo "    HEAD: $head"
@@ -227,7 +221,6 @@ cmd_checkout () {
     while [ $# -ne 0 ]
     do
         case "$1" in
-        --reset-hard) reset_hard=1 ;;
         --) shift; break;;
         -*) usage;;
         *)  break;;
