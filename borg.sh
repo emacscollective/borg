@@ -174,21 +174,32 @@ checkout () {
         cd "$path"
 
         head=$(git rev-parse HEAD)
-        if [ "$head" != "$hash" ]
+        branch=$(git symbolic-ref --short HEAD 2> /dev/null || true)
+        upstream=$(git rev-parse --verify --abbrev-ref $branch@{u} 2> /dev/null || true)
+        if [ "$hash" = "$head" ]
         then
-            if [ -n "$(git status --porcelain=v1 --ignored)" ]
+            echo "ok"
+        elif [ "$name" = "borg" ]
+        then
+            echo "Skipping $path (always using latest/checked out borg)"
+            echo "    HEAD: $head"
+            echo "expected: $hash"
+        elif [ -n "$(git status --porcelain=v1 --ignored)" ]
+        then
+            echo "Skipping $path (uncommitted changes)"
+            echo "    HEAD: $head"
+            echo "expected: $hash"
+        elif ! git diff --quiet "$head" "$upstream"
+        then
+            echo "Skipping $path (tip no longer matches upstream)"
+            echo "    HEAD: $head"
+            echo "expected: $hash"
+        else
+            echo "Checkout $path ($hash)"
+            echo "HEAD was $(git log --no-walk --format='%h %s' HEAD)"
+            if ! git reset --hard "$hash"
             then
-                echo "Skipping $path (due to uncommitted changes)"
-                echo "    HEAD: $head"
-                echo "expected: $hash"
-                git status --porcelain=v1 --ignored
-            else
-                echo "Checkout $path ($hash)"
-                echo "HEAD was $(git log --no-walk --format='%h %s' HEAD)"
-                if ! git reset --hard "$hash"
-                then
-                    echo "Checkout of '$hash' into submodule path '$path' failed"
-                fi
+                echo "Checkout of '$hash' into submodule path '$path' failed"
             fi
         fi
     fi
