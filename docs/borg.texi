@@ -837,16 +837,48 @@ This target bootstraps @code{borg} itself.
 @end deffn
 
 @deffn Command bootstrap
-This target attempts to bootstrap the drones.  To do so it runs
-@code{git submodule init}, @code{borg.sh} (which see), and @code{make build}.
+This target attempts to bootstrap all drones.  To do so it runs @code{git
+  submodule init}, @code{make clone-modules}, @code{make checkout-modules} and @code{make
+  build}.
 
-If an error occurs during the @code{borg.sh} phase, then you can just run
-that command again to process the remaining drones.  The drones that
-have already been bootstrapped or that have previously failed will
-be skipped.  If a drone cannot be cloned from any of the known
-remotes, then you should temporarily remove it using @code{git submodule
-  deinit lib/DRONE}.  When done with @code{borg.sh} also manually run @code{make
-  build} again.
+If an error occurs during one of these steps, then you can just run
+the target that failed (and the subsequent targets) again to process
+the remaining drones.  Doing so does not discard any local changes,
+such as uncommitted changes, new commits, or the effect of manually
+checking out some other commit.
+
+If a drone cannot be cloned from any of the known remotes, then you
+can temporarily ignore it using @code{git submodule deinit lib/DRONE}.
+
+If you have run @code{make clone-modules} and/or @code{make checkout-modules}
+manually, then make sure to finish by running @code{make build} again too.
+@end deffn
+
+@deffn Command clone-modules
+This target attempts to clone all modules that were initialized by
+@code{git submodule init} and which the user did not explicitly deactivate
+afterwards, either by de-initializing it again (@code{git submodule deinit
+  lib/DRONE}) or by setting @code{submodule.DRONE.active} to @code{false}.
+
+This may fail, for example, if the URL of the remote repository has
+changed.  If that happens, you can update the URL, and then run this
+command again.  Already cloned modules are skipped on reruns.
+
+Alternatively drones can be cloned individual using @code{lib/borg/borg.sh
+  clone DRONE}.
+@end deffn
+
+@deffn Command checkout-modules
+This target attempts to checkout commits recorded for all modules,
+which were successfully cloned by @code{make clone-modules}, while also
+trying to check out the recorded commit.
+
+It is safe to rerun this target.  Doing so does not discard any
+local changes, such as uncommitted changes, new commits, or the
+effect of manually checking out some other commit.
+
+Alternatively drones can be checked out individual using
+@code{lib/borg/borg.sh checkout DRONE}.
 @end deffn
 
 @node Variables

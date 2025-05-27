@@ -33,7 +33,8 @@ EMACS_ARGUMENTS ?= -Q --batch
 EMACS_EXTRA ?=
 
 .PHONY: help helpall clean build native quick-clean quick-build quick \
-        init-clean init-build bootstrap bootstrap-borg
+	init-clean init-build bootstrap-borg bootstrap \
+	clone-modules checkout-modules
 .FORCE:
 
 SILENCIO += --eval "(progn (require 'gv) (put 'buffer-substring 'byte-obsolete-generalized-variable nil))"
@@ -182,11 +183,17 @@ endif
 bootstrap:
 	$(Q)printf "\n=== Running 'git submodule init' ===\n\n"
 	$(Q)git submodule init
-	$(Q)printf "\n=== Running '$(BORG_DIR)borg.sh clone' ===\n"
-	$(Q)$(BORG_DIR)borg.sh clone
-	$(Q)printf "\n=== Running '$(BORG_DIR)borg.sh checkout' ===\n"
-	$(Q)$(BORG_DIR)borg.sh checkout
+	$(Q)printf "\n=== Running 'make clone-modules' ===\n"
+	$(Q)$(MAKE) clone-modules
+	$(Q)printf "\n=== Running 'make checkout-modules' ===\n"
+	$(Q)$(MAKE) checkout-modules
 	$(Q)printf "\n=== Running 'make build' ===\n\n"
 	$(Q)$(MAKE) build
 	$(Q)printf "\n=== Bootstrapping finished ===\n\n"
 	$(Q)git submodule status
+
+clone-modules:
+	$(Q)$(BORG_DIR)borg.sh clone
+
+checkout-modules:
+	$(Q)$(BORG_DIR)borg.sh checkout
