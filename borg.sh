@@ -49,9 +49,11 @@ clone () {
     push_remote=$(git config --includes -f .gitmodules remote.pushDefault || true)
     push_match=$(git config --includes -f .gitmodules --get-all remote.pushMatch || true)
 
-    if [ "$(git config submodule.$name.active)" != true ]
+    # Unlike is_tree_submodule_active, ignore value of submodule.active.
+    if [ "$(git config --get --type=bool --default=true submodule.$name.active)" \
+         = false -o -z "$(git config --get submodule.$name.url)" ]
     then
-        echo "Skipping $path (not initialized)"
+        echo "Skipping $path (not activated)"
     else
         if [ ! -e "$path"/.git ]
         then
@@ -151,8 +153,6 @@ clone () {
                     esac
                 done
             fi
-        else
-            git config submodule.$name.active false
         fi
     fi
     echo
@@ -168,9 +168,9 @@ checkout () {
     name=$(module_name "$path")
     hash=$(module_hash "$path")
 
-    if [ "$(git config submodule.$name.active)" != "true" ]
+    if [ ! -e "$path"/.git ]
     then
-        echo "Skipping $path (submodule inactive)"
+        echo "Skipping $path (not populated)"
     else
         cd "$path"
 
