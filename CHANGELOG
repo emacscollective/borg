@@ -1,4 +1,12 @@
 # -*- mode: org -*-
+* v4.2.0    2025-06-01
+
+- Made it safer to rerun ~make bootstrap~ or parts thereof.  cd95c7c
+
+- Added make targets ~checkout-module~ and ~clone-modules~, making it
+  more convenient to rerun just parts of the bootstrapping process.
+  746d6cc
+
 * v4.1.5    2025-04-28
 
 - Fixed bug in bootstrapping script.  #171
