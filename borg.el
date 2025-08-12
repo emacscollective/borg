@@ -755,6 +755,23 @@ and optional NATIVE are both non-nil, then also compile natively."
           (remove '(" --?o\\(?:utfile\\|utput\\)?[= ]\\(\\S +\\)" . 1)
                   compilation-mode-font-lock-keywords)))
 
+(defmacro borg--silence-loaddefs-generate (bodyform)
+  (declare (indent 0))
+  `(unwind-protect
+       (progn
+         ;; Suppress "  INFO     Scraping N files for loaddefs":
+         (advice-add 'progress-reporter-do-update :override #'ignore)
+         (advice-add 'progress-reporter-done :override #'ignore)
+         ;; Suppress "  GEN      NAME-autoloads.el":
+         (advice-add 'byte-compile-info :around
+                     (lambda (fn string &optional _message type)
+                       (funcall fn string nil type))
+                     '((name . "no-message")))
+         ,bodyform)
+      (advice-remove 'progress-reporter-do-update #'ignore)
+      (advice-remove 'progress-reporter-done #'ignore)
+      (advice-remove 'byte-compile-info "no-message")))
+
 (defun borg-update-autoloads (clone &optional path)
   "Update autoload files for the clone named CLONE in the directories in PATH."
   (let* ((path (borg--expand-load-path clone path))
@@ -771,26 +788,17 @@ and optional NATIVE are both non-nil, then also compile natively."
     (message " Creating %s..." file)
     (static-if (require 'loaddefs-gen nil t)
         ;; Stay close to what `package-generate-autoloads' does.
-        (cl-letf*
-            ;; Suppress "Scraping files for loaddefs" and
-            ;; "  GEN      NAME-autoloads.el" messages.
-            (((symbol-function 'progress-reporter-do-update) (lambda (&rest _)))
-             ((symbol-function 'progress-reporter-done) (lambda (_)))
-             ((symbol-function 'borg--byte-compile-info)
-              (symbol-function 'byte-compile-info))
-             ((symbol-function 'byte-compile-info)
-              (lambda (string &optional _message type)
-                (with-no-warnings
-                  (borg--byte-compile-info string nil type)))))
-          (loaddefs-generate
-           path file excludes
-           ;; Same kludge as used in `package-generate-autoloads'.
-           (prin1-to-string
-            '(add-to-list 'load-path
-                          (or (and load-file-name
-                                   (directory-file-name
-                                    (file-name-directory load-file-name)))
-                              (car load-path)))))
+        (progn
+          (borg--silence-loaddefs-generate
+            (loaddefs-generate
+             path file excludes
+             ;; Same kludge as used in `package-generate-autoloads'.
+             (prin1-to-string
+              '(add-to-list 'load-path
+                            (or (and load-file-name
+                                     (directory-file-name
+                                      (file-name-directory load-file-name)))
+                                (car load-path))))))
           (when-let ((buf (find-buffer-visiting file)))
             (kill-buffer buf)))
 
@@ -808,8 +816,7 @@ and optional NATIVE are both non-nil, then also compile natively."
             (write-region (and (functionp 'autoload-rubric)
                                (autoload-rubric file "package" nil))
                           nil file nil 'silent)))
-        (cl-letf (((symbol-function 'progress-reporter-do-update) (lambda (&rest _)))
-                  ((symbol-function 'progress-reporter-done) (lambda (_))))
+        (borg--silence-loaddefs-generate
           (let ((generated-autoload-file file))
             (apply 'update-directory-autoloads path))))
       (when-let ((buf (find-buffer-visiting file)))
