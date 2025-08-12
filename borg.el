@@ -782,14 +782,7 @@ and optional NATIVE are both non-nil, then also compile natively."
                                  (directory-file-name
                                   (file-name-directory load-file-name)))
                             (car load-path)))))))
-     ((let (;; This defaults to `nil' on Emacs 26 through 28, there
-            ;; is no need to double down on the default, and by not
-            ;; doing that, we avoid a warning on Emacs 25.
-            ;; (autoload-timestamps nil)
-            (backup-inhibited t)
-            ;; On Emacs 25 this causes "Making version-control local
-            ;; to NAME-autoloads.el while let-bound!" warnings, but
-            ;; I believe those are harmless.
+     ((let ((backup-inhibited t)
             (version-control 'never)
             (noninteractive t)
             (autoload-excludes
