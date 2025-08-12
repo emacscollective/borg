@@ -52,6 +52,17 @@
 (require 'pcase)
 (require 'subr-x)
 
+(defmacro static-if (condition then-form &rest else-forms) ; since Emacs 30.1
+  "A conditional compilation macro.
+Evaluate CONDITION at macro-expansion time.  If it is non-nil,
+expand the macro to THEN-FORM.  Otherwise expand it to ELSE-FORMS
+enclosed in a `progn' form.  ELSE-FORMS may be empty."
+  (declare (indent 2)
+           (debug (sexp sexp &rest sexp)))
+  (if (eval condition lexical-binding)
+      then-form
+    (cons 'progn else-forms)))
+
 (unless (require 'loaddefs-gen nil t)
   (with-suppressed-warnings ((obsolete autoload))
     (require 'autoload)))
