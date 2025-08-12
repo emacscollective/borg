@@ -63,11 +63,9 @@ enclosed in a `progn' form.  ELSE-FORMS may be empty."
       then-form
     (cons 'progn else-forms)))
 
-(unless (require 'loaddefs-gen nil t)
-  (with-suppressed-warnings ((obsolete autoload))
-    (require 'autoload)))
-(defvar generated-autoload-file)
-(defvar autoload-excludes)
+(static-if (require 'loaddefs-gen nil t)
+    (require 'loaddefs-gen)
+  (require 'autoload))
 
 (declare-function eieio-oref "eieio-core" (obj slot))
 (declare-function epkg "epkg" (name))
@@ -771,29 +769,33 @@ and optional NATIVE are both non-nil, then also compile natively."
                              (expand-file-name (concat clone "-tests.el") dir)))
                      path))))
     (message " Creating %s..." file)
-    ;; Stay close to what `package-generate-autoloads' does.
-    (cond
-     ((functionp 'loaddefs-generate)
-      ;; Suppress "Scraping files for loaddefs" and
-      ;; "  GEN      NAME-autoloads.el" messages.
-      (cl-letf* (((symbol-function 'progress-reporter-do-update) (lambda (&rest _)))
-                 ((symbol-function 'progress-reporter-done) (lambda (_)))
-                 ((symbol-function 'borg--byte-compile-info)
-                  (symbol-function 'byte-compile-info))
-                 ((symbol-function 'byte-compile-info)
-                  (lambda (string &optional _message type)
-                    (with-no-warnings
-                      (borg--byte-compile-info string nil type)))))
-        (loaddefs-generate
-         path file excludes
-         ;; Same kludge as used in `package-generate-autoloads'.
-         (prin1-to-string
-          '(add-to-list 'load-path
-                        (or (and load-file-name
-                                 (directory-file-name
-                                  (file-name-directory load-file-name)))
-                            (car load-path)))))))
-     ((let ((backup-inhibited t)
+    (static-if (require 'loaddefs-gen nil t)
+        ;; Stay close to what `package-generate-autoloads' does.
+        (cl-letf*
+            ;; Suppress "Scraping files for loaddefs" and
+            ;; "  GEN      NAME-autoloads.el" messages.
+            (((symbol-function 'progress-reporter-do-update) (lambda (&rest _)))
+             ((symbol-function 'progress-reporter-done) (lambda (_)))
+             ((symbol-function 'borg--byte-compile-info)
+              (symbol-function 'byte-compile-info))
+             ((symbol-function 'byte-compile-info)
+              (lambda (string &optional _message type)
+                (with-no-warnings
+                  (borg--byte-compile-info string nil type)))))
+          (loaddefs-generate
+           path file excludes
+           ;; Same kludge as used in `package-generate-autoloads'.
+           (prin1-to-string
+            '(add-to-list 'load-path
+                          (or (and load-file-name
+                                   (directory-file-name
+                                    (file-name-directory load-file-name)))
+                              (car load-path)))))
+          (when-let ((buf (find-buffer-visiting file)))
+            (kill-buffer buf)))
+
+      ;; For Emacs < 29.1.
+      (let ((backup-inhibited t)
             (version-control 'never)
             (noninteractive t)
             (autoload-excludes
@@ -809,9 +811,9 @@ and optional NATIVE are both non-nil, then also compile natively."
         (cl-letf (((symbol-function 'progress-reporter-do-update) (lambda (&rest _)))
                   ((symbol-function 'progress-reporter-done) (lambda (_))))
           (let ((generated-autoload-file file))
-            (apply 'update-directory-autoloads path))))))
-    (when-let ((buf (find-buffer-visiting file)))
-      (kill-buffer buf))))
+            (apply 'update-directory-autoloads path))))
+      (when-let ((buf (find-buffer-visiting file)))
+        (kill-buffer buf)))))
 
 (defun borg-compile (clone &optional path)
   "Compile libraries for the clone named CLONE in the directories in PATH."
