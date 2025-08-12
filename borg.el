@@ -787,12 +787,12 @@ and optional NATIVE are both non-nil, then also compile natively."
                      path))))
     (message " Creating %s..." file)
     (static-if (require 'loaddefs-gen nil t)
-        ;; Stay close to what `package-generate-autoloads' does.
+        ;; Stay close to what `package-generate-autoloads' does,
+        ;; but do not bind variables that make no difference.
         (progn
           (borg--silence-loaddefs-generate
             (loaddefs-generate
              path file excludes
-             ;; Same kludge as used in `package-generate-autoloads'.
              (prin1-to-string
               '(add-to-list 'load-path
                             (or (and load-file-name
