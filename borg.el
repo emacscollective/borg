@@ -87,13 +87,6 @@
   (cl-pushnew 'url eieio--known-slot-names)
   (cl-pushnew 'mirror-url eieio--known-slot-names))
 
-(define-obsolete-variable-alias 'borg-drone-directory
-  'borg-drones-directory "Borg 3.2.0")
-(define-obsolete-variable-alias 'borg-byte-compile-recursively
-  'borg-compile-recursively "Borg 3.3.0")
-(define-obsolete-function-alias 'borg-byte-compile
-  #'borg-compile "Borg 3.3.0")
-
 ;;; Variables
 
 (defvar borg-drones-directory)
@@ -1182,7 +1175,7 @@ Formatting is according to the commit message conventions."
 ;;; Integrations
 
 (defun borg-propertize-module-path (path)
-  (and (file-in-directory-p (expand-file-name path) borg-drone-directory)
+  (and (file-in-directory-p (expand-file-name path) borg-drones-directory)
        (borg--drone-disabled-p (file-name-nondirectory path))
        (propertize path 'face 'font-lock-warning-face)))
 
