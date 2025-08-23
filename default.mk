@@ -7,7 +7,8 @@ ELS  += $(PKG)-elpa.el
 ELCS  = $(ELS:.el=.elc)
 
 # Optional:
-DEPS  = epkg/lisp
+DEPS  = cond-let
+DEPS += epkg/lisp
 DEPS += magit/lisp
 
 DOMAIN      ?= emacsmirror.net
