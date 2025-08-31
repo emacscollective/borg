@@ -83,6 +83,8 @@ enclosed in a `progn' form.  ELSE-FORMS may be empty."
 (declare-function org-texinfo-export-to-texinfo "ox-texinfo"
                   (&optional async subtreep visible-only body-only ext-plist))
 
+(defvar inhibit-message-regexps) ; added in Emacs 29.1
+
 (defvar byte+native-compile) ; for Emacs 27
 (defvar comp-files-queue)    ; for Emacs 27
 (defvar native-comp-eln-load-path)
@@ -440,17 +442,6 @@ to variable `borg-rewrite-urls-alist' (which see)."
   "Read the name of a cloned package, prompting with PROMPT."
   (require 'epkg nil t)
   (completing-read prompt (borg-clones) nil t nil 'epkg-package-history))
-
-(defmacro borg-silencio (regexp &rest body)
-  "Execute the forms in BODY while silencing messages that don't match REGEXP."
-  (declare (indent 1))
-  (let ((msg (make-symbol "msg")))
-    `(let ((,msg (symbol-function 'message)))
-       (cl-letf (((symbol-function 'message)
-                  (lambda (format-string &rest args)
-                    (unless (string-match-p ,regexp format-string)
-                      (apply ,msg format-string args)))))
-         ,@body))))
 
 ;;; Activation
 
@@ -1007,13 +998,15 @@ doesn't do anything."
                       (borg--file-tracked-p info))
             (let ((cmd (format "makeinfo --no-split %s -o %s" texi info)))
               (message "  Running `%s'..." cmd)
-              (borg-silencio "\\`(Shell command succeeded with %s)\\'"
+              (let ((inhibit-message-regexps
+                     '("(Shell command succeeded with %s)")))
                 (shell-command cmd))
               (message "  Running `%s'...done" cmd))))))
     (dolist (info (directory-files default-directory nil "\\.info\\'"))
       (let ((cmd (format "install-info %s --dir=dir" info)))
         (message "  Running `%s'..." cmd)
-        (borg-silencio "\\`(Shell command succeeded with %s)\\'"
+        (let ((inhibit-message-regexps
+               '("(Shell command succeeded with %s)")))
           (shell-command cmd))
         (message "  Running `%s'...done" cmd)))))
 
