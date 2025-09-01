@@ -1,4 +1,8 @@
 # -*- mode: org -*-
+* v4.2.1    2025-09-01
+
+Thoughts and whitespace.
+
 * v4.2.0    2025-06-01
 
 - Made it safer to rerun ~make bootstrap~ or parts thereof.  cd95c7c
