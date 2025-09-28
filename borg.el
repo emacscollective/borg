@@ -778,7 +778,8 @@ and optional NATIVE are both non-nil, then also compile natively."
     (message " Creating %s..." file)
     (static-if (require 'loaddefs-gen nil t)
         ;; Stay close to what `package-generate-autoloads' does,
-        ;; but do not bind variables that make no difference.
+        ;; but do not bind variables that make no difference and
+        ;; fully re-generate the file.
         (progn
           (borg--silence-loaddefs-generate
             (loaddefs-generate
@@ -788,7 +789,8 @@ and optional NATIVE are both non-nil, then also compile natively."
                             (or (and load-file-name
                                      (directory-file-name
                                       (file-name-directory load-file-name)))
-                                (car load-path))))))
+                                (car load-path))))
+             nil t))
           (when-let ((buf (find-buffer-visiting file)))
             (kill-buffer buf)))
 
