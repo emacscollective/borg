@@ -801,8 +801,8 @@ those are the drones that take longer to build.
   changed.  If that happens, you can update the URL, and then run this
   command again.  Already cloned modules are skipped on reruns.
 
-  Alternatively drones can be cloned individual using ~lib/borg/borg.sh
-  clone DRONE~.
+  Alternatively drones can be cloned individually, using
+  ~lib/borg/borg.sh clone DRONE~.
 
 - Command: checkout-modules ::
 
@@ -814,7 +814,7 @@ those are the drones that take longer to build.
   local changes, such as uncommitted changes, new commits, or the
   effect of manually checking out some other commit.
 
-  Alternatively drones can be checked out individual using
+  Alternatively drones can be checked out individually, using
   ~lib/borg/borg.sh checkout DRONE~.
 
 * Variables
