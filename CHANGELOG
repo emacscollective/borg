@@ -1,5 +1,5 @@
 # -*- mode: org -*-
-* v4.2.2    UNRELEASED
+* v4.2.2    2025-10-06
 
 - Autoload files are now always recreated from scratch because merely
   updating them, as implemented in ~loaddefs-generate,~ is unreliable.
