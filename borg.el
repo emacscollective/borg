@@ -555,7 +555,10 @@ otherwise."
                (message "Skipped (Requires Emacs >= %s)" min))))
        ((not (file-exists-p dir))
         (message "Skipped (Missing)"))
-       ((directory-empty-p dir)
+       ((and (file-directory-p dir)
+             (null (directory-files
+                    dir nil directory-files-no-dot-files-regexp t 1)))
+        ;; Aka directory-empty-p, added in Emacs 28.1.
         (message "Skipped (Empty directory)"))
        ((and quick (borg-get-all drone "build-step"))
         (message "Skipped (Expensive to build)"))
