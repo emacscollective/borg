@@ -23,7 +23,7 @@ help:
 	$(info make clean        - remove most generated files)
 	@printf "\n"
 
-lisp: $(ELCS) loaddefs check-declare
+lisp: $(ELCS) autoloads check-declare
 redo: clean-lisp lisp
 
 docs:
@@ -58,7 +58,7 @@ clean-lisp:
 clean-docs:
 	@$(MAKE) -C docs clean
 
-loaddefs: $(PKG)-autoloads.el
+autoloads: $(PKG)-autoloads.el
 
 %.elc: %.el
 	@printf "Compiling $<\n"
@@ -71,7 +71,7 @@ check-declare:
 
 $(PKG)-autoloads.el: $(ELS)
 	@printf " Creating $@\n"
-	@$(EMACS) -Q --batch -l autoload -l cl-lib --eval "\
+	@$(EMACS) -Q --batch -l autoload --eval "\
 (let* ((file (expand-file-name \"$@\"))\
        (generated-autoload-file file)\
        (coding-system-for-write 'utf-8-emacs-unix)\
