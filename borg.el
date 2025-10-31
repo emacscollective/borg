@@ -812,7 +812,7 @@ and optional NATIVE are both non-nil, then also compile natively."
         (with-temp-buffer
           (let ((coding-system-for-write 'utf-8-emacs-unix))
             (write-region (and (functionp 'autoload-rubric)
-                               (autoload-rubric file "package" nil))
+                               (autoload-rubric file "package" t))
                           nil file nil 'silent)))
         (borg--silence-loaddefs-generate
           (let ((generated-autoload-file file))
