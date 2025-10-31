@@ -949,12 +949,8 @@ and optional NATIVE are both non-nil, then also compile natively."
 Export each file located on `borg-info-path' if its name matches
 `borg-maketexi-filename-regexp' and the `TEXINFO_DIR_HEADER'
 export keyword is set in its content.  If optional FILES is
-non-nil, then try those files instead.  On Emacs 25 this function
-doesn't do anything."
-  ;; ... because turning on `org-mode' (via `find-file-noselect')
-  ;; results in an error that I do not wish to investigate.
-  (when (and (> emacs-major-version 25)
-             (or files borg-maketexi-filename-regexp))
+non-nil, then try those files instead."
+  (when (or files borg-maketexi-filename-regexp)
     (let ((repo (borg-worktree clone))
           (exclude (borg-get-all clone "no-maketexi")))
       (dolist (file (or files
