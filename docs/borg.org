@@ -10,11 +10,11 @@
 #+subtitle: for version 4.2.2
 
 #+setupfile: .orgconfig
+#+texinfo: @paragraphindent none
 
 The Borg assimilate Emacs packages as Git submodules.  Borg is a
 bare-bones package manager for Emacs packages.
 
-#+texinfo: @noindent
 This manual is for Borg version 4.2.2.
 
 #+texinfo: @insertcopying

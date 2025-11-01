@@ -44,10 +44,11 @@ General Public License for more details.
 @node Top
 @top Borg User Manual
 
+@paragraphindent none
+
 The Borg assimilate Emacs packages as Git submodules.  Borg is a
 bare-bones package manager for Emacs packages.
 
-@noindent
 This manual is for Borg version 4.2.2.
 
 @insertcopying
