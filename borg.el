@@ -6,7 +6,7 @@
 ;; Homepage: https://github.com/emacscollective/borg
 ;; Keywords: tools
 
-;; Package-Version: 4.2.2
+;; Package-Version: 4.3.0
 ;; Package-Requires: (
 ;;     (emacs "27.1")
 ;;     (epkg   "4.1")

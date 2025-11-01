@@ -1,4 +1,14 @@
 # -*- mode: org -*-
+* v4.3.0    2025-11-01
+
+- ~borg-batch-rebuild~ now skips empty drones, which are created when
+  cloning fails.  This command would end up creating an autoloads
+  file, which in turn would prevent later cloning attempts to fail.
+  b8fee39
+
+- For Emacs 28 and earlier we generate autoloads files that dit not
+  contain a ~provide~ form.  9166c2b
+
 * v4.2.2    2025-10-06
 
 - Autoload files are now always recreated from scratch because merely
