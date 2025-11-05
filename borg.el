@@ -537,7 +537,7 @@ otherwise."
     (error "borg-batch-rebuild is to be used only with --batch"))
   (borg-do-drones (drone)
     (unless (and quick (borg-get-all drone "build-step"))
-      (borg--remove-autoloads drone quick)))
+      (borg--remove-autoloads drone)))
   (when (borg-dronep "org")
     ;; `org-loaddefs.el' has to exist when compiling a library
     ;; which depends on `org', else we get warnings about that
@@ -1015,10 +1015,9 @@ non-nil, then try those files instead."
           (shell-command cmd))
         (message "  Running `%s'...done" cmd)))))
 
-(defun borg--remove-autoloads (drone &optional quick)
+(defun borg--remove-autoloads (drone)
   (unless (or (borg--drone-disabled-p drone)
-              (not (file-exists-p (borg-worktree drone)))
-              (and quick (borg-get-all drone "build-step")))
+              (not (file-exists-p (borg-worktree drone))))
     (dolist (dir (borg-load-path drone))
       (dolist (file (directory-files
                      dir t "\\(\\.elc\\|-autoloads\\.el\\|-loaddefs\\.el\\)\\'"
