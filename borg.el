@@ -802,6 +802,7 @@ and optional NATIVE are both non-nil, then also compile natively."
             (kill-buffer buf)))
 
       ;; For Emacs < 29.1.
+      (borg--remove-autoloads clone)
       (let ((backup-inhibited t)
             (version-control 'never)
             (noninteractive t)
