@@ -544,7 +544,7 @@ Git directory is not removed.
 
 @deffn Command borg-build clone &optional activate
 This command builds the clone named CLONE@.  Interactively, or when
-optional ACTIVATE is non-nil, then also activate the drone using
+optional ACTIVATE is non-@code{nil}, then also activate the drone using
 @code{borg-activate}.
 @end deffn
 
@@ -581,7 +581,7 @@ the user init files using @code{borg-batch-rebuild-init}.
 This function is not intended for interactive use; instead it is
 used by the Make target @code{build} described in the following section.
 
-When optional QUICK is non-nil, then this function does not build
+When optional QUICK is non-@code{nil}, then this function does not build
 drones for which @code{submodule.DRONE.build-step} is set, assuming that
 those are the drones that take longer to be built.
 @end defun
@@ -1092,7 +1092,7 @@ respective make targets, as described in @ref{Make targets}.
 @end defvar
 
 @defvar borg-compile-recursively
-Setting this variable to a non-nil value instructs @code{borg-compile}
+Setting this variable to a non-@code{nil} value instructs @code{borg-compile}
 to compile all drones recursively.  Doing so is discouraged.
 @end defvar
 
@@ -1178,13 +1178,13 @@ tree.
 This macro loop over drones.  BODY is evaluated with VAR bound to
 each drone, in turn.  Inside BODY variables set in @code{.gitmodules} are
 cached.  Then RESULT is evaluated to get the return value,
-defaulting to nil.
+defaulting to @code{nil}.
 @end defmac
 
 @defun borg-get clone variable &optional all
 This function returns the value of the Git variable
 @code{submodule.CLONE.VARIABLE} defined in @code{~/.config/emacs/.gitmodules}.
-If optional ALL is non-nil, then it returns all values as a list.
+If optional ALL is non-@code{nil}, then it returns all values as a list.
 @end defun
 
 @defun borg-get-all clone variable
@@ -1201,23 +1201,23 @@ This function returns the @code{load-path} for the clone named CLONE@.
 This function returns the @code{Info-directory-list} for the clone named
 CLONE@.
 
-If optional SETUP is non-nil, then it returns a list of directories
+If optional SETUP is non-@code{nil}, then it returns a list of directories
 containing @code{texi} and/or @code{info} files.  Otherwise it returns a list of
 directories containing a file named @code{dir}.
 @end defun
 
 @defun borg-dronep name
-This function returns non-nil if a drone named NAME exists.
+This function returns non-@code{nil} if a drone named NAME exists.
 
 If that is set in @code{.gitmodules}, then it returns the value of
-@code{submodule.NAME.path}, nil otherwise.
+@code{submodule.NAME.path}, @code{nil} otherwise.
 @end defun
 
 @defun borg-drones &optional include-variables
 This function returns a list of all assimilated drones.
 
 The returned value is a list of the names of the assimilated
-drones, unless optional INCLUDE-VARIABLES is non-nil, in which
+drones, unless optional INCLUDE-VARIABLES is non-@code{nil}, in which
 case elements of the returned list have the form @code{(NAME . ALIST)}.
 
 ALIST is an association list.  Property names are symbols
@@ -1249,7 +1249,7 @@ When the @code{epkg} package is available, then the user is only prompted
 for the name of the package, and the upstream url is retrieved from
 the Epkg database.  If the package isn't in the database then the
 url has to be provided by the user.  If optional EDIT-URL is
-non-nil, then the url from the database, if any, is provided as
+non-@code{nil}, then the url from the database, if any, is provided as
 initial input for the user to edit.
 
 PROMPT is used when prompting for the package name.

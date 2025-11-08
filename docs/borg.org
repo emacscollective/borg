@@ -471,7 +471,7 @@ commit messages.
 - Command: borg-build clone &optional activate ::
 
   This command builds the clone named CLONE.  Interactively, or when
-  optional ACTIVATE is non-nil, then also activate the drone using
+  optional ACTIVATE is non-~nil~, then also activate the drone using
   ~borg-activate~.
 
 - Function: borg-update-autoloads clone &optional path ::
@@ -508,7 +508,7 @@ commit messages.
   This function is not intended for interactive use; instead it is
   used by the Make target ~build~ described in the following section.
 
-  When optional QUICK is non-nil, then this function does not build
+  When optional QUICK is non-~nil~, then this function does not build
   drones for which ~submodule.DRONE.build-step~ is set, assuming that
   those are the drones that take longer to be built.
 
@@ -1027,7 +1027,7 @@ variables you can tell Borg how to build such packages.
 
 - Variable: borg-compile-recursively ::
 
-  Setting this variable to a non-nil value instructs ~borg-compile~
+  Setting this variable to a non-~nil~ value instructs ~borg-compile~
   to compile all drones recursively.  Doing so is discouraged.
 
 - Variable: borg-native-compile-deny-list ::
@@ -1112,13 +1112,13 @@ build your own tools on top of Borg.
   This macro loop over drones.  BODY is evaluated with VAR bound to
   each drone, in turn.  Inside BODY variables set in ~.gitmodules~ are
   cached.  Then RESULT is evaluated to get the return value,
-  defaulting to nil.
+  defaulting to ~nil~.
 
 - Function: borg-get clone variable &optional all ::
 
   This function returns the value of the Git variable
   ~submodule.CLONE.VARIABLE~ defined in ~~/.config/emacs/.gitmodules~.
-  If optional ALL is non-nil, then it returns all values as a list.
+  If optional ALL is non-~nil~, then it returns all values as a list.
 
 - Function: borg-get-all clone variable ::
 
@@ -1135,23 +1135,23 @@ build your own tools on top of Borg.
   This function returns the ~Info-directory-list~ for the clone named
   CLONE.
 
-  If optional SETUP is non-nil, then it returns a list of directories
+  If optional SETUP is non-~nil~, then it returns a list of directories
   containing ~texi~ and/or ~info~ files.  Otherwise it returns a list of
   directories containing a file named ~dir~.
 
 - Function: borg-dronep name ::
 
-  This function returns non-nil if a drone named NAME exists.
+  This function returns non-~nil~ if a drone named NAME exists.
 
   If that is set in ~.gitmodules~, then it returns the value of
-  ~submodule.NAME.path~, nil otherwise.
+  ~submodule.NAME.path~, ~nil~ otherwise.
 
 - Function: borg-drones &optional include-variables ::
 
   This function returns a list of all assimilated drones.
 
   The returned value is a list of the names of the assimilated
-  drones, unless optional INCLUDE-VARIABLES is non-nil, in which
+  drones, unless optional INCLUDE-VARIABLES is non-~nil~, in which
   case elements of the returned list have the form ~(NAME . ALIST)~.
 
   ALIST is an association list.  Property names are symbols
@@ -1183,7 +1183,7 @@ build your own tools on top of Borg.
   for the name of the package, and the upstream url is retrieved from
   the Epkg database.  If the package isn't in the database then the
   url has to be provided by the user.  If optional EDIT-URL is
-  non-nil, then the url from the database, if any, is provided as
+  non-~nil~, then the url from the database, if any, is provided as
   initial input for the user to edit.
 
   PROMPT is used when prompting for the package name.
