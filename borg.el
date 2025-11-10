@@ -813,8 +813,8 @@ and optional NATIVE are both non-nil, then also compile natively."
         ;; caused #128 and to prevent that we use `with-temp-buffer'.
         (with-temp-buffer
           (let ((coding-system-for-write 'utf-8-emacs-unix))
-            (write-region (autoload-rubric file "package" t))
-                          nil file nil 'silent))
+            (write-region (autoload-rubric file "package" t)
+                          nil file nil 'silent)))
         (borg--silence-loaddefs-generate
           (let ((generated-autoload-file file))
             (apply #'update-directory-autoloads path))))
