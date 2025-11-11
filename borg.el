@@ -8,7 +8,7 @@
 
 ;; Package-Version: 4.3.0
 ;; Package-Requires: (
-;;     (emacs "27.1")
+;;     (emacs "28.1")
 ;;     (epkg   "4.1")
 ;;     (magit  "4.4"))
 
@@ -85,8 +85,6 @@ enclosed in a `progn' form.  ELSE-FORMS may be empty."
 
 (defvar inhibit-message-regexps) ; added in Emacs 29.1
 
-(defvar byte+native-compile) ; for Emacs 27
-(defvar comp-files-queue)    ; for Emacs 27
 (defvar native-comp-eln-load-path)
 (defvar native-compile-target-directory)
 
@@ -555,11 +553,7 @@ otherwise."
                (message "Skipped (Requires Emacs >= %s)" min))))
        ((not (file-exists-p dir))
         (message "Skipped (Missing)"))
-       ((static-if (functionp 'directory-empty-p) ;since Emacs 28.1
-            (directory-empty-p dir)
-          (and (file-directory-p dir)
-               (null (directory-files
-                      dir nil directory-files-no-dot-files-regexp t))))
+       ((directory-empty-p dir)
         (message "Skipped (Empty directory)"))
        ((and quick (borg-get-all drone "build-step"))
         (message "Skipped (Expensive to build)"))
@@ -801,7 +795,7 @@ and optional NATIVE are both non-nil, then also compile natively."
           (when-let ((buf (find-buffer-visiting file)))
             (kill-buffer buf)))
 
-      ;; For Emacs < 29.1.
+      ;; For Emacs 28.
       (borg--remove-autoloads clone)
       (let ((backup-inhibited t)
             (version-control 'never)
@@ -816,8 +810,7 @@ and optional NATIVE are both non-nil, then also compile natively."
             (write-region (autoload-rubric file "package" t)
                           nil file nil 'silent)))
         (borg--silence-loaddefs-generate
-          (let ((generated-autoload-file file))
-            (apply #'update-directory-autoloads path))))
+          (make-directory-autoloads path file)))
       (when-let ((buf (find-buffer-visiting file)))
         (kill-buffer buf)))))
 
@@ -934,11 +927,7 @@ and optional NATIVE are both non-nil, then also compile natively."
               (cons (lambda () (ignore-errors (delete-file tempfile)))
                     kill-emacs-hook)))
         (unless (= temp-modes desired-modes)
-          (with-no-warnings
-            ;; Native compilation, and thus this function, may only
-            ;; be used for Emacs > 28.1.  So don't warn about third
-            ;; argument that does exist in older releases.
-            (set-file-modes tempfile desired-modes 'nofollow)))
+          (set-file-modes tempfile desired-modes 'nofollow))
         (write-region (point-min) (point-max) tempfile nil 1)
         (if byte-native-compiling
             (setf byte-to-native-output-buffer-file
