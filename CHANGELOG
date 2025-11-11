@@ -1,4 +1,10 @@
 # -*- mode: org -*-
+* v4.4.0    UNRELEASED
+
+- Dropped support for Emacs 27.  64f67e5
+
+- For Emacs 28 autoloads were not re-generated from scratch.  f2316c1
+
 * v4.3.0    2025-11-01
 
 - ~borg-batch-rebuild~ now skips empty drones, which are created when
@@ -6,7 +12,7 @@
   file, which in turn would prevent later cloning attempts to fail.
   b8fee39
 
-- For Emacs 28 and earlier we generate autoloads files that dit not
+- For Emacs 28 and earlier we generated autoloads files that did not
   contain a ~provide~ form.  9166c2b
 
 * v4.2.2    2025-10-06
