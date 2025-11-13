@@ -1,5 +1,7 @@
 TOP := $(dir $(lastword $(MAKEFILE_LIST)))
 
+DOMAIN ?= emacsmirror.org
+
 PKG = borg
 
 ELS   = $(PKG).el
@@ -10,9 +12,6 @@ ELCS  = $(ELS:.el=.elc)
 DEPS  = cond-let
 DEPS += epkg/lisp
 DEPS += magit/lisp
-
-DOMAIN      ?= emacsmirror.org
-CFRONT_DIST ?= E1IXJGPIOM4EUW
 
 VERSION ?= $(shell test -e $(TOP).git && git describe --tags --abbrev=0 | cut -c2-)
 REVDESC := $(shell test -e $(TOP).git && git describe --tags)
@@ -36,3 +35,6 @@ MANUAL_HTML_ARGS ?= --css-ref https://$(DOMAIN)/assets/page.css
 GITSTATS      ?= gitstats
 GITSTATS_DIR  ?= $(TOP)docs/stats
 GITSTATS_ARGS ?= -c style=https://$(DOMAIN)/assets/stats.css -c max_authors=999
+
+RCLONE      ?= rclone
+RCLONE_ARGS ?= -v
