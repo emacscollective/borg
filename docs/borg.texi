@@ -931,6 +931,17 @@ The value of this constant is the @code{.gitmodules} file of the
 super-repository.
 @end defvar
 
+If you want to change the value of the following variable, you have to
+do so before requiring @code{borg}, else it does not have the desired effect.
+
+@defvar borg-debug-user-init-files
+This variable controls whether the effect of the command-line
+argument @code{--debug-init} extends to user init files.  If non-@code{nil} and
+@code{--debug-init} is used, then @code{debug-on-error} is automatically enable
+and @code{use-package-verbose} is set to @code{debug}.  Finally these variables
+are reset to their default values using @code{after-init-hook}.
+@end defvar
+
 The value of this Make variable has to be set in
 @code{~/.config/emacs/Makefile}.
 

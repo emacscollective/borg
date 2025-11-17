@@ -865,6 +865,17 @@ not be changed by the user.
   The value of this constant is the ~.gitmodules~ file of the
   super-repository.
 
+If you want to change the value of the following variable, you have to
+do so before requiring ~borg~, else it does not have the desired effect.
+
+- Variable: borg-debug-user-init-files ::
+
+  This variable controls whether the effect of the command-line
+  argument ~--debug-init~ extends to user init files.  If non-~nil~ and
+  ~--debug-init~ is used, then ~debug-on-error~ is automatically enable
+  and ~use-package-verbose~ is set to ~debug~.  Finally these variables
+  are reset to their default values using ~after-init-hook~.
+
 The value of this Make variable has to be set in
 ~~/.config/emacs/Makefile~.
 

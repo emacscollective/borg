@@ -45,6 +45,26 @@
 
 ;;; Code:
 
+(defvar borg-debug-user-init-files t
+  "Whether to extend the effect of `--debug-init' to user init files.
+If non-nil and `--debug-init' is used, enable `debug-on-error' and
+set `use-package-verbose' to `debug'.  Reset these variables using
+`after-init-hook'.")
+
+(when (and borg-debug-user-init-files
+           init-file-debug
+           (not after-init-time))
+  (setq debug-on-error 'enabled-by-borg)
+  (defvar use-package-verbose)
+  (setq use-package-verbose 'debug)
+  (letrec ((fn (lambda ()
+                 (when (eq debug-on-error 'enabled-by-borg)
+                   (setq debug-on-error nil))
+                 (when (eq use-package-verbose 'debug)
+                   (setq use-package-verbose nil))
+                 (remove-hook 'after-init-hook fn))))
+    (add-hook 'after-init-hook fn 98)))
+
 (require 'bytecomp)
 (require 'cl-lib)
 (require 'comp nil t)
