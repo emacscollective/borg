@@ -283,22 +283,23 @@ Now that @code{borg} is available we can build all the assimilated packages (cur
 just @code{borg} itself) using @code{make bootstrap}.
 
 Now it is time to tell Emacs to initialize Borg instead of Package by
-adding a simple @code{init.el} file containing at least:
+adding a simple @code{early-init.el} file containing:
 
 @lisp
-(when (< emacs-major-version 27)
-  (setq package-enable-at-startup nil))
+;; -*- lexical-binding: t -*-
+
+(setq load-prefer-newer t)
+
 (add-to-list 'load-path (expand-file-name "lib/borg" user-emacs-directory))
 (require 'borg)
 (borg-initialize)
-@end lisp
 
-Beginning with Emacs 27.1, @code{package-enable-at-startup} has to be
-disabled earlier, in @code{early-init.el}:
-
-@lisp
 (setq package-enable-at-startup nil)
 @end lisp
+
+Changing the values of @code{load-prefer-newer} and @code{package-enable-at-startup}
+as shown here is optional but strongly recommended.  @code{load-prefer-newer}
+should be enabled before loading @code{borg}.
 
 Now you could create the initial commit but you could also delay that.
 
@@ -406,11 +407,24 @@ sed -i "s|git@@gitlab.com:|https://gitlab.com/|g" .git/config
 @node Startup
 @chapter Startup
 
-The @code{user-init-file}, @code{~/.config/emacs/init.el}, has to contain a call to
-@code{borg-initialize}.
+The early init file, @code{early-init.el} (see @ref{Early Init File,,,emacs,}),
+should contain a call to @code{borg-initialize}.
 
-You should also set @code{package-enable-at-startup} to @code{nil}.  If you use
-Emacs 27 or later, then do so in @code{early-init.el}, otherwise in @code{init.el}.
+Changing the values of @code{load-prefer-newer} and @code{package-enable-at-startup}
+as shown here is optional but strongly recommended.  @code{load-prefer-newer}
+should be enabled before loading @code{borg}.
+
+@lisp
+;; -*- lexical-binding: t -*-
+
+(setq load-prefer-newer t)
+
+(add-to-list 'load-path (expand-file-name "lib/borg" user-emacs-directory))
+(require 'borg)
+(borg-initialize)
+
+(setq package-enable-at-startup nil)
+@end lisp
 
 @defun borg-initialize
 This function initializes assimilated drones using @code{borg-activate}.

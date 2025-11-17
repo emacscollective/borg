@@ -216,22 +216,23 @@ Now that ~borg~ is available we can build all the assimilated packages (currentl
 just ~borg~ itself) using ~make bootstrap~.
 
 Now it is time to tell Emacs to initialize Borg instead of Package by
-adding a simple ~init.el~ file containing at least:
+adding a simple ~early-init.el~ file containing:
 
 #+begin_src emacs-lisp
-  (when (< emacs-major-version 27)
-    (setq package-enable-at-startup nil))
+  ;; -*- lexical-binding: t -*-
+
+  (setq load-prefer-newer t)
+
   (add-to-list 'load-path (expand-file-name "lib/borg" user-emacs-directory))
   (require 'borg)
   (borg-initialize)
-#+end_src
 
-Beginning with Emacs 27.1, ~package-enable-at-startup~ has to be
-disabled earlier, in ~early-init.el~:
-
-#+begin_src emacs-lisp
   (setq package-enable-at-startup nil)
 #+end_src
+
+Changing the values of ~load-prefer-newer~ and ~package-enable-at-startup~
+as shown here is optional but strongly recommended.  ~load-prefer-newer~
+should be enabled before loading ~borg~.
 
 Now you could create the initial commit but you could also delay that.
 
@@ -336,11 +337,24 @@ If you have already run ~make bootstrap~, then you also have to edit
 
 * Startup
 
-The ~user-init-file~, ~~/.config/emacs/init.el~, has to contain a call to
-~borg-initialize~.
+The early init file, ~early-init.el~ (see [[info:emacs#Early Init File]]),
+should contain a call to ~borg-initialize~.
 
-You should also set ~package-enable-at-startup~ to ~nil~.  If you use
-Emacs 27 or later, then do so in ~early-init.el~, otherwise in ~init.el~.
+Changing the values of ~load-prefer-newer~ and ~package-enable-at-startup~
+as shown here is optional but strongly recommended.  ~load-prefer-newer~
+should be enabled before loading ~borg~.
+
+#+begin_src emacs-lisp
+  ;; -*- lexical-binding: t -*-
+
+  (setq load-prefer-newer t)
+
+  (add-to-list 'load-path (expand-file-name "lib/borg" user-emacs-directory))
+  (require 'borg)
+  (borg-initialize)
+
+  (setq package-enable-at-startup nil)
+#+end_src
 
 - Function: borg-initialize ::
 
