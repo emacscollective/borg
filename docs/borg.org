@@ -364,16 +364,6 @@ should be enabled before loading ~borg~.
   it by setting the value of the Git variable ~submodule.DRONE.disabled~
   to true in ~~/.config/emacs/.gitmodules~.
 
-- Command: borg-activate clone ::
-
-  This function activates the clone named CLONE by adding the
-  appropriate directories to the ~load-path~ and to ~Info-directory-list~,
-  and by loading the autoloads file, if it exists.
-
-  Unlike ~borg-initialize~, this function ignores the Git variable
-  ~submodule.DRONE.disabled~ and can be used to activate clones that
-  have not been assimilated.
-
 * Assimilation
 
 A third-party package is assimilated by adding it as a submodule and,
@@ -473,6 +463,16 @@ commit messages.
   is used.  If ~epkg~ is unavailable, the package is unknown, or when
   a prefix argument is used, then the url is also read in the
   minibuffer.
+
+- Command: borg-activate clone ::
+
+  This command activates the clone named CLONE by adding the
+  appropriate directories to the ~load-path~ and to ~Info-directory-list~,
+  and by loading the autoloads file, if it exists.
+
+  Unlike ~borg-initialize~, this function ignores the Git variable
+  ~submodule.DRONE.disabled~ and can be used to activate clones that
+  have not been assimilated.
 
 - Command: borg-remove clone ::
 

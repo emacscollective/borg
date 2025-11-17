@@ -434,16 +434,6 @@ it by setting the value of the Git variable @code{submodule.DRONE.disabled}
 to true in @code{~/.config/emacs/.gitmodules}.
 @end defun
 
-@deffn Command borg-activate clone
-This function activates the clone named CLONE by adding the
-appropriate directories to the @code{load-path} and to @code{Info-directory-list},
-and by loading the autoloads file, if it exists.
-
-Unlike @code{borg-initialize}, this function ignores the Git variable
-@code{submodule.DRONE.disabled} and can be used to activate clones that
-have not been assimilated.
-@end deffn
-
 @node Assimilation
 @chapter Assimilation
 
@@ -546,6 +536,16 @@ is read in the minibuffer and the url stored in the Epkg database
 is used.  If @code{epkg} is unavailable, the package is unknown, or when
 a prefix argument is used, then the url is also read in the
 minibuffer.
+@end deffn
+
+@deffn Command borg-activate clone
+This command activates the clone named CLONE by adding the
+appropriate directories to the @code{load-path} and to @code{Info-directory-list},
+and by loading the autoloads file, if it exists.
+
+Unlike @code{borg-initialize}, this function ignores the Git variable
+@code{submodule.DRONE.disabled} and can be used to activate clones that
+have not been assimilated.
 @end deffn
 
 @deffn Command borg-remove clone
