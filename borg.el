@@ -592,7 +592,6 @@ This function is to be used only with `--batch'."
                             (concat (user-real-login-name) ".el"))))
       (when (file-exists-p file)
         (message "\n--- [%s] ---\n" file)
-        (load-file file)
         (byte-recompile-file (expand-file-name file) t 0)))))
 
 (defun borg-build (clone &optional activate native)
