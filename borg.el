@@ -45,6 +45,38 @@
 
 ;;; Code:
 
+(defun borg-report-load-duration (&optional file format-string)
+  "Report how long it takes to load the file currently being loaded.
+
+This function should be called very early in the file, ideally
+before doing anything else.  Print two messages; one right now
+and another once the file has been loaded.
+
+If optional FILE is non-nil, instead report how long it takes to
+load that file (this assumes that it is currently being loaded).
+Optional FORMAT-STRING, if non-nil, is passed to `message'.  It
+should end with \"...\" and contain zero or one %s, which stands
+for the file name."
+  (when load-file-name
+    (letrec ((start (current-time))
+             (load-file (or file load-file-name))
+             (format (or format-string "Loading %s..."))
+             (fn (lambda (file)
+                   (when (equal file load-file)
+                     (message "%s%s"
+                              (format-message format load-file)
+                              (format-message "done (%.3fs)"
+                                              (float-time
+                                               (time-subtract
+                                                (current-time) start))))
+                     (remove-hook 'after-load-functions fn)))))
+      (add-hook 'after-load-functions fn 98)
+      (message format load-file))))
+
+(when (and (not after-init-time) user-init-file)
+  (borg-report-load-duration user-init-file nil))
+(borg-report-load-duration)
+
 (defvar borg-debug-user-init-files t
   "Whether to extend the effect of `--debug-init' to user init files.
 If non-nil and `--debug-init' is used, enable `debug-on-error' and
@@ -461,10 +493,12 @@ to variable `borg-rewrite-urls-alist' (which see)."
   (require 'epkg nil t)
   (completing-read prompt (borg-clones) nil t nil 'epkg-package-history))
 
-(defun borg--load-config (file)
+(defun borg--load-config (file &optional format-string nomessage)
   (let ((file (expand-file-name file borg-user-emacs-directory)))
     (when (file-exists-p file)
-      (load file nil nil t))))
+      (unless nomessage
+        (borg-report-load-duration file format-string))
+      (load file nil t t))))
 
 ;;; Activation
 

@@ -364,6 +364,26 @@ should be enabled before loading ~borg~.
   it by setting the value of the Git variable ~submodule.DRONE.disabled~
   to true in ~~/.config/emacs/.gitmodules~.
 
+Borg automatically reports how long it takes to load ~borg.el~ itself,
+~early-init.el,~ and other config files that it loads directly.  It
+cannot do the same for ~init.el~, so you should explicitly call the
+following function from that file, and possibly from other home-made
+config files.
+
+- Function: borg-report-load-duration &optional file format-string ::
+
+  This function reports how long it takes to load the file currently
+  being loaded.  It should be called very early in the file, ideally
+  before doing anything else.  This prints two messages; one right
+  when the function is called and another once the file has been
+  loaded.
+
+  If optional FILE is non-~nil~, this function instead reports how long
+  it takes to load that file (this assumes that it is currently being
+  loaded).  Optional FORMAT-STRING, if non-~nil~, is passed to ~message~.
+  It should should end with "..." and contain zero or one ~%s~, which
+  stands for the file name.
+
 * Assimilation
 
 A third-party package is assimilated by adding it as a submodule and,
