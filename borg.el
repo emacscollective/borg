@@ -683,16 +683,13 @@ and optional NATIVE are both non-nil, then also compile natively."
   (let ((buffer (get-buffer-create "*Borg Build*"))
         (config (borg--config-file))
         (process-connection-type nil))
+    (when (file-exists-p config)
+      (load-file config))
     (with-current-buffer buffer
       (setq default-directory borg-user-emacs-directory)
       (borg-build-mode)
       (goto-char (point-max))
       (let ((inhibit-read-only t))
-        (when (file-exists-p config)
-          (insert (format "\n(%s) Loading %s\n\n"
-                          (format-time-string "%H:%M:%S")
-                          config))
-          (load-file config))
         (unless (looking-back "\n\n" (- (point) 2))
           (insert ?\n))
         (insert (format "(%s) Building %s\n\n"
