@@ -1217,6 +1217,24 @@ Formatting is according to the commit message conventions."
      (process-lines "git" "diff-index" "--name-status" "--cached" "HEAD"
                     "--" (file-relative-name borg-drones-directory)))))
 
+(defun borg-report-after-init-duration ()
+  "Report how long it takes to run `after-init-hook'.
+This is done by adding two functions to that hook; one with a very
+low depth and the other with a very high depth.  Do nothing if the
+hook already ran."
+  (unless after-init-time
+    (letrec ((start nil)
+             (beg (lambda ()
+                    (setq start (current-time))
+                    (message "Running after-init-hook...")
+                    (remove-hook 'after-init-hook beg)))
+             (end (lambda ()
+                    (message "Running after-init-hook...done (%.3fs)"
+                             (float-time (time-subtract (current-time) start)))
+                    (remove-hook 'after-init-hook end))))
+      (add-hook 'after-init-hook beg -98)
+      (add-hook 'after-init-hook end +98))))
+
 ;;; Integrations
 
 (defun borg-propertize-module-path (path)

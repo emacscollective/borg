@@ -454,6 +454,13 @@ It should should end with "@dots{}" and contain zero or one @code{%s}, which
 stands for the file name.
 @end defun
 
+@defun borg-report-after-init-duration
+This function reports how long it takes to run @code{after-init-hook}.
+This is done by adding two functions to that hook; one with a very
+low depth and the other with a very high depth.  Calling this
+function does nothing if the hook already ran.
+@end defun
+
 @node Assimilation
 @chapter Assimilation
 
