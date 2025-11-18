@@ -286,7 +286,7 @@ Now it is time to tell Emacs to initialize Borg instead of Package by
 adding a simple @code{early-init.el} file containing:
 
 @lisp
-;; -*- lexical-binding: t -*-
+;; -*- lexical-binding:t; no-byte-compile:t -*-
 
 (setq load-prefer-newer t)
 
@@ -415,7 +415,7 @@ as shown here is optional but strongly recommended.  @code{load-prefer-newer}
 should be enabled before loading @code{borg}.
 
 @lisp
-;; -*- lexical-binding: t -*-
+;; -*- lexical-binding:t; no-byte-compile:t -*-
 
 (setq load-prefer-newer t)
 
