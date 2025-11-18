@@ -523,7 +523,7 @@ if it exists."
          (let ((file (expand-file-name (format "%s-%s.el" clone part) dir)))
            (and (file-exists-p file)
                 (with-demoted-errors "Error loading autoloads: %s"
-                  (load file nil t))
+                  (load file nil t t))
                 ;; We cannot rely on the autoloads file doing that.
                 (add-to-list 'load-path dir)))))
     (dolist (dir (borg-load-path clone))
