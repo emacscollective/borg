@@ -70,6 +70,7 @@ helpall::
 	$(info make quick-build     = byte-compile most drones and init files)
 help helpall::
 	$(info make quick           = clean and byte-compile most drones and init files)
+	$(info make redo            = clean and byte-compile all drones and init files)
 	$(info )
 	$(info Drone targets)
 	$(info -------------)
@@ -93,10 +94,12 @@ help helpall::
 
 clean:
 ifeq "$(BORG_CLEAN_ELN)" "true"
+	@printf "Cleaning...\n"
 	$(Q)rm -f init.elc $(INIT_FILES:.el=.elc)
 	$(Q)$(EMACS) $(EMACS_ARGUMENTS) $(EMACS_EXTRA) $(SILENCIO) \
 	$(BORG_ARGUMENTS) \
 	--funcall borg--batch-clean 2>&1
+	@printf "\n"
 else
 	$(Q)find . -name '*.elc'          -printf 'removed %p\n' -delete
 	$(Q)find . -name '*-autoloads.el' -printf 'removed %p\n' -delete
@@ -107,6 +110,7 @@ clean-force:
 	$(Q)find . -name '*-autoloads.el' -printf 'removed %p\n' -delete
 
 build: init-clean
+	@printf "Building...\n"
 	$(Q)$(EMACS) $(EMACS_ARGUMENTS) $(EMACS_EXTRA) $(SILENCIO) \
 	$(BORG_ARGUMENTS) \
 	--funcall borg-batch-rebuild $(INIT_FILES) 2>&1
@@ -119,16 +123,21 @@ native: init-clean
 ## Batch Quick
 
 quick-clean: init-clean
+	@printf "Cleaning...\n"
 	$(Q)$(EMACS) $(EMACS_ARGUMENTS) $(EMACS_EXTRA) $(SILENCIO) \
 	$(BORG_ARGUMENTS) \
 	--eval '(borg--batch-clean t)' 2>&1
+	@printf "\n"
 
 quick-build:
+	@printf "Building...\n"
 	$(Q)$(EMACS) $(EMACS_ARGUMENTS) $(EMACS_EXTRA) $(SILENCIO) \
 	$(BORG_ARGUMENTS) \
 	--eval '(borg-batch-rebuild t)' $(INIT_FILES) 2>&1
 
 quick: quick-clean quick-build
+
+redo: clean build
 
 ## Per-Clone
 
