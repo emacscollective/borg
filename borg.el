@@ -461,6 +461,11 @@ to variable `borg-rewrite-urls-alist' (which see)."
   (require 'epkg nil t)
   (completing-read prompt (borg-clones) nil t nil 'epkg-package-history))
 
+(defun borg--load-config (file)
+  (let ((file (expand-file-name file borg-user-emacs-directory)))
+    (when (file-exists-p file)
+      (load file nil nil t))))
+
 ;;; Activation
 
 (defun borg-initialize ()
@@ -478,11 +483,7 @@ If Emacs is running without an interactive terminal, then first
 load \"`borg-user-emacs-directory'/etc/borg/init.el\", if that
 exists."
   (when noninteractive
-    (let ((init (convert-standard-filename
-                 (expand-file-name "etc/borg/init.el"
-                                   borg-user-emacs-directory))))
-      (when (file-exists-p init)
-        (load-file init))))
+    (borg--load-config "etc/borg/init.el"))
   (info-initialize)
   (let ((start (current-time))
         (skipped 0)
@@ -632,10 +633,8 @@ and optional NATIVE are both non-nil, then also compile natively."
   (let ((default-directory (borg-worktree clone))
         (build-cmd (if (functionp borg-build-shell-command)
                        (funcall borg-build-shell-command clone)
-                     borg-build-shell-command))
-        (config (borg--config-file)))
-    (when (file-exists-p config)
-      (load config nil t t))
+                     borg-build-shell-command)))
+    (borg--load-config "etc/borg/config.el")
     (if-let ((commands (borg-get-all clone "build-step")))
         (borg--run-build-commands clone commands build-cmd)
       (let ((path (mapcar #'file-name-as-directory (borg-load-path clone))))
@@ -680,11 +679,9 @@ and optional NATIVE are both non-nil, then also compile natively."
              (and file
                   (string-match-p emacs-lisp-file-regexp file)
                   (file-in-directory-p file top))))))
+  (borg--load-config "etc/borg/config.el")
   (let ((buffer (get-buffer-create "*Borg Build*"))
-        (config (borg--config-file))
         (process-connection-type nil))
-    (when (file-exists-p config)
-      (load-file config))
     (with-current-buffer buffer
       (setq default-directory borg-user-emacs-directory)
       (borg-build-mode)
@@ -1204,10 +1201,6 @@ Formatting is according to the commit message conventions."
       (if (string-match "\\`[0-9]+\\(\\.[0-9]+\\)*" ver)
           (match-string 0 ver)
         (error "Cannot determine Git version (from %s)" ver)))))
-
-(defun borg--config-file ()
-  (convert-standard-filename
-   (expand-file-name "etc/borg/config.el" borg-user-emacs-directory)))
 
 (defun borg--maybe-absorb-gitdir (pkg)
   (if (version< (borg--git-version) "2.12.0")
