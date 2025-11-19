@@ -30,7 +30,7 @@ else
 endif
 
 EMACS           ?= emacs
-EMACS_ARGUMENTS ?= -Q --batch
+EMACS_ARGUMENTS ?= -Q --batch --eval "(setq load-prefer-newer t)"
 
 EMACS_EXTRA ?=
 
