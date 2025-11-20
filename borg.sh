@@ -160,6 +160,8 @@ clone () {
 checkout () {
     path="$1"
     shift
+    force="$1"
+    shift
     echo "--- [$path] ---"
 
     cd "$super"
@@ -184,12 +186,12 @@ checkout () {
             echo "Skipping $path (always using latest/checked out borg)"
             echo "    HEAD: $head"
             echo "expected: $hash"
-        elif [ -n "$(git status --porcelain=v1 --ignored)" ]
+        elif [ -n "$(git status --porcelain=v1)" ]
         then
             echo "Skipping $path (uncommitted changes)"
             echo "    HEAD: $head"
             echo "expected: $hash"
-        elif ! git diff --quiet "$head" "$upstream"
+        elif [ "${force:-nil}" = nil ] && ! git diff --quiet "$head" "$upstream"
         then
             echo "Skipping $path (tip no longer matches upstream)"
             echo "    HEAD: $head"
@@ -229,22 +231,22 @@ cmd_clone () {
 }
 
 cmd_checkout () {
-    while [ $# -ne 0 ]
+    while [ $# -gt 0 ]
     do
         case "$1" in
+        --force) force=t; shift;;
         --) shift; break;;
         -*) usage;;
         *)  break;;
         esac
-        shift
     done
 
     if [ $# -ne 0 ]
     then
-        for path in "$@"; do checkout $path; done
+        for path in "$@"; do checkout $path $force; done
     else
         git ls-files -s | grep ^160000 | cut -f2 |
-            while read path; do checkout $path; done
+            while read path; do checkout $path $force; done
     fi
 }
 
