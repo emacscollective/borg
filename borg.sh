@@ -186,7 +186,8 @@ checkout () {
             echo "Skipping $path (always using latest/checked out borg)"
             echo "    HEAD: $head"
             echo "expected: $hash"
-        elif [ -n "$(git status --porcelain=v1)" ]
+        elif [ -n "$(git status --porcelain=v1 --untracked-files=no)" ]
+             # FIXME: How should untracked changes be addressed here such i.e. Info dirs?
         then
             echo "Skipping $path (uncommitted changes)"
             echo "    HEAD: $head"
