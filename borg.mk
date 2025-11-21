@@ -208,3 +208,6 @@ clone-modules:
 
 checkout-modules:
 	$(Q)$(BORG_DIR)borg.sh checkout
+
+update-modules:
+	$(Q)$(BORG_DIR)borg.sh checkout --force
