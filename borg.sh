@@ -197,6 +197,11 @@ checkout () {
             echo "Skipping $path (tip no longer matches upstream)"
             echo "    HEAD: $head"
             echo "expected: $hash"
+        elif [ "${force:-nil}" = t ] && [ -z "$branch" ]
+             # FIXME: Check if the current branch matches the upstreams
+             # head or git the submodules branch variable
+        then
+            echo "HEAD is in detached state, expected a branch"
         else
             echo "Checkout $path ($hash)"
             echo "HEAD was $(git log --no-walk --format='%h %s' HEAD)"
