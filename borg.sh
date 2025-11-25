@@ -160,8 +160,10 @@ clone () {
 checkout () {
     path="$1"
     shift
-    force="$1"
-    shift
+    if [ $# -ge 1 ] ; then
+        force="$1"
+        shift
+    fi
     echo "--- [$path] ---"
 
     cd "$super"
@@ -249,7 +251,7 @@ cmd_checkout () {
 
     if [ $# -ne 0 ]
     then
-        for path in "$@"; do checkout $path $force; done
+        for path in "$@"; do checkout $path ${force+ $force}; done
     else
         git ls-files -s | grep ^160000 | cut -f2 |
             while read path; do checkout $path $force; done
