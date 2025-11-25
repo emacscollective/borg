@@ -256,9 +256,9 @@ cmd_checkout () {
     fi
 }
 
-command=$1
+command=${1:-nil}
 
-case "$command" in
+case "${command}" in
     clone|checkout) shift; "cmd_$command" "$@" ;;
     *) usage ;;
 esac
