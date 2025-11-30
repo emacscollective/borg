@@ -9,8 +9,6 @@ BORG_DIR := $(dir $(lastword $(MAKEFILE_LIST)))
 
 BORG_CLEAN_ELN := true
 
-help::
-
 -include etc/borg/config.mk
 
 ifeq "$(BORG_SECONDARY_P)" "true"
