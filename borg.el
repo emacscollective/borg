@@ -73,9 +73,10 @@ for the file name."
       (add-hook 'after-load-functions fn 98)
       (message format load-file))))
 
-(when (and (not after-init-time) user-init-file)
-  (borg-report-load-duration user-init-file nil))
-(borg-report-load-duration)
+(when user-init-file
+  (unless after-init-time
+    (borg-report-load-duration user-init-file nil))
+  (borg-report-load-duration))
 
 (defvar borg-debug-user-init-files t
   "Whether to extend the effect of `--debug-init' to user init files.
