@@ -29,7 +29,9 @@ EMACS_BATCH ?= $(EMACS) $(EMACS_Q_ARG) --batch $(EMACS_ARGS) $(EMACS_EXTRA)
 
 SILENCIO += --eval "(progn (require 'gv) (put 'buffer-substring 'byte-obsolete-generalized-variable nil))"
 SILENCIO += --eval "(define-advice message (:around (fn format &rest args) silencio)\
-  (unless (or (equal format \"Not registering prefix \\\"%s\\\" from %s.  Affects: %S\")\
+  (unless (or (member format\
+                      '(\"Not registering prefix \\\"%s\\\" from %s.  Affects: %S\"\
+                        \"(Shell command succeeded with %s)\"))\
               (ignore-errors (string-match-p \"Scraping files for\" (car args))))\
     (apply fn format args)))"
 
