@@ -13,12 +13,6 @@ help::
 
 -include etc/borg/config.mk
 
-ifeq ($(V),1)
-  Q=
-else
-  Q=@
-endif
-
 ifeq "$(BORG_SECONDARY_P)" "true"
   DRONES_DIR ?= $(shell git config "borg.drones-directory" || echo "elpa")
   BORG_ARGS   = -L $(BORG_DIR) --load borg-elpa \
@@ -33,11 +27,6 @@ EMACS       ?= emacs
 EMACS_ARGS  ?= -Q --batch --eval "(setq load-prefer-newer t)"
 EMACS_EXTRA ?=
 
-.PHONY: help helpall clean build native quick-clean quick-build quick \
-	init-clean init-build bootstrap-borg bootstrap \
-	clone-modules checkout-modules
-.FORCE:
-
 SILENCIO += --eval "(progn (require 'gv) (put 'buffer-substring 'byte-obsolete-generalized-variable nil))"
 SILENCIO += --eval "(progn \
   (put 'if-let 'byte-obsolete-info nil) \
@@ -46,6 +35,17 @@ SILENCIO += --eval "(define-advice message (:around (fn format &rest args) silen
   (unless (or (equal format \"Not registering prefix \\\"%s\\\" from %s.  Affects: %S\")\
               (ignore-errors (string-match-p \"Scraping files for\" (car args))))\
     (apply fn format args)))"
+
+.FORCE:
+.PHONY: help helpall clean build native quick-clean quick-build quick \
+	init-clean init-build bootstrap-borg bootstrap \
+	clone-modules checkout-modules
+
+ifeq ($(V),1)
+  Q=
+else
+  Q=@
+endif
 
 ## Help
 
