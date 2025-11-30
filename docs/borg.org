@@ -384,12 +384,12 @@ config files.
   It should should end with "..." and contain zero or one ~%s~, which
   stands for the file name.
 
-- Function: borg-report-after-init-duration ::
+- Function: borg-report-init-duration ::
 
-  This function reports how long it takes to run ~after-init-hook~.
-  This is done by adding two functions to that hook; one with a very
-  low depth and the other with a very high depth.  Calling this
-  function does nothing if the hook already ran.
+  This function adds functions to ~after-init-hook~, which, once that
+  hook is nearly done running, will report how long it took to run
+  that hook and also how long Emacs initialization took.  Calling
+  this function does nothing if the hook already ran.
 
 * Assimilation
 

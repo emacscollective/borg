@@ -1217,23 +1217,30 @@ Formatting is according to the commit message conventions."
      (process-lines "git" "diff-index" "--name-status" "--cached" "HEAD"
                     "--" (file-relative-name borg-drones-directory)))))
 
-(defun borg-report-after-init-duration ()
-  "Report how long it takes to run `after-init-hook'.
-This is done by adding two functions to that hook; one with a very
-low depth and the other with a very high depth.  Do nothing if the
-hook already ran."
+(defun borg-report-init-duration ()
+  "Report how long Emacs initialization and `after-init-hook' took.
+This adds functions to `after-init-hook' to determine how long it
+takes to run that, and to report those findings and also how long
+Emacs initialization took.  If that hook has already run, do nothing."
   (unless after-init-time
-    (letrec ((start nil)
-             (beg (lambda ()
-                    (setq start (current-time))
-                    (message "Running after-init-hook...")
-                    (remove-hook 'after-init-hook beg)))
-             (end (lambda ()
-                    (message "Running after-init-hook...done (%.3fs)"
-                             (float-time (time-subtract (current-time) start)))
-                    (remove-hook 'after-init-hook end))))
-      (add-hook 'after-init-hook beg -98)
-      (add-hook 'after-init-hook end +98))))
+    (letrec ((before nil)
+             (beg  (lambda ()
+                     (setq before (current-time))
+                     (message "Running after-init-hook...")
+                     (remove-hook 'after-init-hook beg)))
+             (end  (lambda ()
+                     (message "Running after-init-hook...done (%.3fs)"
+                              (float-time (time-subtract (current-time)
+                                                         before)))
+                     (remove-hook 'after-init-hook end)))
+             (init (lambda ()
+                     (message "Total init time %.3fs"
+                              (float-time (time-subtract after-init-time
+                                                         before-init-time)))
+                     (remove-hook 'after-init-hook init))))
+      (add-hook 'after-init-hook beg  -98)
+      (add-hook 'after-init-hook end  +98)
+      (add-hook 'after-init-hook init +98))))
 
 ;;; Integrations
 
