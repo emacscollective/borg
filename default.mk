@@ -13,20 +13,20 @@ DEPS  = cond-let
 DEPS += epkg/lisp
 DEPS += magit/lisp
 
+LOAD_PATH     ?= $(addprefix -L ../,$(DEPS))
+LOAD_PATH     += -L .
+ORG_LOAD_PATH ?= -L ../../org/lisp
+
 VERSION ?= $(shell test -e $(TOP).git && git describe --tags --abbrev=0 | cut -c2-)
 REVDESC := $(shell test -e $(TOP).git && git describe --tags)
 
-EMACS      ?= emacs
-EMACS_ARGS ?= --eval "(progn \
+EMACS       ?= emacs
+EMACS_ARGS  ?= --eval "(progn \
   (put 'if-let 'byte-obsolete-info nil) \
   (put 'when-let 'byte-obsolete-info nil))"
-
-LOAD_PATH  ?= $(addprefix -L ../,$(DEPS))
-LOAD_PATH  += -L .
-
-ifndef ORG_LOAD_PATH
-ORG_LOAD_PATH  = -L ../../org/lisp
-endif
+EMACS_Q_ARG ?= -Q
+EMACS_BATCH ?= $(EMACS) $(EMACS_Q_ARG) --batch $(EMACS_ARGS) $(LOAD_PATH)
+EMACS_ORG   ?= $(EMACS) $(EMACS_Q_ARG) --batch $(EMACS_ARGS) $(ORG_LOAD_PATH)
 
 INSTALL_INFO     ?= $(shell command -v ginstall-info || printf install-info)
 MAKEINFO         ?= makeinfo
