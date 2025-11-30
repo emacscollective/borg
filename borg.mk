@@ -27,13 +27,21 @@ EMACS_EXTRA ?=
 EMACS_Q_ARG ?= -Q
 EMACS_BATCH ?= $(EMACS) $(EMACS_Q_ARG) --batch $(EMACS_ARGS) $(EMACS_EXTRA)
 
-SILENCIO += --eval "(progn (require 'gv) (put 'buffer-substring 'byte-obsolete-generalized-variable nil))"
-SILENCIO += --eval "(define-advice message (:around (fn format &rest args) silencio)\
-  (unless (or (member format\
-                      '(\"Not registering prefix \\\"%s\\\" from %s.  Affects: %S\"\
-                        \"(Shell command succeeded with %s)\"))\
-              (ignore-errors (string-match-p \"Scraping files for\" (car args))))\
-    (apply fn format args)))"
+# Initial revisions of these kludges:
+# - be368ce85e6 byte-obsolete-generalized-variable
+# - a013a0eee79 registering
+# - f6e9cb62ea0 succeeded
+# - 38e9e01efb1 scraping
+SILENCIO += --eval "(progn\
+  (with-eval-after-load 'gv\
+    (put 'buffer-substring 'byte-obsolete-generalized-variable nil))\
+  (define-advice message (:around (fn format &rest args) silencio)\
+    (unless (or (member format\
+                        '(\"Not registering prefix \\\"%s\\\" from %s.  Affects: %S\"\
+                          \"(Shell command succeeded with %s)\"))\
+                (and (stringp (car args))\
+                     (string-match-p \"Scraping files for\" (car args))))\
+      (apply fn format args))))"
 
 .FORCE:
 .PHONY: help helpall clean build native quick-clean quick-build quick \
