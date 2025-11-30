@@ -21,17 +21,16 @@ endif
 
 ifeq "$(BORG_SECONDARY_P)" "true"
   DRONES_DIR ?= $(shell git config "borg.drones-directory" || echo "elpa")
-  BORG_ARGUMENTS = -L $(BORG_DIR) --load borg-elpa \
+  BORG_ARGS   = -L $(BORG_DIR) --load borg-elpa \
   --funcall borg-elpa-initialize
 else
   DRONES_DIR ?= $(shell git config "borg.drones-directory" || echo "lib")
-  BORG_ARGUMENTS = -L $(BORG_DIR) --load borg \
+  BORG_ARGS   = -L $(BORG_DIR) --load borg \
   --funcall borg-initialize
 endif
 
-EMACS           ?= emacs
-EMACS_ARGUMENTS ?= -Q --batch --eval "(setq load-prefer-newer t)"
-
+EMACS       ?= emacs
+EMACS_ARGS  ?= -Q --batch --eval "(setq load-prefer-newer t)"
 EMACS_EXTRA ?=
 
 .PHONY: help helpall clean build native quick-clean quick-build quick \
@@ -96,8 +95,8 @@ clean:
 ifeq "$(BORG_CLEAN_ELN)" "true"
 	@printf "Cleaning...\n"
 	$(Q)rm -f init.elc $(INIT_FILES:.el=.elc)
-	$(Q)$(EMACS) $(EMACS_ARGUMENTS) $(EMACS_EXTRA) $(SILENCIO) \
-	$(BORG_ARGUMENTS) \
+	$(Q)$(EMACS) $(EMACS_ARGS) $(EMACS_EXTRA) $(SILENCIO) \
+	$(BORG_ARGS) \
 	--funcall borg--batch-clean 2>&1
 	@printf "\n"
 else
@@ -111,28 +110,28 @@ clean-force:
 
 build: init-clean
 	@printf "Building...\n"
-	$(Q)$(EMACS) $(EMACS_ARGUMENTS) $(EMACS_EXTRA) $(SILENCIO) \
-	$(BORG_ARGUMENTS) \
+	$(Q)$(EMACS) $(EMACS_ARGS) $(EMACS_EXTRA) $(SILENCIO) \
+	$(BORG_ARGS) \
 	--funcall borg-batch-rebuild $(INIT_FILES) 2>&1
 
 native: init-clean
-	$(Q)$(EMACS) $(EMACS_ARGUMENTS) $(EMACS_EXTRA) $(SILENCIO) \
-	$(BORG_ARGUMENTS) \
+	$(Q)$(EMACS) $(EMACS_ARGS) $(EMACS_EXTRA) $(SILENCIO) \
+	$(BORG_ARGS) \
 	--eval "(borg-batch-rebuild nil t)" $(INIT_FILES) 2>&1
 
 ## Batch Quick
 
 quick-clean: init-clean
 	@printf "Cleaning...\n"
-	$(Q)$(EMACS) $(EMACS_ARGUMENTS) $(EMACS_EXTRA) $(SILENCIO) \
-	$(BORG_ARGUMENTS) \
+	$(Q)$(EMACS) $(EMACS_ARGS) $(EMACS_EXTRA) $(SILENCIO) \
+	$(BORG_ARGS) \
 	--eval '(borg--batch-clean t)' 2>&1
 	@printf "\n"
 
 quick-build:
 	@printf "Building...\n"
-	$(Q)$(EMACS) $(EMACS_ARGUMENTS) $(EMACS_EXTRA) $(SILENCIO) \
-	$(BORG_ARGUMENTS) \
+	$(Q)$(EMACS) $(EMACS_ARGS) $(EMACS_EXTRA) $(SILENCIO) \
+	$(BORG_ARGS) \
 	--eval '(borg-batch-rebuild t)' $(INIT_FILES) 2>&1
 
 quick: quick-clean quick-build
@@ -142,8 +141,8 @@ redo: clean build
 ## Per-Clone
 
 clean/%: .FORCE
-	$(Q)$(EMACS) $(EMACS_ARGUMENTS) $(EMACS_EXTRA) $(SILENCIO) \
-	$(BORG_ARGUMENTS) \
+	$(Q)$(EMACS) $(EMACS_ARGS) $(EMACS_EXTRA) $(SILENCIO) \
+	$(BORG_ARGS) \
 	--eval '(borg-clean "$*")' 2>&1
 
 # Make tries to rebuild included files.  Since the next rule
@@ -152,21 +151,21 @@ clean/%: .FORCE
 $(DRONES_DIR)/borg/borg.mk: ;
 
 $(DRONES_DIR)/% : .FORCE
-	$(Q)$(EMACS) $(EMACS_ARGUMENTS) $(EMACS_EXTRA) $(SILENCIO) \
-	$(BORG_ARGUMENTS) \
+	$(Q)$(EMACS) $(EMACS_ARGS) $(EMACS_EXTRA) $(SILENCIO) \
+	$(BORG_ARGS) \
 	--eval '(borg-build "$*")' 2>&1
 
 # Define the "aliases" separately to avoid warnings about "peer
 # targets" not being updated.
 build/%: .FORCE
-	$(Q)$(EMACS) $(EMACS_ARGUMENTS) $(EMACS_EXTRA) $(SILENCIO) \
-	$(BORG_ARGUMENTS) \
+	$(Q)$(EMACS) $(EMACS_ARGS) $(EMACS_EXTRA) $(SILENCIO) \
+	$(BORG_ARGS) \
 	--eval '(borg-build "$*")' 2>&1
 
 
 native/%: .FORCE
-	$(Q)$(EMACS) $(EMACS_ARGUMENTS) $(EMACS_EXTRA) $(SILENCIO) \
-	$(BORG_ARGUMENTS) \
+	$(Q)$(EMACS) $(EMACS_ARGS) $(EMACS_EXTRA) $(SILENCIO) \
+	$(BORG_ARGS) \
 	--eval '(borg-build "$*" nil t)' 2>&1
 
 ## Init Files
@@ -176,13 +175,13 @@ init-clean:
 
 init-tangle: init.org
 	@printf "%s\n" "--- [init.org] ---"
-	$(Q)$(EMACS) $(EMACS_ARGUMENTS) $(EMACS_EXTRA) \
+	$(Q)$(EMACS) $(EMACS_ARGS) $(EMACS_EXTRA) \
 	--load org \
 	--eval '(org-babel-tangle-file "init.org")' 2>&1
 
 init-build: init-clean
-	$(Q)$(EMACS) $(EMACS_ARGUMENTS) $(EMACS_EXTRA) \
-	$(BORG_ARGUMENTS) \
+	$(Q)$(EMACS) $(EMACS_ARGS) $(EMACS_EXTRA) \
+	$(BORG_ARGS) \
 	--funcall borg-batch-rebuild-init $(INIT_FILES) 2>&1
 
 ifeq ($(wildcard init.org), init.org)
