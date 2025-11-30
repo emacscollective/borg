@@ -45,6 +45,9 @@
 
 ;;; Code:
 
+(put 'if-let 'byte-obsolete-info nil)
+(put 'when-let 'byte-obsolete-info nil)
+
 (defun borg-report-load-duration (&optional file format-string)
   "Report how long it takes to load the file currently being loaded.
 
