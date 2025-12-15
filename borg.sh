@@ -160,6 +160,10 @@ clone () {
 checkout () {
     path="$1"
     shift
+    if [ $# -ge 1 ] ; then
+        force="$1"
+        shift
+    fi
     echo "--- [$path] ---"
 
     cd "$super"
@@ -184,16 +188,22 @@ checkout () {
             echo "Skipping $path (always using latest/checked out borg)"
             echo "    HEAD: $head"
             echo "expected: $hash"
-        elif [ -n "$(git status --porcelain=v1 --ignored)" ]
+        elif [ -n "$(git status --porcelain=v1 --untracked-files=no)" ]
+             # FIXME: How should untracked changes be addressed here such i.e. Info dirs?
         then
             echo "Skipping $path (uncommitted changes)"
             echo "    HEAD: $head"
             echo "expected: $hash"
-        elif ! git diff --quiet "$head" "$upstream"
+        elif [ "${force:-nil}" = nil ] && ! git diff --quiet "$head" "$upstream"
         then
             echo "Skipping $path (tip no longer matches upstream)"
             echo "    HEAD: $head"
             echo "expected: $hash"
+        elif [ "${force:-nil}" = t ] && [ -z "$branch" ]
+             # FIXME: Check if the current branch matches the upstreams
+             # head or git the submodules branch variable
+        then
+            echo "HEAD is in detached state, expected a branch"
         else
             echo "Checkout $path ($hash)"
             echo "HEAD was $(git log --no-walk --format='%h %s' HEAD)"
@@ -229,28 +239,28 @@ cmd_clone () {
 }
 
 cmd_checkout () {
-    while [ $# -ne 0 ]
+    while [ $# -gt 0 ]
     do
         case "$1" in
+        --force) force=t; shift;;
         --) shift; break;;
         -*) usage;;
         *)  break;;
         esac
-        shift
     done
 
     if [ $# -ne 0 ]
     then
-        for path in "$@"; do checkout $path; done
+        for path in "$@"; do checkout $path ${force+ $force}; done
     else
         git ls-files -s | grep ^160000 | cut -f2 |
-            while read path; do checkout $path; done
+            while read path; do checkout $path $force; done
     fi
 }
 
-command=$1
+command=${1:-nil}
 
-case "$command" in
+case "${command}" in
     clone|checkout) shift; "cmd_$command" "$@" ;;
     *) usage ;;
 esac
