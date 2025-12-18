@@ -207,7 +207,7 @@ checkout () {
 }
 
 cmd_clone () {
-    while [ $# -ne 0 ]
+    while [ $# -gt 0 ]
     do
         case "$1" in
         --) shift; break;;
@@ -219,7 +219,7 @@ cmd_clone () {
 
     gitdir="$(realpath "$(git rev-parse --git-dir)")"
 
-    if [ $# -ne 0 ]
+    if [ $# -gt 0 ]
     then
         for path in "$@"; do clone $path $gitdir; done
     else
@@ -229,7 +229,7 @@ cmd_clone () {
 }
 
 cmd_checkout () {
-    while [ $# -ne 0 ]
+    while [ $# -gt 0 ]
     do
         case "$1" in
         --) shift; break;;
@@ -239,7 +239,7 @@ cmd_checkout () {
         shift
     done
 
-    if [ $# -ne 0 ]
+    if [ $# -gt 0 ]
     then
         for path in "$@"; do checkout $path; done
     else
