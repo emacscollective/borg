@@ -214,7 +214,6 @@ cmd_clone () {
         -*) usage;;
         *)  break;;
         esac
-        shift
     done
 
     gitdir="$(realpath "$(git rev-parse --git-dir)")"
@@ -236,7 +235,6 @@ cmd_checkout () {
         -*) usage;;
         *)  break;;
         esac
-        shift
     done
 
     if [ $# -gt 0 ]
