@@ -248,7 +248,7 @@ cmd_checkout () {
     fi
 }
 
-command=$1
+command=${1-}
 
 case "$command" in
     clone|checkout) shift; "cmd_$command" "$@" ;;
