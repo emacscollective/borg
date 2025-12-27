@@ -5,6 +5,39 @@
 
 - For Emacs 28 autoloads were not re-generated from scratch.  f2316c1
 
+- Improved documentation.
+
+- Added new variable ~borg-debug-user-init-files~.  d09d38a
+
+- No longer load a library before compiling it.  fcc513d
+
+- Started to automatically report how long it takes to load ~borg~ and
+  ~early-init.el~ (or more precisely the setup file, which loads ~borg~).
+  Added new function ~borg-report-init-duration~, which can be used to
+  do the same for other setup files, and ~borg-report-init-duration~,
+  which can be used to report how long initialization and running
+  ~after-init-hook~ took.  e8285cc..788d232
+
+- Started to use a new function, ~borg--load-config~ to load all of
+  Borg's additional init files, in silence.  To show messages when
+  loading these files, do so explicitly in these files.  The new
+  ~borg-report-load-duration~ can be used for that purpose, or just
+  ~message~.  e8285cc, 01f2df0
+
+- Added a new ~redo~ target, a shorthand for using ~clean~ followed by
+  ~build~.
+
+- Renamed make variable ~EMACS_ARGUMENTS~ to ~EMACS_ARGS~, and
+  ~BORG_ARGUMENTS~ to ~BORG_ARGS~.  c069d77
+
+- Added new make variable ~EMACS_Q_ARG~.  5dd4e43
+
+- ~if-let~ and ~when-let~ are now undeprecated when ~borg~ is loaded.
+  e76fcaf
+
+- Fixed minor issues in ~borg.sh~ and removed some dead code.
+  9f8e987..6ed307a
+
 * v4.3.0    2025-11-01
 
 - ~borg-batch-rebuild~ now skips empty drones, which are created when
