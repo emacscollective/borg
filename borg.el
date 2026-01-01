@@ -528,13 +528,13 @@ exists."
         (initialized 0))
     (borg-do-drones (drone)
       (cond
-       ((borg--drone-disabled-p drone)
-        (cl-incf skipped))
-       ((not (file-exists-p (borg-worktree drone)))
-        (cl-incf skipped))
-       (t
-        (cl-incf initialized)
-        (borg-activate drone))))
+        ((borg--drone-disabled-p drone)
+         (cl-incf skipped))
+        ((not (file-exists-p (borg-worktree drone)))
+         (cl-incf skipped))
+        (t
+         (cl-incf initialized)
+         (borg-activate drone))))
     (let* ((message (current-message))
            (inhibit (and message
                          (string-match-p
@@ -605,18 +605,18 @@ otherwise."
     (message "\n--- [%s] ---\n" drone)
     (let ((dir (borg-worktree drone)))
       (cond
-       ((borg--drone-disabled-p drone)
-        (message "Skipped (Disabled)"))
-       ((let ((min (cdr (assoc drone borg-minimal-emacs-alist))))
-          (and min (version< emacs-version min)
-               (message "Skipped (Requires Emacs >= %s)" min))))
-       ((not (file-exists-p dir))
-        (message "Skipped (Missing)"))
-       ((directory-empty-p dir)
-        (message "Skipped (Empty directory)"))
-       ((and quick (borg-get-all drone "build-step"))
-        (message "Skipped (Expensive to build)"))
-       ((borg-build drone nil native)))))
+        ((borg--drone-disabled-p drone)
+         (message "Skipped (Disabled)"))
+        ((let ((min (cdr (assoc drone borg-minimal-emacs-alist))))
+           (and min (version< emacs-version min)
+                (message "Skipped (Requires Emacs >= %s)" min))))
+        ((not (file-exists-p dir))
+         (message "Skipped (Missing)"))
+        ((directory-empty-p dir)
+         (message "Skipped (Empty directory)"))
+        ((and quick (borg-get-all drone "build-step"))
+         (message "Skipped (Expensive to build)"))
+        ((borg-build drone nil native)))))
   (borg-batch-rebuild-init))
 
 (defun borg-batch-rebuild-init ()
@@ -644,28 +644,28 @@ and optional NATIVE are both non-nil, then also compile natively."
     (setq clone (substring clone 0 -1)))
   (borg-clean clone)
   (cond
-   (noninteractive
-    (let ((borg-compile-function borg-compile-function))
-      (when (and (fboundp 'native-comp-available-p)
-                 (native-comp-available-p))
-        (when native
-          (setq borg-compile-function
-                (if (functionp native) native #'borg-byte+native-compile)))
-        (when (memq borg-compile-function '( borg--native-compile
-                                             native-compile
-                                             native-compile-async))
-          (message "WARNING: Using `%s' instead of unsuitable `%s'"
-                   'borg-byte+native-compile borg-compile-function)
-          (setq borg-compile-function #'borg-byte+native-compile)))
-      (borg--build-noninteractive clone)
-      (when activate
-        (borg-activate clone))))
-   ((let ((process (borg--build-interactive clone)))
-      (when activate
-        (add-function :after (process-sentinel process)
-                      (lambda (_process event)
-                        (when (string-equal event "finished\n")
-                          (borg-activate clone)))))))))
+    (noninteractive
+     (let ((borg-compile-function borg-compile-function))
+       (when (and (fboundp 'native-comp-available-p)
+                  (native-comp-available-p))
+         (when native
+           (setq borg-compile-function
+                 (if (functionp native) native #'borg-byte+native-compile)))
+         (when (memq borg-compile-function '( borg--native-compile
+                                              native-compile
+                                              native-compile-async))
+           (message "WARNING: Using `%s' instead of unsuitable `%s'"
+                    'borg-byte+native-compile borg-compile-function)
+           (setq borg-compile-function #'borg-byte+native-compile)))
+       (borg--build-noninteractive clone)
+       (when activate
+         (borg-activate clone))))
+    ((let ((process (borg--build-interactive clone)))
+       (when activate
+         (add-function :after (process-sentinel process)
+                       (lambda (_process event)
+                         (when (string-equal event "finished\n")
+                           (borg-activate clone)))))))))
 
 (defun borg--build-noninteractive (clone)
   (let ((default-directory (borg-worktree clone))
@@ -810,9 +810,9 @@ and optional NATIVE are both non-nil, then also compile natively."
                        (funcall fn string nil type))
                      '((name . "no-message")))
          ,bodyform)
-      (advice-remove 'progress-reporter-do-update #'ignore)
-      (advice-remove 'progress-reporter-done #'ignore)
-      (advice-remove 'byte-compile-info "no-message")))
+     (advice-remove 'progress-reporter-do-update #'ignore)
+     (advice-remove 'progress-reporter-done #'ignore)
+     (advice-remove 'byte-compile-info "no-message")))
 
 (defun borg-update-autoloads (clone &optional path)
   "Update autoload files for the clone named CLONE in the directories in PATH."
@@ -930,36 +930,36 @@ and optional NATIVE are both non-nil, then also compile natively."
 
 (defun borg-byte+native-compile (file)
   (cond
-   ((or (equal (getenv "NATIVE_DISABLED") "1")
-        (member (file-name-nondirectory file)
-                borg-native-compile-deny-list))
-    (byte-compile-file file))
-   ((and (fboundp 'comp--native-compile)
-         (fboundp 'comp-ensure-native-compiler))
-    (comp-ensure-native-compiler)
-    (let* ((byte+native-compile t)
-           (byte-to-native-output-buffer-file nil)
-           (native-compile-target-directory (car native-comp-eln-load-path))
-           (eln-file (comp--native-compile file)))
-      (pcase byte-to-native-output-buffer-file
-        (`(,temp-buffer . ,target-file)
-         (unwind-protect
-             (progn
-               (borg--byte-write-target-file temp-buffer target-file)
-               (when (stringp eln-file)
-                 (set-file-times eln-file)))
-           (kill-buffer temp-buffer)
-           (file-exists-p target-file))))))
-   ((error "Emacs %s does not support native compilation" emacs-version))))
+    ((or (equal (getenv "NATIVE_DISABLED") "1")
+         (member (file-name-nondirectory file)
+                 borg-native-compile-deny-list))
+     (byte-compile-file file))
+    ((and (fboundp 'comp--native-compile)
+          (fboundp 'comp-ensure-native-compiler))
+     (comp-ensure-native-compiler)
+     (let* ((byte+native-compile t)
+            (byte-to-native-output-buffer-file nil)
+            (native-compile-target-directory (car native-comp-eln-load-path))
+            (eln-file (comp--native-compile file)))
+       (pcase byte-to-native-output-buffer-file
+         (`(,temp-buffer . ,target-file)
+          (unwind-protect
+              (progn
+                (borg--byte-write-target-file temp-buffer target-file)
+                (when (stringp eln-file)
+                  (set-file-times eln-file)))
+            (kill-buffer temp-buffer)
+            (file-exists-p target-file))))))
+    ((error "Emacs %s does not support native compilation" emacs-version))))
 
 (defun borg-byte+native-compile-async (file)
   (byte-compile-file file)
   (cond
-   ((and (fboundp 'native-compile-async)
-         (fboundp 'comp-ensure-native-compiler))
-    (comp-ensure-native-compiler)
-    (native-compile-async file))
-   ((error "Emacs %s does not support native compilation" emacs-version))))
+    ((and (fboundp 'native-compile-async)
+          (fboundp 'comp-ensure-native-compiler))
+     (comp-ensure-native-compiler)
+     (native-compile-async file))
+    ((error "Emacs %s does not support native compilation" emacs-version))))
 
 (if (fboundp 'byte-write-target-file)
     (defalias 'borg--byte-write-target-file 'byte-write-target-file)

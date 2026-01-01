@@ -1,6 +1,8 @@
 ((nil
   (indent-tabs-mode . nil)
   (sisyphus-libraries . (t "borg.mk" "borg.sh")))
+ (emacs-lisp-mode
+  (lisp-indent-local-overrides . ((cond . 0))))
  (makefile-mode
   (indent-tabs-mode . t)
   (outline-regexp . "#\\(#+\\)")
