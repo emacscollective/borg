@@ -1,6 +1,6 @@
 #!/bin/sh
 
-# Copyright (C) 2016-2025 Jonas Bernoulli
+# Copyright (C) 2016-2026 Jonas Bernoulli
 #
 # Author: Jonas Bernoulli <jonas@bernoul.li>
 # SPDX-License-Identifier: GPL-3.0-or-later
