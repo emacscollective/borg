@@ -129,7 +129,4 @@
 
 ;;; _
 (provide 'borg-elpa)
-;; Local Variables:
-;; indent-tabs-mode: nil
-;; End:
 ;;; borg-elpa.el ends here

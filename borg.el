@@ -1396,7 +1396,4 @@ Do you really want to %s it? "))))
 
 ;;; _
 (provide 'borg)
-;; Local Variables:
-;; indent-tabs-mode: nil
-;; End:
 ;;; borg.el ends here
