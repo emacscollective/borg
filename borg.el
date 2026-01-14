@@ -523,6 +523,9 @@ exists."
   (when noninteractive
     (borg--load-config "etc/borg/init.el"))
   (info-initialize)
+  (let ((dir (car (Info-default-dirs))))
+    (when (file-directory-p dir)
+      (cl-pushnew dir Info-directory-list :test #'file-equal-p)))
   (let ((start (current-time))
         (skipped 0)
         (initialized 0))

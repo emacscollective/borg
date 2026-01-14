@@ -1,4 +1,9 @@
 # -*- mode: org -*-
+* v4.4.1    UNRELEASED
+
+- When Emacs is run from its build directory, add the respective info
+  directory to ~Info-directory-list~.
+
 * v4.4.0    2026-01-01
 
 - Dropped support for Emacs 27.  64f67e5
