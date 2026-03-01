@@ -1,4 +1,8 @@
 # -*- mode: org -*-
+* v4.4.2    2026-03-01
+
+- Old man yells at cloud.
+
 * v4.4.1    2026-02-01
 
 - When Emacs is run from its build directory, add the respective info
