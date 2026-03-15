@@ -1173,10 +1173,12 @@ Formatting is according to the commit message conventions."
   (interactive)
   (when-let* ((alist (borg--drone-states)))
     (let ((width (apply #'max (mapcar (lambda (e) (length (car e))) alist)))
-          (align (cl-member-if (pcase-lambda (`(,_ ,_ ,version))
-                                 (and version
-                                      (string-match-p "\\`v[0-9]" version)))
-                               alist)))
+          ;; Emacs 31.1 adds `any'/`member-if' and deprecates `cl-member-if'.
+          (align (funcall (static-if (fboundp 'any) #'any #'cl-member-if)
+                          (pcase-lambda (`(,_ ,_ ,version))
+                            (and version
+                                 (string-match-p "\\`v[0-9]" version)))
+                          alist)))
       (when (> (length alist) 1)
         (let ((a 0) (m 0) (d 0))
           (pcase-dolist (`(,_ ,state ,_) alist)
