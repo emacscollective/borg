@@ -6,10 +6,10 @@
 ;; Homepage: https://github.com/emacscollective/borg
 ;; Keywords: tools
 
-;; Package-Version: 4.4.3
+;; Package-Version: 4.5.0
 ;; Package-Requires: (
 ;;     (emacs "28.1")
-;;     (epkg   "4.1")
+;;     (epkg   "4.2")
 ;;     (magit  "4.5"))
 
 ;; SPDX-License-Identifier: GPL-3.0-or-later

@@ -1,5 +1,5 @@
 # -*- mode: org -*-
-* v4.5.0    UNRELEASED
+* v4.5.0    2026-05-01
 
 - Support assimilating packages from the repositories used for GNU
   ELPA and NonGNU ELPA.  Previously such packages were installed from
