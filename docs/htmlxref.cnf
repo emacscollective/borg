@@ -1,0 +1,19 @@
+# https://www.gnu.org/software/texinfo/manual/texinfo/html_node/HTML-Xref-Configuration.html
+
+EMACS  = https://www.gnu.org/software/emacs/manual
+MAGIT  = https://docs.magit.vc
+MIRROR = https://docs.emacsmirror.net
+
+auth		node	${EMACS}/html_node/auth/
+ediff		node	${EMACS}/html_node/ediff/
+elisp		node	${EMACS}/html_node/elisp/
+emacs		node	${EMACS}/html_node/emacs/
+
+forge		node	${MAGIT}/forge/
+ghub		node	${MAGIT}/ghub/
+magit		node	${MAGIT}/magit/
+transient	node	${MAGIT}/transient/
+with-editor	node	${MAGIT}/with-editor/
+
+borg		node	${MIRROR}/borg/
+epkg		node	${MIRROR}/epkg/
