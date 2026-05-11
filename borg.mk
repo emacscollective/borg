@@ -183,15 +183,15 @@ endif
 ## Bootstrap
 
 bootstrap:
-	$(Q)printf "\n=== Running 'git submodule init' ===\n\n"
+	@printf "\n=== Running 'git submodule init' ===\n\n"
 	$(Q)git submodule init
-	$(Q)printf "\n=== Running 'make clone-modules' ===\n"
+	@printf "\n=== Running 'make clone-modules' ===\n"
 	$(Q)$(MAKE) clone-modules
-	$(Q)printf "\n=== Running 'make checkout-modules' ===\n"
+	@printf "\n=== Running 'make checkout-modules' ===\n"
 	$(Q)$(MAKE) checkout-modules
-	$(Q)printf "\n=== Running 'make build' ===\n\n"
+	@printf "\n=== Running 'make build' ===\n\n"
 	$(Q)$(MAKE) build
-	$(Q)printf "\n=== Bootstrapping finished ===\n\n"
+	@printf "\n=== Bootstrapping finished ===\n\n"
 	$(Q)git submodule status
 
 clone-modules:
