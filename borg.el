@@ -1236,7 +1236,7 @@ Formatting is according to the commit message conventions."
           version))))))
 
 (defun borg--drone-states ()
-  (let ((default-directory borg-user-emacs-directory))
+  (let ((default-directory borg-top-level-directory))
     (mapcar
      (lambda (line)
        (pcase-let ((`(,state ,module) (split-string line "\t")))
