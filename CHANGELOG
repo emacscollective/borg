@@ -1,4 +1,9 @@
 # -*- mode: org -*-
+* v4.5.2    2026-07-01
+
+- ~borg-insert-update-message~ believed all drones were removed
+  when invoked from a subdirectory.  #183
+
 * v4.5.1    2026-06-01
 
 - Thoughts and whitespace.
