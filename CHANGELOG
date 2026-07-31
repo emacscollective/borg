@@ -1,4 +1,8 @@
 # -*- mode: org -*-
+* v4.5.3    2026-08-01
+
+- Thoughts and whitespace.
+
 * v4.5.2    2026-07-01
 
 - ~borg-insert-update-message~ believed all drones were removed
