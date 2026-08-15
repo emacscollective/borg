@@ -173,7 +173,7 @@ init-tangle: init.org
 	--eval '(org-babel-tangle-file "init.org")' 2>&1
 
 init-build: init-clean
-	$(Q)$(EMACS_BATCH) $(BORG_ARGS) \
+	$(Q)$(EMACS_BATCH) $(subst borg-initialize,ignore,$(BORG_ARGS)) \
 	--funcall borg-batch-rebuild-init $(INIT_FILES) 2>&1
 
 ifeq ($(wildcard init.org), init.org)

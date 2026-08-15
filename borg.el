@@ -619,11 +619,12 @@ This function is to be used only with `--batch'."
   (unless noninteractive
     (error "`borg-batch-recompile-init' is to be used only with --batch"))
   (let ((default-directory borg-user-emacs-directory))
+    (message "\n--- [init files] ---\n")
+    (borg-initialize)
     (dolist (file (or command-line-args-left
                       (list "init.el"
                             (concat (user-real-login-name) ".el"))))
       (when (file-exists-p file)
-        (message "\n--- [%s] ---\n" file)
         (byte-recompile-file (expand-file-name file) t 0)))))
 
 (defun borg-build (clone &optional activate native)
