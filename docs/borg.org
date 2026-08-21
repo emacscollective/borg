@@ -130,7 +130,7 @@ and configure all submodules (including the ~borg~ submodule) and to
 build all drones.
 
 #+begin_src sh
-  git clone git@github.com:emacscollective/emacs.g.git ~/.config/emacs
+  git clone https://github.com/emacscollective/emacs.g ~/.config/emacs
   cd ~/.config/emacs
   make bootstrap-borg
   make bootstrap
@@ -152,11 +152,6 @@ use that configuration using ~emacs --init-directory /path/to/emacs.g/~,
 provided you are using Emacs 29 or later.  Otherwise you have to
 resort to ~emacs -Q -l /path/to/emacs.g/early-init.el -l
 /path/to/emacs.g/init.el~.
-
-For drones whose upstream repositories are located on Github or Gitlab
-the ~emacs.g~ collective uses the ~ssh~ protocol by default, which is a
-problem if you don't have accounts there and have not properly setup
-your keys.  See [[*Using https URLs]].
 
 During package compilation you may notice the submodules relating to
 those packages become dirty due to the compilation outputs not being
@@ -209,7 +204,7 @@ bootstrap /from scratch/.  In the process we are creating a seed but we
 are not there yet.  Instead run this:
 
 #+begin_src sh
-  git submodule add --name borg git@github.com:emacscollective/borg.git lib/borg
+  git submodule add --name borg https://github.com/emacscollective/borg lib/borg
 #+end_src
 
 Now that ~borg~ is available we can build all the assimilated packages (currently
@@ -246,11 +241,11 @@ doing so without the help of the ~epkg~ package is quite cumbersome,
 so lets manually install that and its dependency first:
 
 #+begin_src sh
-  git submodule add --name closql git@github.com:magit/closql.git lib/closql
-  git submodule add --name emacsql git@github.com:magit/emacsql.git lib/emacsql
-  git submodule add --name compat git@github.com:emacs-compat/compat.git lib/compat
-  git submodule add --name llama git@github.com:tarsius/llama.git lib/llama
-  git submodule add --name epkg git@github.com:emacscollective/epkg.git lib/epkg
+  git submodule add --name closql https://github.com/magit/closql lib/closql
+  git submodule add --name emacsql https://github.com/magit/emacsql lib/emacsql
+  git submodule add --name compat https://github.com/emacs-compat/compat lib/compat
+  git submodule add --name llama https://github.com/tarsius/llama lib/llama
+  git submodule add --name epkg https://github.com/emacscollective/epkg lib/epkg
   git config -f .gitmodules submodule.emacsql.no-byte-compile emacsql-pg.el
   echo /epkgs/ >> .gitignore
   git add .gitignore .gitmodules
@@ -292,27 +287,24 @@ works the same way as described in [[*Bootstrapping using a seed]].  The
 only difference is that instead of starting by cloning someone else's
 repository you start by cloning your own repository.
 
-*** Using https URLs
+*** Using ssh URLs
 
 For drones whose upstream repositories are located on Github or Gitlab
-the ~emacs.g~ collective uses the ~ssh~ protocol by default, which is a
-problem if you don't have accounts there and have not properly setup
-your keys.
-
-Luckily this can easily be fixed using the following global rules.
+the ~emacs.g~ collective uses the ~https~ protocol by default, but your can
+change that on the fly using the following global rules.
 
 #+begin_src emacs-lisp
-  git config --global url.https://github.com/.insteadOf git@github.com:
-  git config --global url.https://gitlab.com/.insteadOf git@gitlab.com:
+  git config --global url.git@github.com:.insteadOf https://github.com/
+  git config --global url.git@gitlab.com:.insteadOf https://gitlab.com/
 #+end_src
 
 If you don't want to configure this globally, then you can also configure
-Borg itself to prefer the ~https~ URLS.
+Borg itself to prefer the ~ssh~ URLs.
 
 #+begin_src emacs-lisp
   (setq borg-rewrite-urls-alist
-        '(("git@github.com:" . "https://github.com/")
-          ("git@gitlab.com:" . "https://gitlab.com/")))
+        '(("https://github.com/" . "git@github.com:")
+          ("https://gitlab.com/" . "git@gitlab.com:")))
 #+end_src
 
 This does not affect packages that have already been assimilated.
@@ -321,9 +313,9 @@ are assimilated by default.
 
 #+begin_src sh
   cd ~/.config/emacs
-  sed -i "s|git@github.com:|https://github.com/|g" .gitmodules
-  sed -i "s|git@gitlab.com:|https://gitlab.com/|g" .gitmodules
-  git commit -m "Use https URLs for Github and Gitlab"
+  sed -i "s|https://github.com/|git@github.com:|g" .gitmodules
+  sed -i "s|https://gitlab.com/|git@gitlab.com:|g" .gitmodules
+  git commit -m "Use ssh URLs for Github and Gitlab"
 #+end_src
 
 If you have already run ~make bootstrap~, then you also have to edit
@@ -331,8 +323,8 @@ If you have already run ~make bootstrap~, then you also have to edit
 
 #+begin_src sh
   cd ~/.config/emacs
-  sed -i "s|git@github.com:|https://github.com/|g" .git/config
-  sed -i "s|git@gitlab.com:|https://gitlab.com/|g" .git/config
+  sed -i "s|https://github.com/|git@github.com:|g" .git/config
+  sed -i "s|https://gitlab.com/|git@gitlab.com:|g" .git/config
 #+end_src
 
 * Startup
@@ -951,7 +943,7 @@ variables you can tell Borg how to build such packages.
   #+BEGIN_SRC undefined
     [submodule "mu4e"]
             path = lib/mu4e
-            url = git@github.com:djcb/mu.git
+            url = https://github.com/djcb/mu.git
             build-step = test -e ./configure || autoreconf -i
             build-step = ./configure
             build-step = make -C mu4e > /dev/null
@@ -968,7 +960,7 @@ variables you can tell Borg how to build such packages.
   #+BEGIN_SRC undefined
     [submodule "multiple-cursors"]
             path = lib/multiple-cursors
-            url = git@github.com:magnars/multiple-cursors.el.git
+            url = https://github.com/magnars/multiple-cursors.el.git
             build-step = borg-compile
   #+END_SRC
 
@@ -1132,7 +1124,7 @@ variables you can tell Borg how to build such packages.
 
   An alist that can optionally be used to rewrite certain URLs.  Each
   element has the form ~(ORIG . BASE)~.  Each URL that starts with ORIG
-  is rewritten to start with BASE instead.  See [[*Using https URLs]].
+  is rewritten to start with BASE instead.  See [[*Using ssh URLs]].
 
 - Variable: borg-maketexi-filename-regexp ::
 

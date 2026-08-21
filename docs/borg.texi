@@ -196,7 +196,7 @@ and configure all submodules (including the @code{borg} submodule) and to
 build all drones.
 
 @example
-git clone git@@github.com:emacscollective/emacs.g.git ~/.config/emacs
+git clone https://github.com/emacscollective/emacs.g ~/.config/emacs
 cd ~/.config/emacs
 make bootstrap-borg
 make bootstrap
@@ -218,11 +218,6 @@ use that configuration using @code{emacs --init-directory /path/to/emacs.g/},
 provided you are using Emacs 29 or later.  Otherwise you have to
 resort to @code{emacs -Q -l /path/to/emacs.g/early-init.el -l
 /path/to/emacs.g/init.el}.
-
-For drones whose upstream repositories are located on Github or Gitlab
-the @code{emacs.g} collective uses the @code{ssh} protocol by default, which is a
-problem if you don't have accounts there and have not properly setup
-your keys.  See @ref{Using https URLs}.
 
 During package compilation you may notice the submodules relating to
 those packages become dirty due to the compilation outputs not being
@@ -276,7 +271,7 @@ bootstrap @emph{from scratch}.  In the process we are creating a seed but we
 are not there yet.  Instead run this:
 
 @example
-git submodule add --name borg git@@github.com:emacscollective/borg.git lib/borg
+git submodule add --name borg https://github.com/emacscollective/borg lib/borg
 @end example
 
 Now that @code{borg} is available we can build all the assimilated packages (currently
@@ -313,11 +308,11 @@ doing so without the help of the @code{epkg} package is quite cumbersome,
 so lets manually install that and its dependency first:
 
 @example
-git submodule add --name closql git@@github.com:magit/closql.git lib/closql
-git submodule add --name emacsql git@@github.com:magit/emacsql.git lib/emacsql
-git submodule add --name compat git@@github.com:emacs-compat/compat.git lib/compat
-git submodule add --name llama git@@github.com:tarsius/llama.git lib/llama
-git submodule add --name epkg git@@github.com:emacscollective/epkg.git lib/epkg
+git submodule add --name closql https://github.com/magit/closql lib/closql
+git submodule add --name emacsql https://github.com/magit/emacsql lib/emacsql
+git submodule add --name compat https://github.com/emacs-compat/compat lib/compat
+git submodule add --name llama https://github.com/tarsius/llama lib/llama
+git submodule add --name epkg https://github.com/emacscollective/epkg lib/epkg
 git config -f .gitmodules submodule.emacsql.no-byte-compile emacsql-pg.el
 echo /epkgs/ >> .gitignore
 git add .gitignore .gitmodules
@@ -360,28 +355,25 @@ works the same way as described in @ref{Bootstrapping using a seed}.  The
 only difference is that instead of starting by cloning someone else's
 repository you start by cloning your own repository.
 
-@anchor{Using https URLs}
-@subsection Using https URLs
+@anchor{Using ssh URLs}
+@subsection Using ssh URLs
 
 For drones whose upstream repositories are located on Github or Gitlab
-the @code{emacs.g} collective uses the @code{ssh} protocol by default, which is a
-problem if you don't have accounts there and have not properly setup
-your keys.
-
-Luckily this can easily be fixed using the following global rules.
+the @code{emacs.g} collective uses the @code{https} protocol by default, but your can
+change that on the fly using the following global rules.
 
 @lisp
-git config --global url.https://github.com/.insteadOf git@@github.com:
-git config --global url.https://gitlab.com/.insteadOf git@@gitlab.com:
+git config --global url.git@@github.com:.insteadOf https://github.com/
+git config --global url.git@@gitlab.com:.insteadOf https://gitlab.com/
 @end lisp
 
 If you don't want to configure this globally, then you can also configure
-Borg itself to prefer the @code{https} URLS@.
+Borg itself to prefer the @code{ssh} URLs.
 
 @lisp
 (setq borg-rewrite-urls-alist
-      '(("git@@github.com:" . "https://github.com/")
-        ("git@@gitlab.com:" . "https://gitlab.com/")))
+      '(("https://github.com/" . "git@@github.com:")
+        ("https://gitlab.com/" . "git@@gitlab.com:")))
 @end lisp
 
 This does not affect packages that have already been assimilated.
@@ -390,9 +382,9 @@ are assimilated by default.
 
 @example
 cd ~/.config/emacs
-sed -i "s|git@@github.com:|https://github.com/|g" .gitmodules
-sed -i "s|git@@gitlab.com:|https://gitlab.com/|g" .gitmodules
-git commit -m "Use https URLs for Github and Gitlab"
+sed -i "s|https://github.com/|git@@github.com:|g" .gitmodules
+sed -i "s|https://gitlab.com/|git@@gitlab.com:|g" .gitmodules
+git commit -m "Use ssh URLs for Github and Gitlab"
 @end example
 
 If you have already run @code{make bootstrap}, then you also have to edit
@@ -400,8 +392,8 @@ If you have already run @code{make bootstrap}, then you also have to edit
 
 @example
 cd ~/.config/emacs
-sed -i "s|git@@github.com:|https://github.com/|g" .git/config
-sed -i "s|git@@gitlab.com:|https://gitlab.com/|g" .git/config
+sed -i "s|https://github.com/|git@@github.com:|g" .git/config
+sed -i "s|https://gitlab.com/|git@@gitlab.com:|g" .git/config
 @end example
 
 @node Startup
@@ -1016,7 +1008,7 @@ with @code{shell-command}.
 @example
 [submodule "mu4e"]
         path = lib/mu4e
-        url = git@@github.com:djcb/mu.git
+        url = https://github.com/djcb/mu.git
         build-step = test -e ./configure || autoreconf -i
         build-step = ./configure
         build-step = make -C mu4e > /dev/null
@@ -1033,7 +1025,7 @@ ignores a missing "autoloads" file during initialization
 @example
 [submodule "multiple-cursors"]
         path = lib/multiple-cursors
-        url = git@@github.com:magnars/multiple-cursors.el.git
+        url = https://github.com/magnars/multiple-cursors.el.git
         build-step = borg-compile
 @end example
 
@@ -1197,7 +1189,7 @@ If the value of this variable is @code{true}, then it is skipped by
 @defvar borg-rewrite-urls-alist
 An alist that can optionally be used to rewrite certain URLs.  Each
 element has the form @code{(ORIG . BASE)}.  Each URL that starts with ORIG
-is rewritten to start with BASE instead.  See @ref{Using https URLs}.
+is rewritten to start with BASE instead.  See @ref{Using ssh URLs}.
 @end defvar
 
 @defvar borg-maketexi-filename-regexp
