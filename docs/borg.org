@@ -246,7 +246,7 @@ doing so without the help of the ~epkg~ package is quite cumbersome,
 so lets manually install that and its dependency first:
 
 #+begin_src sh
-  git submodule add --name closql git@github.com:emacscollective/closql.git lib/closql
+  git submodule add --name closql git@github.com:magit/closql.git lib/closql
   git submodule add --name emacsql git@github.com:magit/emacsql.git lib/emacsql
   git submodule add --name compat git@github.com:emacs-compat/compat.git lib/compat
   git submodule add --name llama git@github.com:tarsius/llama.git lib/llama
