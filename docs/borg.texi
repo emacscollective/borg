@@ -164,7 +164,7 @@ saying.
 @section Bootstrapping
 
 (As mentioned in the next section you can use a location other than
-@code{~/.config/emacs} (or @code{~/.emacs.d}). Nevertheless most of the subsequent
+@code{~/.config/emacs} (or @code{~/.emacs.d}).  Nevertheless most of the subsequent
 examples just talk about @code{~/.config/emacs} and if you use something
 else, then obviously have to substitute that.  The same applies to the
 string @code{lib} and the variables @code{user-init-file} and @code{user-emacs-directory},
@@ -1026,7 +1026,7 @@ with @code{shell-command}.
 
 To skip generating "autoloads" (e.g., using @code{use-package} to create
 "autoloads" on the fly), just provide the required build steps to
-build the package, omitting @code{borg-update-autoloads}. Borg silently
+build the package, omitting @code{borg-update-autoloads}.  Borg silently
 ignores a missing "autoloads" file during initialization
 (@code{borg-initialize}).
 

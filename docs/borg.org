@@ -99,7 +99,7 @@ saying.
 ** Bootstrapping
 
 (As mentioned in the next section you can use a location other than
-~~/.config/emacs~ (or ~~/.emacs.d~). Nevertheless most of the subsequent
+~~/.config/emacs~ (or ~~/.emacs.d~).  Nevertheless most of the subsequent
 examples just talk about ~~/.config/emacs~ and if you use something
 else, then obviously have to substitute that.  The same applies to the
 string ~lib~ and the variables ~user-init-file~ and ~user-emacs-directory~,
@@ -961,7 +961,7 @@ variables you can tell Borg how to build such packages.
 
   To skip generating "autoloads" (e.g., using ~use-package~ to create
   "autoloads" on the fly), just provide the required build steps to
-  build the package, omitting ~borg-update-autoloads~. Borg silently
+  build the package, omitting ~borg-update-autoloads~.  Borg silently
   ignores a missing "autoloads" file during initialization
   (~borg-initialize~).
 
