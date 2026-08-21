@@ -113,9 +113,9 @@ Borg as the package manager.  Most users end up using ~emacs.g~ merely
 as a bootstrapping seed and do not merge upstream changes after that.
 
 This collective already assimilates a few drones in addition to ~borg~
-itself, namely ~magit~, ~epkg~, ~use-package~, ~auto-compile~, ~git-modes~ and
-~diff-hl~, as well as their dependencies.  These drones are not required
-by ~borg~ but their use is highly recommended.
+itself, namely ~magit~, ~epkg~, ~use-package~, ~auto-compile~ and ~git-modes~,
+as well as their dependencies.  These drones are not required by ~borg~
+but their use is highly recommended.
 
 Clone the ~emacs.g~ repository to either ~~/.config/emacs~, or for testing
 purposes to any other location.  This repository contains a ~Makefile~
@@ -184,18 +184,29 @@ since you are starting from scratch, you may choose something else
 by setting the Git variable ~borg.drones-directory~ locally for this
 repository.
 
-Then you should add a ~Makefile~ containing at least:
+Then you should add a ~Makefile~ containing:
 
 #+begin_src makefile
-  DRONES_DIR = $(shell git config "borg.drones-directory" || echo "lib")
+  -include lib/borg/borg.mk
 
-  -include $(DRONES_DIR)/borg/borg.mk
+  ifndef BORG_DIR
+
+  help helpall::
+  	$(info )
+  	$(info Bootstrapping)
+  	$(info -------------)
+  	$(info make bootstrap-borg  = make borg and make targets available)
+  	@printf "\n"
 
   bootstrap-borg:
-          @git submodule--helper clone --name borg --path $(DRONES_DIR)/borg \
-          --url git@github.com:emacscollective/borg.git
-          @cd $(DRONES_DIR)/borg; git symbolic-ref HEAD refs/heads/main
-          @cd $(DRONES_DIR)/borg; git reset --hard HEAD
+  	@ GITDIR="$$(realpath --relative-to=. "$$(git rev-parse --git-dir)")"; \
+  	mkdir "$$GITDIR/modules"; \
+  	git clone https://github.com/emacscollective/borg lib/borg \
+  	--separate-git-dir "$$GITDIR/modules/borg"
+  	@cd lib/borg; git symbolic-ref HEAD refs/heads/main
+  	@cd lib/borg; git reset --hard HEAD
+
+  endif
 #+end_src
 
 Now you are probably tempted to run ~make bootstrap-borg~, but that is
@@ -214,7 +225,7 @@ Now it is time to tell Emacs to initialize Borg instead of Package by
 adding a simple ~early-init.el~ file containing:
 
 #+begin_src emacs-lisp
-  ;; -*- lexical-binding:t; no-byte-compile:t -*-
+  ;; -*- no-byte-compile: t; lexical-binding: t -*-
 
   (setq load-prefer-newer t)
 
@@ -233,29 +244,28 @@ Now you could create the initial commit but you could also delay that.
 
 #+begin_src sh
   git commit -m "Assimilate borg"
-#+end_src
-
-Now it is time to assimilate some other essential packages.  You could
-do so using ~M-x borg-assimilate~, but you would quickly notice that
-doing so without the help of the ~epkg~ package is quite cumbersome,
-so lets manually install that and its dependency first:
-
-#+begin_src sh
-  git submodule add --name closql https://github.com/magit/closql lib/closql
-  git submodule add --name emacsql https://github.com/magit/emacsql lib/emacsql
-  git submodule add --name compat https://github.com/emacs-compat/compat lib/compat
-  git submodule add --name llama https://github.com/tarsius/llama lib/llama
-  git submodule add --name epkg https://github.com/emacscollective/epkg lib/epkg
-  git config -f .gitmodules submodule.emacsql.no-byte-compile emacsql-pg.el
-  echo /epkgs/ >> .gitignore
-  git add .gitignore .gitmodules
   make build
-  git commit -m "Assimilate epkg and dependencies"
 #+end_src
 
-Once you have done that and have restarted Emacs, you can install
-Magit using Borg, as described in [[*Assimilation]].  You should also
-configure Magit status buffers to display submodules:
+Now it is time to assimilate ~epkg~ and its dependencies.  Because ~epkg~
+hasn't been assimilated yet, ~borg-assimilate~ doesn't know where these
+packages are distributed.  Instead copy the URLs from this list.
+
+| Package      | URL                                             |
+|--------------+-------------------------------------------------|
+| compat       | https://github.com/emacs-compat/compat          |
+| cond-let     | https://github.com/tarsius/cond-let             |
+| llama        | https://github.com/tarsius/llama                |
+| emacsql      | https://github.com/magit/emacsql                |
+| closql       | https://github.com/magit/closql                 |
+| epkg         | https://github.com/emacscollective/epkg         |
+| auto-compile | https://github.com/emacscollective/auto-compile |
+
+Create a commit, using a message such as "Assimilate epkg and
+dependencies".  Next you should assimilate ~auto-compile~ and create
+a commit.  Then you should assimilate ~magit~ and its dependencies.
+Finally you should configure Magit to list submodules in status
+buffers:
 
 #+begin_src emacs-lisp
   (with-eval-after-load 'magit
@@ -264,10 +274,6 @@ configure Magit status buffers to display submodules:
                             'magit-insert-stashes
                             'append))
 #+end_src
-
-Finally (look, nobody forced you to do this from scratch ;-) I
-strongly suggest that you make yourself familiar with my ~auto-compile~
-package.
 
 *** Migrating a legacy configuration
 
