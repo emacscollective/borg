@@ -48,7 +48,8 @@ clone () {
     push_remote=$(git config --includes -f .gitmodules remote.pushDefault || true)
     push_match=$(git config --includes -f .gitmodules --get-all remote.pushMatch || true)
 
-    # Unlike is_tree_submodule_active, ignore value of submodule.active.
+    # For simplicity and unlike in is_tree_submodule_active(), ignore
+    # submodule.active and submodule.MODULE.url.  See gitsubmodules(7).
     if [ "$(git config --get --type=bool --default=true submodule.$name.active)" \
          = false -o -z "$(git config --get submodule.$name.url)" ]
     then
