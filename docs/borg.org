@@ -694,19 +694,16 @@ their output is shown.
 :UNNUMBERED: notoc
 :END:
 
+- Command: redo ::
+
+  This target depends on the ~clean~ and ~build~ targets to perform a clean
+  build.  By first removing all old byte-code and native files and then
+  rebuilding everything, it ensures clean builds.
+
 - Command: clean ::
 
   This target removes all byte-code and native files of all drones and
   config files.
-
-  To ensure a clean build, this target should always be run before
-  ~build~, so you might want to add a default target that does just
-  that.  To do so, add this to ~~/.config/emacs/etc/borg/config.mk~:
-
-  #+begin_src makefile-gmake
-    .DEFAULT_GOAL := all
-    all: clean build
-  #+end_src
 
 - Command: clean-force ::
 

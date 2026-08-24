@@ -776,18 +776,15 @@ This target prints information about all of the following targets.
 @anchor{Batch targets}
 @heading Batch targets
 
+@deffn Command redo
+This target depends on the @code{clean} and @code{build} targets to perform a clean
+build.  By first removing all old byte-code and native files and then
+rebuilding everything, it ensures clean builds.
+@end deffn
+
 @deffn Command clean
 This target removes all byte-code and native files of all drones and
 config files.
-
-To ensure a clean build, this target should always be run before
-@code{build}, so you might want to add a default target that does just
-that.  To do so, add this to @code{~/.config/emacs/etc/borg/config.mk}:
-
-@example
-.DEFAULT_GOAL := all
-all: clean build
-@end example
 @end deffn
 
 @deffn Command clean-force
