@@ -363,10 +363,10 @@ should be enabled before loading ~borg~.
   to true in ~~/.config/emacs/.gitmodules~.
 
 Borg automatically reports how long it takes to load ~borg.el~ itself,
-~early-init.el,~ and other config files that it loads directly.  It
-cannot do the same for ~init.el~, so you should explicitly call the
+~early-init.el,~ and other configuration files that it loads directly.
+It cannot do the same for ~init.el~, so you should explicitly call the
 following function from that file, and possibly from other home-made
-config files.
+configuration files.
 
 - Function: borg-report-load-duration &optional file format-string ::
 
@@ -703,7 +703,7 @@ their output is shown.
 - Command: clean ::
 
   This target removes all byte-code and native files of all drones and
-  config files.
+  configuration files.
 
 - Command: clean-force ::
 
@@ -742,11 +742,11 @@ those are the drones that take longer to build.
 - Command: quick-clean ::
 
   This target removes all byte-code and native files of most drones
-  It also remove the byte-code files of the config files.
+  It also remove the byte-code files of the configuration files.
 
 - Command: quick-build ::
 
-  This target builds /most/ drones and the config files
+  This target builds /most/ drones and the configuration files
 
   It also builds the init files as described for ~build~.
 
