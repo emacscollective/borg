@@ -737,7 +737,7 @@ like this to the DRONE repository by setting @code{remote.NAME.url} to
 URL and using the standard value for @code{remote.NAME.fetch}.
 @end defvar
 
-@defvar borg.pushDefault FORK
+@defvar remote.pushDefault FORK
 This variable specifies a name used for push-remotes.  Because this
 variable can only have one value it is recommended that you use the
 same name, FORK, for your personal remote in all drone repositories

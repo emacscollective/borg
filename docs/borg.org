@@ -652,7 +652,7 @@ remote in the super-repository by setting ~submodule.DRONE.remote~ in
   like this to the DRONE repository by setting ~remote.NAME.url~ to
   URL and using the standard value for ~remote.NAME.fetch~.
 
-- Variable: borg.pushDefault FORK ::
+- Variable: remote.pushDefault FORK ::
 
   This variable specifies a name used for push-remotes.  Because this
   variable can only have one value it is recommended that you use the
