@@ -44,15 +44,15 @@ old location because you still have to support older Emacs releases.
 * Installation
 
 Borg can be used by itself, in which case it has to be bootstrapped.
-This is how Borg originally was intended to be used exclusively, but
-nowadays you may also choose to use it merely as a secondary package
-manager, in which case Borg itself is installed using Package.
+This is how Borg is primarily intended to be used, but you may also
+choose to use it merely as a secondary package manager, in which case
+Borg itself can be installed using Package.
 
 ** Use as secondary package manager
 
 To use Borg as a secondary package manager alongside Package, begin by
-installing the former using the latter.  Borg is only available from
-Melpa, so you have to add that first.
+installing the former using the latter.  Borg is available from Melpa,
+so you have to add that archive first.
 
 #+begin_src emacs-lisp
   (add-to-list 'package-archives
@@ -78,11 +78,9 @@ replacing the call to ~package-initialize~ in your init file with this:
     (package-initialize))
 #+end_src
 
-Just like Package (aka Elpa) defaults to installing packages in ~elpa/~,
-Borg defaults to installing them in ~borg/~.  (When using both package
-managers, that is.  If used by itself, then Borg defaults to using
-~lib/~.)  If you want to use another directory, then you can do so by
-setting the Git variable ~borg.drones-directory~.
+When using both Package and Borg, then Borg defaults to installing
+packages in ~borg/~.  (When using just Borg, then it instead uses ~lib/~.)
+Set the Git variable ~borg.drones-directory~ to use another directory.
 
 You should also add a ~Makefile~ containing:
 
@@ -92,19 +90,10 @@ You should also add a ~Makefile~ containing:
     sort | tail -n 1)/borg.mk
 #+end_src
 
-Despite its title, many things mentioned in the next section are
-relevant even when Borg was installed the way we just did.  Just
-saying.
+Despite its title, some parts of the next section are also relevant
+when Borg is installed using Package, so don't skip it.
 
 ** Bootstrapping
-
-(As mentioned in the next section you can use a location other than
-~~/.config/emacs~ (or ~~/.emacs.d~).  Nevertheless most of the subsequent
-examples just talk about ~~/.config/emacs~ and if you use something
-else, then obviously have to substitute that.  The same applies to the
-string ~lib~ and the variables ~user-init-file~ and ~user-emacs-directory~,
-which also might not be appropriate depending on your choices.)
-
 *** Bootstrapping using a seed
 
 To get started clone the repository of the ~emacs.g~ collective.  A
@@ -117,17 +106,22 @@ itself, namely ~magit~, ~epkg~, ~use-package~, ~auto-compile~ and ~git-modes~,
 as well as their dependencies.  These drones are not required by ~borg~
 but their use is highly recommended.
 
-Clone the ~emacs.g~ repository to either ~~/.config/emacs~, or for testing
-purposes to any other location.  This repository contains a ~Makefile~
-that imports ~lib/borg/borg.mk~ and defines an additional target whose
-purpose is to make that file and ~lib/borg/borg.sh~ available.  Run ~make
-bootstrap-borg~ to clone the ~borg~ repository.  That does not completely
-setup ~borg~ but it makes the latest version of the mentioned files
-available.
+Clone the ~emacs.g~ repository to either ~~/.config/emacs~, ~~/.emacs.d~ or
+for testing purposes to any other location.  Below we assume you used
+the former, so otherwise you'll have to substitute your choosen path
+for that in the examples below.
 
-Now that these files are available you can run ~make bootstrap~ to get
-and configure all submodules (including the ~borg~ submodule) and to
-build all drones.
+This repository contains a ~Makefile~ that imports ~lib/borg/borg.mk~, if
+available.  It also defines the target ~bootstrap-borg~, which clones
+the Borg repository to ~lib/borg/~.
+
+Run ~make bootstrap-borg~ to clone the ~borg~ repository.  That does not
+completely setup ~borg~, but it makes the latest version of Borg
+available, including the ~bootstrap~ make target, which completes the
+setup of all assimilated drones, including Borg itself.
+
+Now that these files are available you can run ~make bootstrap~ to clone
+and configure all package submodules, and to build all drones.
 
 #+begin_src sh
   git clone https://github.com/emacscollective/emacs.g ~/.config/emacs
@@ -153,20 +147,17 @@ provided you are using Emacs 29 or later.  Otherwise you have to
 resort to ~emacs -Q -l /path/to/emacs.g/early-init.el -l
 /path/to/emacs.g/init.el~.
 
-During package compilation you may notice the submodules relating to
-those packages become dirty due to the compilation outputs not being
-ignored in those submodules.  For this reason it is useful to ignore
-these outputs globally, for example in your ~~/.config/git/ignore~
-file:
+During package compilation you may notice that some package modules
+become "dirty", due to compilation outputs not being ignored in those
+submodules.  Instead of bothering their maintainers, by submitting a
+pull-request for each such package, I recommend ignoring these files
+globally and be done with it, by adding this to ~~/.config/git/ignore~:
 
 #+begin_src undefined
   *.elc
   *-autoloads.el
   dir
 #+end_src
-
-You may discover more things that you'll want to ignore this way as
-you use ~borg~.
 
 *** Bootstrapping from scratch
 
@@ -195,7 +186,7 @@ Then you should add a ~Makefile~ containing:
   	$(info )
   	$(info Bootstrapping)
   	$(info -------------)
-  	$(info make bootstrap-borg  = make borg and make targets available)
+  	$(info make bootstrap-borg  -- Make borg and make targets available)
   	@printf "\n"
 
   bootstrap-borg:
@@ -218,10 +209,10 @@ are not there yet.  Instead run this:
   git submodule add --name borg https://github.com/emacscollective/borg lib/borg
 #+end_src
 
-Now that ~borg~ is available we can build all the assimilated packages (currently
-just ~borg~ itself) using ~make bootstrap~.
+Now that ~borg~ is available we can build all the assimilated packages
+(currently just ~borg~ itself) using ~make bootstrap~.
 
-Now it is time to tell Emacs to initialize Borg instead of Package by
+Next we have to tell Emacs to initialize Borg instead of Package, by
 adding a simple ~early-init.el~ file containing:
 
 #+begin_src emacs-lisp
@@ -249,7 +240,8 @@ Now you could create the initial commit but you could also delay that.
 
 Now it is time to assimilate ~epkg~ and its dependencies.  Because ~epkg~
 hasn't been assimilated yet, ~borg-assimilate~ doesn't know where these
-packages are distributed.  Instead copy the URLs from this list.
+packages are distributed.  Instead copy the URLs from this list, when
+prompted.
 
 | Package      | URL                                             |
 |--------------+-------------------------------------------------|
@@ -262,10 +254,19 @@ packages are distributed.  Instead copy the URLs from this list.
 | auto-compile | https://github.com/emacscollective/auto-compile |
 
 Create a commit, using a message such as "Assimilate epkg and
-dependencies".  Next you should assimilate ~auto-compile~ and create
-a commit.  Then you should assimilate ~magit~ and its dependencies.
-Finally you should configure Magit to list submodules in status
-buffers:
+dependencies".
+
+Next you should assimilate ~auto-compile~, add the following lines to
+~early-init.el~, and create a commit.
+
+#+begin_src emacs-lisp
+  (require 'auto-compile)
+  (auto-compile-on-load-mode)
+  (auto-compile-on-save-mode)
+#+end_src
+
+Then you should assimilate ~magit~ and its dependencies.  Finally you
+should configure Magit to list submodules in status buffers:
 
 #+begin_src emacs-lisp
   (with-eval-after-load 'magit
@@ -281,17 +282,17 @@ If you are currently using Package and want to gently ease into using
 Borg alongside that, then you can proceed as described in [[*Use as
 secondary package manager]].
 
-If on the other hand you are already manually using Git modules,
+If on the other hand you are already using Git modules manually,
 then you should proceed as described in [[*Bootstrapping from scratch]].
-Obviously "from scratch" does not apply this time around, so just skip
-steps like ~git init~.
+Obviously "from scratch" is a misnomer in that case, and you should
+skip steps like ~git init~.
 
 *** Using your configuration on another machine
 
 Getting started using your existing configuration on another machine
 works the same way as described in [[*Bootstrapping using a seed]].  The
-only difference is that instead of starting by cloning someone else's
-repository you start by cloning your own repository.
+main difference is that instead of starting by cloning someone else's
+repository, you start by cloning your own repository.
 
 *** Using ssh URLs
 
@@ -342,6 +343,9 @@ Changing the values of ~load-prefer-newer~ and ~package-enable-at-startup~
 as shown here is optional but strongly recommended.  ~load-prefer-newer~
 should be enabled before loading ~borg~.
 
+While optional, enabling the Auto-Compile modes here, ensures that
+these modes can do their thing for as many libraries as possible.
+
 #+begin_src emacs-lisp
   ;; -*- lexical-binding:t; no-byte-compile:t -*-
 
@@ -350,6 +354,10 @@ should be enabled before loading ~borg~.
   (add-to-list 'load-path (expand-file-name "lib/borg" user-emacs-directory))
   (require 'borg)
   (borg-initialize)
+
+  (require 'auto-compile)
+  (auto-compile-on-load-mode)
+  (auto-compile-on-save-mode)
 
   (setq package-enable-at-startup nil)
 #+end_src
@@ -360,7 +368,7 @@ should be enabled before loading ~borg~.
 
   To skip the activation of the drone named DRONE, temporarily disable
   it by setting the value of the Git variable ~submodule.DRONE.disabled~
-  to true in ~~/.config/emacs/.gitmodules~.
+  to ~true~ in ~~/.config/emacs/.gitmodules~.
 
 Borg automatically reports how long it takes to load ~borg.el~ itself,
 ~early-init.el,~ and other configuration files that it loads directly.
@@ -379,8 +387,8 @@ configuration files.
   If optional FILE is non-~nil~, this function instead reports how long
   it takes to load that file (this assumes that it is currently being
   loaded).  Optional FORMAT-STRING, if non-~nil~, is passed to ~message~.
-  It should should end with "..." and contain zero or one ~%s~, which
-  stands for the file name.
+  It should end with "..." and contain zero or one ~%s~, which stands
+  for the file name.
 
 - Function: borg-report-init-duration ::
 
@@ -418,7 +426,7 @@ If you wish to avoid such complications, you should use the command
 ~epkg-describe-package~ before assimilating a package.  Among other
 useful information, it also provides a dependency tree.
 
-Once the packages have been added as a submodules and the drones have
+Once the packages have been added as submodules and the drones have
 been built, the assimilation is completed by creating an assimilation
 commit.
 
@@ -456,9 +464,12 @@ depend on one another, it might make sense:
 The command ~borg-insert-update-message~ can be used to generate such
 commit messages.
 
+If a package needs to be configured, consider including those changes
+in the respective assimilation commit.
+
 - Key: C-c C-b [in git-commit-mode buffer] (borg-insert-update-message) ::
 
-  This command insert information about drones that are changed in the
+  This command inserts information about drones that are changed in the
   index.  Formatting is according to the commit message conventions
   described above.
 
@@ -1020,13 +1031,9 @@ variables you can tell Borg how to build such packages.
   explicitly specify the default location.
 
   #+BEGIN_SRC undefined
-    [submodule "org"]
-            path = lib/org
-            url = git://orgmode.org/org-mode.git
-            build-step = make
-            load-path = lisp
-            load-path = contrib/lisp
-            info-path = doc
+    [submodule "vertico"]
+            load-path = .
+            load-path = extensions
   #+END_SRC
 
 - Variable: submodule.DRONE.no-byte-compile PATH ::
@@ -1086,8 +1093,8 @@ variables you can tell Borg how to build such packages.
 
   This variable instructs Borg to execute COMMAND after the default
   build-steps for each DRONE (or after ~submodule.DRONE.build-step,~ if
-  that specified).  It has to be set in ~borg-gitmodules-file~ and can
-  have multiple values.
+  that is specified).  It has to be set in ~borg-gitmodules-file~ and
+  can have multiple values.
 
   If a COMMAND begins with a parenthesis, then it is evaluated as
   a lisp expression.  In that case the variable ~borg-clone~ holds
