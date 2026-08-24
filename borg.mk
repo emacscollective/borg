@@ -96,6 +96,8 @@ help helpall::
 
 ## Batch
 
+redo: clean build
+
 clean:
 ifeq "$(BORG_CLEAN_ELN)" "true"
 	@printf "Cleaning...\n"
@@ -123,6 +125,8 @@ native: init-clean
 
 ## Batch Quick
 
+quick: quick-clean quick-build
+
 quick-clean: init-clean
 	@printf "Cleaning...\n"
 	$(Q)$(EMACS_BATCH) $(BORG_ARGS) \
@@ -133,10 +137,6 @@ quick-build:
 	@printf "Building...\n"
 	$(Q)$(EMACS_BATCH) $(BORG_ARGS) \
 	--eval '(borg-batch-rebuild t)' $(INIT_FILES) 2>&1
-
-quick: quick-clean quick-build
-
-redo: clean build
 
 ## Per-Clone
 
