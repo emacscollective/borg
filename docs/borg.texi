@@ -720,7 +720,7 @@ If you created some commits in a drone repository and are the
 maintainer of the respective package, then you can just push your
 changes to the "origin" remote.
 
-You don't have to do this every time you created some commits, but at
+You don't have to do it every time you created some commits, but at
 important checkpoints, such as after creating a release, you should
 record the changes in the @code{~/.config/emacs} repository.  To do so
 proceed as described in @ref{Updating drones}.
@@ -738,11 +738,11 @@ fork a drone, you should also record information about your personal
 remote in the super-repository by setting @code{submodule.DRONE.remote} in
 @code{~/.config/emacs/.gitmodules}.
 
-@defvar submodule.DRONE.remote "NAME URL"
+@defvar submodule.DRONE.remote NAME URL
 This variable specifies an additional remote named NAME that is
 fetched from URL@.  This variable can be specified multiple times.
-Note that "NAME URL" is a single value and that the two parts of
-that value are separated by a single space.
+Note that @code{NAME URL} is a single value and that the two parts of that
+value are separated by a space.
 
 @code{make bootstrap} automatically adds all remotes that are specified
 like this to the DRONE repository by setting @code{remote.NAME.url} to
@@ -756,10 +756,10 @@ same name, FORK, for your personal remote in all drone repositories
 in which you have created patches that haven't been merged into the
 upstream repository (yet).  A good value may be your username.
 
-For all DRONES for which one value of @code{submodule.DRONE.remote}
+For all drones for which one value of @code{submodule.DRONE.remote}
 specifies a remote whose NAME matches FORK, @code{make bootstrap}
 automatically configures FORK to be used as the push-remote by
-setting @code{remote.pushDefault} to FORK@.
+setting @code{remote.pushDefault} to FORK in @code{.git/modules/DRONE/config}.
 @end defvar
 
 @node Make targets
@@ -1167,7 +1167,7 @@ compilation.
 
 @defvar borg.extra-build-step COMMAND
 This variable instructs Borg to execute COMMAND after the default
-build-steps for each DRONE (or after @code{submodule.DRONE.build-step,} if
+build-steps for each drone (or after @code{submodule.DRONE.build-step,} if
 that is specified).  It has to be set in @code{borg-gitmodules-file} and
 can have multiple values.
 
