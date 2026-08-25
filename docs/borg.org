@@ -872,9 +872,6 @@ those are the drones that take longer to build.
   that contains the drone submodules.  If specified, the value has to
   be relative to the top-level directory of the repository.
 
-  Note that if you change the value of this variable, then you might
-  have to additionally edit ~~/.config/emacs/Makefile~.
-
 The values of the following variables are set at startup and should
 not be changed by the user.
 

@@ -12,11 +12,13 @@ BORG_CLEAN_ELN := true
 -include etc/borg/config.mk
 
 ifeq "$(BORG_SECONDARY_P)" "true"
-  DRONES_DIR ?= $(shell git config "borg.drones-directory" || echo "elpa")
+  DRONES_DIR ?= $(shell git config --includes -f $(BORG_DIR)/.gitmodules \
+  "borg.drones-directory" --default="elpa")
   BORG_ARGS   = -L $(BORG_DIR) --load borg-elpa \
   --funcall borg-elpa-initialize $(SILENCIO)
 else
-  DRONES_DIR ?= $(shell git config "borg.drones-directory" || echo "lib")
+  DRONES_DIR ?= $(shell git config --includes -f $(BORG_DIR)/.gitmodules \
+  "borg.drones-directory" --default="lib")
   BORG_ARGS   = -L $(BORG_DIR) --load borg \
   --funcall borg-initialize $(SILENCIO)
 endif

@@ -169,8 +169,9 @@ enclosed in a `progn' form.  ELSE-FORMS may be empty."
        (setdir (ignore-errors
                  (let ((default-directory libdir))
                    (file-name-as-directory
-                    (car (process-lines
-                          "git" "config" "borg.drones-directory")))))))
+                    (car (process-lines "git" "config" "--includes" "--file"
+                                        (expand-file-name ".gitmodules" topdir)
+                                        "borg.drones-directory")))))))
 
   (defconst borg-drones-directory
     (or (and-let* ((dir (and topdir setdir (expand-file-name setdir topdir))))
