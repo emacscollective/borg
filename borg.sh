@@ -90,7 +90,7 @@ clone () {
         fi
 
         git config --includes -f .gitmodules --get-all submodule.$name.remote |
-        while read -r remote url refspec
+        while read -r remote url
         do
             cd "$super"
 
