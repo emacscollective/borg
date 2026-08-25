@@ -185,7 +185,7 @@ checkout () {
             echo "Skipping $path (always using latest/checked out borg)"
             echo "    HEAD: $head"
             echo "expected: $hash"
-        elif [ -n "$(git status --porcelain=v1 --ignored)" ]
+        elif [ -n "$(git status --porcelain=v1)" ]
         then
             echo "Skipping $path (uncommitted changes)"
             echo "    HEAD: $head"
