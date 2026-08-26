@@ -60,7 +60,7 @@ clone () {
             url=$(git config submodule.$name.url)
             args=
             rename=
-            echo "Cloning $path from origin ($url)"
+            echo "Cloning from $url"
             case "$name,$url" in
             elpa-admin,*git.savannah.gnu.org*/git/elpa/gnu.git)
                 args="--no-tags --single-branch --branch $name"
@@ -96,7 +96,7 @@ clone () {
 
             if [ ! -e "$path"/.git ]
             then
-                echo "Cloning $path from $remote ($url)"
+                echo "Cloning from $url [as $remote]"
 
                 mkdir -p "$modsdir"
                 if git clone "$url" "$path" \
@@ -111,7 +111,7 @@ clone () {
 
                 if ! git remote | grep -q "^$remote\$"
                 then
-                    echo "Augmenting $path with remote $remote ($url)"
+                    echo "Adding remote '$remote'"
                     args=
                     case "$url" in
                     *git.savannah.gnu.org*/git/emacs/elpa.git)
@@ -120,7 +120,7 @@ clone () {
                         args="--no-tags -t elpa/$name" ;;
                     esac
                     git remote add "$remote" "$url" $args
-                    git fetch "$remote" || echo "fetch failed"
+                    git fetch "$remote" || echo "Fetching failed"
                 fi
             fi
 
@@ -131,7 +131,7 @@ clone () {
                 if ! git config remote.pushDefault > /dev/null &&
                         [ "$remote" = "$push_remote" ]
                 then
-                    echo "Setting remote.pushDefault for $path to $remote"
+                    echo "Setting remote.pushDefault=$remote"
                     git config remote.pushDefault "$remote"
                 fi
             fi
