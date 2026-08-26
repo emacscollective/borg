@@ -305,9 +305,11 @@ Then evaluate RESULT to get return value, default nil.
          ,@body))))
 
 (defun borg-get (clone variable &optional all)
-  "Return value of `submodule.CLONE.VARIABLE' in `~/.config/emacs/.gitmodules'.
-If optional ALL is non-nil, then return all values as a list.
-VARIABLE can be a symbol or a string."
+  "Return value of `submodule.CLONE.VARIABLE'.
+The variable has to be set in \"~/.config/emacs/.gitmodules'\", or
+in a file included by the former file, usually \".gitremotes\" and
+\".borgconfig\".  If optional ALL is non-nil, then return all values
+as a list.  VARIABLE can be a symbol or a string."
   (let ((values
          (if borg--gitmodule-cache
              (alist-get (if (symbolp variable) variable (intern variable))
@@ -322,9 +324,11 @@ VARIABLE can be a symbol or a string."
     (if all values (car (last values)))))
 
 (defun borg-get-all (clone variable)
-  "Return values of `submodule.CLONE.VARIABLE' in `~/.config/emacs/.gitmodules'.
-Return all values as a list.  VARIABLE can be a symbol or
-a string."
+  "Return values of `submodule.CLONE.VARIABLE'.
+The variable has to be set in \"~/.config/emacs/.gitmodules'\", or
+in a file included by the former file, usually \".gitremotes\" and
+\".borgconfig\".  If optional ALL is non-nil, then return all values
+as a list.  VARIABLE can be a symbol or a string."
   (borg-get clone variable t))
 
 (defun borg-load-path (clone)

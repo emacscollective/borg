@@ -154,6 +154,17 @@ include $(shell find -L elpa -maxdepth 1 -regex '.*/borg-[.0-9]*' |\
   sort | tail -n 1)/borg.mk
 @end example
 
+You should also add the following lines at the top of @code{.gitmodules}.
+This isn't strictly necessary, but if you don't, then you must use
+@code{.gitmodules} whenever this manual says, that you should set some
+variable in @code{.borgconfig} or @code{.gitremotes}.
+
+@example
+[include]
+        path = .gitremotes
+        path = .borgconfig
+@end example
+
 Despite its title, some parts of the next section are also relevant
 when Borg is installed using Package, so don't skip it.
 
@@ -353,6 +364,17 @@ should configure Magit to list submodules in status buffers:
                           'append))
 @end lisp
 
+You should also add the following lines at the top of @code{.gitmodules}.
+This isn't strictly necessary, but if you don't, then you must use
+@code{.gitmodules} whenever this manual says, that you should set some
+variable in @code{.borgconfig} or @code{.gitremotes}.
+
+@example
+[include]
+        path = .gitremotes
+        path = .borgconfig
+@end example
+
 @anchor{Migrating a legacy configuration}
 @subsection Migrating a legacy configuration
 
@@ -447,7 +469,7 @@ This function initializes assimilated drones using @code{borg-activate}.
 
 To skip the activation of the drone named DRONE, temporarily disable
 it by setting the value of the Git variable @code{submodule.DRONE.disabled}
-to @code{true} in @code{~/.config/emacs/.gitmodules}.
+to @code{true} in @code{~/.config/emacs/.borgconfig}.
 @end defun
 
 Borg automatically reports how long it takes to load @code{borg.el} itself,
@@ -735,8 +757,9 @@ using @code{F u} in Magit and you can also push to your fork using @code{P p}.
 Of course you should also occasionally record the changes in the
 @code{~/.config/emacs} repository.  Additionally, and ideally when you first
 fork a drone, you should also record information about your personal
-remote in the super-repository by setting @code{submodule.DRONE.remote} in
-@code{~/.config/emacs/.gitmodules}.
+remote in the super-repository by setting @code{submodule.DRONE.remote}.
+
+The following variables should be set in @code{~/.config/emacs/.gitremotes}.
 
 @defvar submodule.DRONE.remote NAME URL
 This variable specifies an additional remote named NAME that is
@@ -942,13 +965,13 @@ Alternatively drones can be checked out individually, using
 @node Variables
 @chapter Variables
 
+The Git variables documented in this section should be set in
+@code{~/.config/emacs/.borgconfig}.
+
 @defvar borg.drones-directory DIRECTORY
 This Git variable can be used to override the name of the directory
 that contains the drone submodules.  If specified, the value has to
 be relative to the top-level directory of the repository.
-
-Note that if you change the value of this variable, then you might
-have to additionally edit @code{~/.config/emacs/Makefile}.
 @end defvar
 
 The values of the following variables are set at startup and should
@@ -972,6 +995,17 @@ when Emacs is started with @code{emacs -q -l /path/to/init.el}.
 @defvar borg-gitmodules-file
 The value of this constant is the @code{.gitmodules} file of the
 super-repository.
+
+You should also add the following lines at the top of this file.
+This isn't strictly necessary, but if you don't, then you must use
+@code{.gitmodules} whenever this manual says, that you should set some
+variable in @code{.borgconfig} or @code{.gitremotes}.
+
+@example
+[include]
+        path = .gitremotes
+        path = .borgconfig
+@end example
 @end defvar
 
 If you want to change the value of the following variable, you have to
@@ -992,10 +1026,6 @@ The value of this Make variable has to be set in
 A list of init files to be build by the Make targets @code{build} and
 @code{build-init}.  See @ref{Make targets}.
 @end defvar
-
-The values of these borg-specific Git variables have to be set in the
-file @code{~/.config/emacs/.gitmodules}.  The variables @code{borg.pushDefault} and
-@code{submodule.DRONE.remote} are described in @ref{Patching drones}.
 
 Because most repositories used to maintain Emacs packages follow some
 common-sense conventions, Borg usually does not have to be told how to
@@ -1168,8 +1198,8 @@ compilation.
 @defvar borg.extra-build-step COMMAND
 This variable instructs Borg to execute COMMAND after the default
 build-steps for each drone (or after @code{submodule.DRONE.build-step,} if
-that is specified).  It has to be set in @code{borg-gitmodules-file} and
-can have multiple values.
+that is specified).  It has to be set in @code{.borgconfig} and can have
+multiple values.
 
 If a COMMAND begins with a parenthesis, then it is evaluated as
 a lisp expression.  In that case the variable @code{borg-clone} holds
@@ -1240,21 +1270,22 @@ tree.
 
 @defmac borg-do-drones (var [result]) body@dots{})
 This macro loop over drones.  BODY is evaluated with VAR bound to
-each drone, in turn.  Inside BODY variables set in @code{.gitmodules} are
-cached.  Then RESULT is evaluated to get the return value,
-defaulting to @code{nil}.
+each drone, in turn.  Inside BODY variables set in @code{.gitmodules},
+and in files included by that file, are cached.  Then RESULT is
+evaluated to get the return value, defaulting to @code{nil}.
 @end defmac
 
 @defun borg-get clone variable &optional all
 This function returns the value of the Git variable
-@code{submodule.CLONE.VARIABLE} defined in @code{~/.config/emacs/.gitmodules}.
-If optional ALL is non-@code{nil}, then it returns all values as a list.
+@code{submodule.CLONE.VARIABLE} set in @code{~/.config/emacs/.gitmodules}, or in
+files included by that file.  If optional ALL is non-@code{nil}, then it
+returns all values as a list.
 @end defun
 
 @defun borg-get-all clone variable
-This function returns all values of the Git variable
-@code{submodule.CLONE.VARIABLE} defined in @code{~/.config/emacs/.gitmodules} as a
-list.
+This function returns as a list all values of the Git variable
+@code{submodule.CLONE.VARIABLE} set in @code{~/.config/emacs/.gitmodules}, or
+in files included by that file.
 @end defun
 
 @defun borg-load-path clone
@@ -1284,9 +1315,9 @@ The returned value is a list of the names of the assimilated
 drones, unless optional INCLUDE-VARIABLES is non-@code{nil}, in which
 case elements of the returned list have the form @code{(NAME . ALIST)}.
 
-ALIST is an association list.  Property names are symbols
-and correspond to a VARIABLE defined in the Borg repository's
-@code{.gitmodules} file as @code{submodule.NAME.VARIABLE}.
+ALIST is an association list.  Property names are symbols and
+correspond to a VARIABLE set in the Borg repository's @code{.gitmodules}
+file (or in a file included by that) as @code{submodule.NAME.VARIABLE}.
 
 Each property value is either a string or a list of strings.  If
 INCLUDE-VARIABLES is @code{raw} then all values are lists.  Otherwise a

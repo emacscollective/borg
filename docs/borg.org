@@ -90,6 +90,17 @@ You should also add a ~Makefile~ containing:
     sort | tail -n 1)/borg.mk
 #+end_src
 
+You should also add the following lines at the top of ~.gitmodules~.
+This isn't strictly necessary, but if you don't, then you must use
+~.gitmodules~ whenever this manual says, that you should set some
+variable in ~.borgconfig~ or ~.gitremotes~.
+
+#+begin_src gitconfig
+  [include]
+  	path = .gitremotes
+  	path = .borgconfig
+#+end_src
+
 Despite its title, some parts of the next section are also relevant
 when Borg is installed using Package, so don't skip it.
 
@@ -276,6 +287,17 @@ should configure Magit to list submodules in status buffers:
                             'append))
 #+end_src
 
+You should also add the following lines at the top of ~.gitmodules~.
+This isn't strictly necessary, but if you don't, then you must use
+~.gitmodules~ whenever this manual says, that you should set some
+variable in ~.borgconfig~ or ~.gitremotes~.
+
+#+begin_src gitconfig
+  [include]
+  	path = .gitremotes
+  	path = .borgconfig
+#+end_src
+
 *** Migrating a legacy configuration
 
 If you are currently using Package and want to gently ease into using
@@ -368,7 +390,7 @@ these modes can do their thing for as many libraries as possible.
 
   To skip the activation of the drone named DRONE, temporarily disable
   it by setting the value of the Git variable ~submodule.DRONE.disabled~
-  to ~true~ in ~~/.config/emacs/.gitmodules~.
+  to ~true~ in ~~/.config/emacs/.borgconfig~.
 
 Borg automatically reports how long it takes to load ~borg.el~ itself,
 ~early-init.el,~ and other configuration files that it loads directly.
@@ -649,8 +671,9 @@ using ~F u~ in Magit and you can also push to your fork using ~P p~.
 Of course you should also occasionally record the changes in the
 ~~/.config/emacs~ repository.  Additionally, and ideally when you first
 fork a drone, you should also record information about your personal
-remote in the super-repository by setting ~submodule.DRONE.remote~ in
-~~/.config/emacs/.gitmodules~.
+remote in the super-repository by setting ~submodule.DRONE.remote~.
+
+The following variables should be set in ~~/.config/emacs/.gitremotes~.
 
 - Variable: submodule.DRONE.remote NAME URL ::
 
@@ -866,6 +889,9 @@ those are the drones that take longer to build.
 
 * Variables
 
+The Git variables documented in this section should be set in
+~~/.config/emacs/.borgconfig~.
+
 - Variable: borg.drones-directory DIRECTORY ::
 
   This Git variable can be used to override the name of the directory
@@ -895,6 +921,17 @@ not be changed by the user.
   The value of this constant is the ~.gitmodules~ file of the
   super-repository.
 
+  You should also add the following lines at the top of this file.
+  This isn't strictly necessary, but if you don't, then you must use
+  ~.gitmodules~ whenever this manual says, that you should set some
+  variable in ~.borgconfig~ or ~.gitremotes~.
+
+  #+begin_src gitconfig
+    [include]
+    	path = .gitremotes
+    	path = .borgconfig
+  #+end_src
+
 If you want to change the value of the following variable, you have to
 do so before requiring ~borg~, else it does not have the desired effect.
 
@@ -913,10 +950,6 @@ The value of this Make variable has to be set in
 
   A list of init files to be build by the Make targets ~build~ and
   ~build-init~.  See [[*Make targets]].
-
-The values of these borg-specific Git variables have to be set in the
-file ~~/.config/emacs/.gitmodules~.  The variables ~borg.pushDefault~ and
-~submodule.DRONE.remote~ are described in [[*Patching drones]].
 
 Because most repositories used to maintain Emacs packages follow some
 common-sense conventions, Borg usually does not have to be told how to
@@ -1090,8 +1123,8 @@ variables you can tell Borg how to build such packages.
 
   This variable instructs Borg to execute COMMAND after the default
   build-steps for each drone (or after ~submodule.DRONE.build-step,~ if
-  that is specified).  It has to be set in ~borg-gitmodules-file~ and
-  can have multiple values.
+  that is specified).  It has to be set in ~.borgconfig~ and can have
+  multiple values.
 
   If a COMMAND begins with a parenthesis, then it is evaluated as
   a lisp expression.  In that case the variable ~borg-clone~ holds
@@ -1161,21 +1194,22 @@ build your own tools on top of Borg.
 - Macro: borg-do-drones (var [result]) body...) ::
 
   This macro loop over drones.  BODY is evaluated with VAR bound to
-  each drone, in turn.  Inside BODY variables set in ~.gitmodules~ are
-  cached.  Then RESULT is evaluated to get the return value,
-  defaulting to ~nil~.
+  each drone, in turn.  Inside BODY variables set in ~.gitmodules~,
+  and in files included by that file, are cached.  Then RESULT is
+  evaluated to get the return value, defaulting to ~nil~.
 
 - Function: borg-get clone variable &optional all ::
 
   This function returns the value of the Git variable
-  ~submodule.CLONE.VARIABLE~ defined in ~~/.config/emacs/.gitmodules~.
-  If optional ALL is non-~nil~, then it returns all values as a list.
+  ~submodule.CLONE.VARIABLE~ set in ~~/.config/emacs/.gitmodules~, or in
+  files included by that file.  If optional ALL is non-~nil~, then it
+  returns all values as a list.
 
 - Function: borg-get-all clone variable ::
 
-  This function returns all values of the Git variable
-  ~submodule.CLONE.VARIABLE~ defined in ~~/.config/emacs/.gitmodules~ as a
-  list.
+  This function returns as a list all values of the Git variable
+  ~submodule.CLONE.VARIABLE~ set in ~~/.config/emacs/.gitmodules~, or
+  in files included by that file.
 
 - Function: borg-load-path clone ::
 
@@ -1205,9 +1239,9 @@ build your own tools on top of Borg.
   drones, unless optional INCLUDE-VARIABLES is non-~nil~, in which
   case elements of the returned list have the form ~(NAME . ALIST)~.
 
-  ALIST is an association list.  Property names are symbols
-  and correspond to a VARIABLE defined in the Borg repository's
-  ~.gitmodules~ file as ~submodule.NAME.VARIABLE~.
+  ALIST is an association list.  Property names are symbols and
+  correspond to a VARIABLE set in the Borg repository's ~.gitmodules~
+  file (or in a file included by that) as ~submodule.NAME.VARIABLE~.
 
   Each property value is either a string or a list of strings.  If
   INCLUDE-VARIABLES is ~raw~ then all values are lists.  Otherwise a
