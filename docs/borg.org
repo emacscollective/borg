@@ -699,6 +699,32 @@ The following variables should be set in ~~/.config/emacs/.gitremotes~.
   automatically configures FORK to be used as the push-remote by
   setting ~remote.pushDefault~ to FORK in ~.git/modules/DRONE/config~.
 
+- Variable: remote.pushMatch PATTERN ::
+
+  While the previous variable is useful to configure your fork as the
+  push-remote, the purpose of this variable is to set the push-remote
+  for upstream repositories you own.
+
+  This variable can be specified multiple times.  Each glob PATTERN
+  should match a single account on a single host.
+
+As an example, this is how I combine the above variables:
+
+#+begin_src gitconfig
+  [remote]
+  	pushDefault = tarsius
+  	pushMatch = codeberg.org?tarsius/
+  	pushMatch = github.com?tarsius/
+  	pushMatch = github.com?tarsiiformes/
+  	pushMatch = github.com?emacscollective/
+  	pushMatch = github.com?magit/
+#+end_src
+
+Hosts and account names are separated using ~?~ because depending on
+what protocol either ~/~ or ~:~ must be matched.  The trailing ~/~ avoids
+matching other accounts that begin with the name of one of my
+accounts.
+
 * Make targets
 
 The following ~make~ targets are available by default.  To use them you

@@ -785,6 +785,32 @@ automatically configures FORK to be used as the push-remote by
 setting @code{remote.pushDefault} to FORK in @code{.git/modules/DRONE/config}.
 @end defvar
 
+@defvar remote.pushMatch PATTERN
+While the previous variable is useful to configure your fork as the
+push-remote, the purpose of this variable is to set the push-remote
+for upstream repositories you own.
+
+This variable can be specified multiple times.  Each glob PATTERN
+should match a single account on a single host.
+@end defvar
+
+As an example, this is how I combine the above variables:
+
+@example
+[remote]
+        pushDefault = tarsius
+        pushMatch = codeberg.org?tarsius/
+        pushMatch = github.com?tarsius/
+        pushMatch = github.com?tarsiiformes/
+        pushMatch = github.com?emacscollective/
+        pushMatch = github.com?magit/
+@end example
+
+Hosts and account names are separated using @code{?} because depending on
+what protocol either @code{/} or @code{:} must be matched.  The trailing @code{/} avoids
+matching other accounts that begin with the name of one of my
+accounts.
+
 @node Make targets
 @chapter Make targets
 

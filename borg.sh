@@ -125,34 +125,34 @@ clone () {
                     git fetch "$remote" || echo "Fetching failed"
                 fi
             fi
-
-            if [ -e "$super/$path/.git" ]
-            then
-                cd "$super/$path"
-
-                if ! git config remote.pushDefault > /dev/null &&
-                        [ "$remote" = "$push_remote" ]
-                then
-                    echo "Setting remote.pushDefault=$remote"
-                    git config remote.pushDefault "$remote"
-                fi
-            fi
         done
 
         if [ -e "$super/$path/.git" ]
         then
             cd "$super/$path"
 
-            if [ -z "$(git config remote.pushDefault)" ]
+            if ! git config remote.pushDefault > /dev/null &&
+               [ -n "$push_remote" ] &&
+               git remote | grep -q "^$push_remote\$"
             then
-                url=$(git config remote.origin.url)
-                for p in $push_match
+                echo "Setting remote.pushDefault=$remote"
+                git config remote.pushDefault "$push_remote"
+            fi
+
+            if ! git config remote.pushDefault > /dev/null
+            then
+                for remote in $(git remote)
                 do
-                    case $url in
-                    *$p*)
-                        echo "Setting remote.pushDefault for $path to origin"
-                        git config remote.pushDefault origin ;;
-                    esac
+                    for p in $push_match
+                    do
+                        case $(git config remote.$remote.url) in
+                        *$p*)
+                            echo "Setting remote.pushDefault=$remote"
+                            git config remote.pushDefault origin
+                            break 2
+                            ;;
+                        esac
+                    done
                 done
             fi
         fi
