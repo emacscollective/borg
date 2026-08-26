@@ -686,6 +686,20 @@ The following variables should be set in ~~/.config/emacs/.gitremotes~.
   like this to the DRONE repository by setting ~remote.NAME.url~ to
   URL and using the standard value for ~remote.NAME.fetch~.
 
+- Variable: submodule.setupMirror BOOLEAN ::
+- Variable: submodule.DRONE.setupMirror BOOLEAN ::
+
+  Setting the first variable to ~true~ causes a remote named ~mirror~,
+  which tracks the repository on the Emacsmirror, to be added for all
+  or most drone.  If a DRONE is not mirrored, then the second variable
+  can be set to ~false~.  That variable can also be set to ~true~ to only
+  add a ~mirror~ remote for that DRONE (~submodule.DRONE.remote~ could be
+  used instead).
+
+  Adding a ~mirror~ remote for all or some drones is particularly useful
+  if the upstreams of certain drones are unreliable.  If the upstream
+  is down but the mirror is not, then the drone can still be set up.
+
 - Variable: remote.pushDefault FORK ::
 
   This variable specifies a name used for push-remotes.  Because this
@@ -718,6 +732,9 @@ As an example, this is how I combine the above variables:
   	pushMatch = github.com?tarsiiformes/
   	pushMatch = github.com?emacscollective/
   	pushMatch = github.com?magit/
+  	setupMirror = true
+  [submodule "wip"] # local private utilities
+  	setupMirror = false
 #+end_src
 
 Hosts and account names are separated using ~?~ because depending on

@@ -97,7 +97,13 @@ clone () {
             fi
         fi
 
-        super_get_all submodule.$name.remote |
+
+        { super_get_all submodule.$name.remote;
+          [ \( "$(super_get --bool remote.setupMirror)" = true -a \
+               "$(super_get --bool --default true submodule.$name.setupMirror)" = true \
+            \) -o "$(super_get --bool submodule.$name.setupMirror)" = true ] &&
+            echo mirror https://github.com/emacsmirror/$name;
+        } |
         while read -r remote url
         do
             cd "$super"
