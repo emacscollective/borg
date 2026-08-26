@@ -36,6 +36,14 @@ module_hash () {
         sed -n "s|^$1 \([^.]*\)|\1|p"
 }
 
+super_get () {
+    git config --includes -f .gitmodules "$@" || true
+}
+
+super_get_all () {
+    git config --includes -f .gitmodules --get-all "$@" || true
+}
+
 clone () {
     path="$1"
     modsdir="$2/modules"
@@ -45,12 +53,12 @@ clone () {
     cd "$super"
 
     name=$(module_name "$path")
-    push_remote=$(git config --includes -f .gitmodules remote.pushDefault || true)
-    push_match=$(git config --includes -f .gitmodules --get-all remote.pushMatch || true)
+    push_remote=$(super_get remote.pushDefault)
+    push_match=$(super_get_all remote.pushMatch)
 
     # For simplicity and unlike in is_tree_submodule_active(), ignore
     # submodule.active and submodule.MODULE.url.  See gitsubmodules(7).
-    if [ "$(git config --get --type=bool --default=true submodule.$name.active)" \
+    if [ "$(super_get --type=bool --default=true submodule.$name.active)" \
          = false -o -z "$(git config --get submodule.$name.url)" ]
     then
         echo "Skipping $path (not activated)"
@@ -89,7 +97,7 @@ clone () {
             fi
         fi
 
-        git config --includes -f .gitmodules --get-all submodule.$name.remote |
+        super_get_all submodule.$name.remote |
         while read -r remote url
         do
             cd "$super"
