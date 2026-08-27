@@ -84,19 +84,16 @@ Installation
 The Borg assimilate Emacs packages as Git submodules.
 
 Borg is a bare-bones package manager for Emacs packages.  It provides
-only a few essential features and should be combined with other tools
-such as Magit, @code{epkg}, @code{use-package}, and @code{auto-compile}.
+only a few essential features, and should be combined with other tools
+such as @code{magit}, @code{epkg}, and @code{auto-compile}.
 
-Borg assimilates packages into the @code{~/.config/emacs} @footnote{Or @code{~/.emacs.d} of course, if you prefer that or have to use the
-old location because you still have to support older Emacs releases.} repository
-as Git submodules.  An assimilated package is called a drone and a
-borg-based @code{~/.config/emacs} repository is called a collective.
+Borg assimilates packages into the @code{~/.config/emacs} (or @code{~/.emacs.d})
+repository as Git submodules.  An assimilated package is called a
+drone.  It is possible to clone a package, without immediately also
+assimilating it, allowing you to review it, before performing that
+second step.
 
-It is possible to clone a package repository without assimilating it.
-A cloned package is called a clone.
-
-To learn more about this project, also read the blog post @footnote{@uref{https://emacsair.me/2016/05/17/assimilate-emacs-packages-as-git-submodules}.} in
-which it was announced.
+Borg can be used by itself or alongside @code{package}.
 
 @node Installation
 @chapter Installation
