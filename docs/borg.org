@@ -132,13 +132,10 @@ and configure all package submodules, and to build all drones.
   git clone https://github.com/emacscollective/emacs.g ~/.config/emacs
   cd ~/.config/emacs
   make bootstrap-borg
-  make bootstrap
+  make bootstrap | tee bootstrap.log
 #+end_src
 
-If you have assimilated many packages, you might want to use ~make
-bootstrap | tee bootstrap.log~.
-
-The last command run during bootstrap is ~git submodule status~, which
+The last command run by ~make bootstrap~ is ~git submodule status~, which
 prints one line per module.  If a line is prefixed with =+=, that means
 that it was not possible to checkout the recorded commit, and ~-~ means
 that the module could not be cloned.  Even if some module could not be
@@ -147,10 +144,7 @@ run ~emacs~ now, and then investigate any issues from the comfort of
 Magit.
 
 If you cloned to somewhere other than ~~/.config/emacs~, then you can
-use that configuration using ~emacs --init-directory /path/to/emacs.g/~,
-provided you are using Emacs 29 or later.  Otherwise you have to
-resort to ~emacs -Q -l /path/to/emacs.g/early-init.el -l
-/path/to/emacs.g/init.el~.
+use that configuration using ~emacs --init-directory /path/to/config/~.
 
 During package compilation you may notice that some package modules
 become "dirty", due to compilation outputs not being ignored in those
@@ -205,19 +199,16 @@ Then you should add a ~Makefile~ containing:
   endif
 #+end_src
 
-Now you are probably tempted to run ~make bootstrap-borg~, but that is
-for bootstrapping /from a seed/, and what we are doing right now is to
-bootstrap /from scratch/.  In the process we are creating a seed but we
-are not there yet.  Instead run this:
+When you later clone your configuration on a new machine, you can use
+this ~bootstrap-borg~ make target to initialize the ~borg~ submodule, but
+this super repository doesn't have any submodules yet, so instead you
+have do add the first submodule.
 
 #+begin_src sh
   git submodule add --name borg https://github.com/emacscollective/borg lib/borg
 #+end_src
 
-Now that ~borg~ is available we can build all the assimilated packages
-(currently just ~borg~ itself) using ~make bootstrap~.
-
-Next we have to tell Emacs to initialize Borg instead of Package, by
+Next you have to tell Emacs to initialize Borg instead of Package, by
 adding a simple ~early-init.el~ file containing:
 
 #+begin_src emacs-lisp
@@ -1021,32 +1012,17 @@ variables you can tell Borg how to build such packages.
   Otherwise COMMAND is assumed to be a shell command and is executed
   with ~shell-command~.
 
+  An example using several shell commands and one standard build-step
+  function.
+
   #+begin_src gitconfig
     [submodule "mu4e"]
-            path = lib/mu4e
-            url = https://github.com/djcb/mu.git
             build-step = test -e ./configure || autoreconf -i
             build-step = ./configure
             build-step = make -C mu4e > /dev/null
             build-step = borg-update-autoloads
             load-path = mu4e
   #+end_src
-
-  To skip generating "autoloads" (e.g., using ~use-package~ to create
-  "autoloads" on the fly), just provide the required build steps to
-  build the package, omitting ~borg-update-autoloads~.  Borg silently
-  ignores a missing "autoloads" file during initialization
-  (~borg-initialize~).
-
-  #+begin_src gitconfig
-    [submodule "multiple-cursors"]
-            path = lib/multiple-cursors
-            url = https://github.com/magnars/multiple-cursors.el.git
-            build-step = borg-compile
-  #+end_src
-
-  Note that just because a package provides a ~Makefile~, you do not
-  necessarily have to use it.
 
   Even if ~make~ generates the Info file, you might still have to add
   ~borg-makeinfo~ as an additional build-step because the former might
@@ -1111,15 +1087,9 @@ variables you can tell Borg how to build such packages.
   times.
 
   Sometimes a drone comes with an optional library which adds support
-  for some other third-party package, which you don't want to use.
-  For example ~emacsql~ comes with a PostgreSQL back-end, which is
-  implemented in the library ~emacsql-pg.el~, which requires the ~pg~
-  package.  The standard Borg collective ~emacs.g~ assimilates ~emacsql~,
-  for the sake of the ~epkg~ drone, which only requires the SQLite
-  back-end.  To avoid an error about ~pg~ not being available, ~emacs.g~
-  instructs Borg to not compile ~emacsql-pg.el~.  (Of course if you want
-  to use the PostgreSQL back-end and assimilate ~pg~, then you should
-  undo that.)
+  for some other third-party package, which you don't want to use. By
+  adding such libraries as a value of this variable, you can avoid
+  compile errors and warnings about unsatisfied dependencies,
 
 - Variable: submodule.DRONE.recursive-byte-compile BOOLEAN ::
 
