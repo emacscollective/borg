@@ -298,9 +298,22 @@ Changing the values of @code{load-prefer-newer} and @code{package-enable-at-star
 as shown here is optional but strongly recommended.  @code{load-prefer-newer}
 should be enabled before loading @code{borg}.
 
-Now you could create the initial commit but you could also delay that.
+You should also add @code{.gitmodules}, containing the following.  This isn't
+strictly necessary, but if you don't, then you must use @code{.gitmodules}
+whenever this manual says, that you should set some variable in
+@code{.borgconfig} or @code{.gitremotes}.
 
 @example
+[include]
+        path = .gitremotes
+        path = .borgconfig
+@end example
+
+Other files you might want to create at this time include @code{init.el},
+@code{.dir-locals.el} and @code{.gitignore}; before creating the initial commit.
+
+@example
+git add --all
 git commit -m "Assimilate borg"
 make build
 @end example
@@ -351,17 +364,6 @@ should configure Magit to list submodules in status buffers:
                           'magit-insert-stashes
                           'append))
 @end lisp
-
-You should also add the following lines at the top of @code{.gitmodules}.
-This isn't strictly necessary, but if you don't, then you must use
-@code{.gitmodules} whenever this manual says, that you should set some
-variable in @code{.borgconfig} or @code{.gitremotes}.
-
-@example
-[include]
-        path = .gitremotes
-        path = .borgconfig
-@end example
 
 @anchor{Migrating a legacy configuration}
 @subsection Migrating a legacy configuration
