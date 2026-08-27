@@ -188,13 +188,13 @@ Then you should add a ~Makefile~ containing:
   	$(info make bootstrap-borg  -- Make borg and make targets available)
   	@printf "\n"
 
+  GITDIR := $(shell realpath --relative-to=. "$$(git rev-parse --git-dir)")
+  SRCDIR ?= $(shell git config -f .gitmodules submodule.borg.path)
+  URL    ?= $(shell git config -f .gitmodules submodule.borg.url)
+
   bootstrap-borg:
-  	@ GITDIR="$$(realpath --relative-to=. "$$(git rev-parse --git-dir)")"; \
-  	mkdir "$$GITDIR/modules"; \
-  	git clone https://github.com/emacscollective/borg lib/borg \
-  	--separate-git-dir "$$GITDIR/modules/borg"
-  	@cd lib/borg; git symbolic-ref HEAD refs/heads/main
-  	@cd lib/borg; git reset --hard HEAD
+  	mkdir -p "$(GITDIR)/modules"
+  	git clone $(URL) $(SRCDIR) --separate-git-dir "$(GITDIR)/modules/borg"
 
   endif
 #+end_src
