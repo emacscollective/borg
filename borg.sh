@@ -121,10 +121,12 @@ clone () {
                 then
                     echo "Adding remote '$remote'"
                     args=
-                    case "$url" in
-                    *git.savannah.gnu.org*/git/emacs/elpa.git)
+                    case "$name,$url" in
+                    elpa-admin,*git.savannah.gnu.org*/git/elpa/gnu.git)
+                        args="--no-tags -t $name" ;;
+                    *,*git.savannah.gnu.org*/git/elpa/gnu.git)
                         args="--no-tags -t externals/$name" ;;
-                    *git.savannah.gnu.org*/git/emacs/nongnu.git)
+                    *,*git.savannah.gnu.org*/git/elpa/nongnu.git)
                         args="--no-tags -t elpa/$name" ;;
                     esac
                     git remote add "$remote" "$url" $args
