@@ -85,15 +85,16 @@ clone () {
             esac
 
             mkdir -p "$modsdir"
-            git clone "$url" "$path" $args \
-                --separate-git-dir "$modsdir/$name" ||
-                echo "Cloning failed"
-
-            if [ -n "$rename" ]
+            if git clone "$url" "$path" $args --separate-git-dir "$modsdir/$name"
             then
-                cd "$path"
-                echo "Renaming branch $rename to main"
-                git branch -m $rename main
+                if [ -n "$rename" ]
+                then
+                    cd "$path"
+                    echo "Renaming branch $rename to main"
+                    git branch -m $rename main
+                fi
+            else
+                echo "Cloning failed"
             fi
         fi
 
