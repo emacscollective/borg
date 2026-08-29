@@ -143,7 +143,7 @@ clone () {
                [ -n "$push_remote" ] &&
                git remote | grep -q "^$push_remote\$"
             then
-                echo "Setting remote.pushDefault=$remote"
+                echo "Setting remote.pushDefault=$push_remote"
                 git config remote.pushDefault "$push_remote"
             fi
 
