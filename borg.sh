@@ -209,9 +209,36 @@ checkout () {
         else
             echo "Checkout $path ($hash)"
             echo "HEAD was $(git log --no-walk --format='%h %s' HEAD)"
-            if ! git reset --hard "$hash"
+
+            target=
+            for r in $(git branch -r --points-at=$hash | grep -v HEAD)
+            do
+                if [ "$(echo $r | cut -d/ -f2)" != "$branch" ]
+                then
+                    target=$r
+                    break
+                fi
+            done
+
+            if [ -n "$target" ]
             then
-                echo "Checkout of '$hash' into submodule path '$path' failed"
+                remote=$(echo $target | cut -d/ -f1)
+                branch=$(echo $target | cut -d/ -f2)
+                git branch --no-track $branch $target
+                git branch -u $(git symbolic-ref --short HEAD) $branch
+                if [ "$remote" != "$(git config remote.pushDefault)" ]
+                then
+                    git config remote.$branch.pushRemote $remote
+                fi
+                if ! git checkout $branch
+                then
+                    echo "Checkout of '$branch' into submodule path '$path' failed"
+                fi
+            else
+                if ! git reset --hard "$hash"
+                then
+                    echo "Checkout of '$hash' into submodule path '$path' failed"
+                fi
             fi
         fi
     fi
