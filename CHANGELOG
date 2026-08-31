@@ -1,4 +1,37 @@
 # -*- mode: org -*-
+* v4.6.0    UNRELEASED
+
+- ~borg-batch-rebuild-init~ now reloads autoloads, preventing bogus
+  warnings about undefined functions and variables.  07dc2ca
+
+- The manual was fixed, updated and otherwise improved.  Outdated
+  information was removed or corrected.  Added information about
+  the ~.gitremotes~ and ~.borgconfig~ files, and how to include them
+  in ~.gitmodules~.
+
+- ~make checkout~ no longer refuses to update a module containing
+  ignored files.  #179
+
+- ~borg.drones-directory~ must now be set in ~.borgconfig~ (or
+  ~.gitmodules~).  ~borg.mk~ now honors this setting.  a5f37ee, 9250166
+
+- Improved how the push remotes of drones can be set while cloning,
+  using the variables ~remote.pushDefault~ and ~remote.pushMatch~.
+  6c4a54a
+
+- Added support for conveniently adding the Emacsmirror as a remote,
+  using the new ~submodule.setupMirror~ and ~submodule.DRONE.setupMirror~
+  variables.  3d5f3d3
+
+- Fixed adding the GNU ELPA or NonGNU ELPA repository as a remote.
+  d615e3f
+
+- During ~make checkout~, if the default branch does not exactly match
+  the commit recorded for a module, but some other remote branch does,
+  then a corresponding local branch is created and checked out now.
+  Previously the default branch was reset to the recorded commit.
+  #176
+
 * v4.5.3    2026-08-01
 
 - Thoughts and whitespace.
