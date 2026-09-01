@@ -1,5 +1,5 @@
 # -*- mode: org -*-
-* v4.6.0    UNRELEASED
+* v4.6.0    2026-09-01
 
 - ~borg-batch-rebuild-init~ now reloads autoloads, preventing bogus
   warnings about undefined functions and variables.  07dc2ca
