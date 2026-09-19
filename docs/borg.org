@@ -111,7 +111,7 @@ you do not want all of these packages, you can reset to an earlier
 commit.  Resetting to the very first commit gives you a nearly minimal
 configuration,
 
-The history of the seed repository is occationally rewritten, ensuring
+The history of the seed repository is occasionally rewritten, ensuring
 that the simple instructions in the previous paragraph always apply.
 For that reason you should only use it for bootstrapping, and not pull
 from this repository.  You might still want to keep it as a remote, so
@@ -120,7 +120,7 @@ that you can always easily consult the current canonical configuration.
 Clone the seed repository to either ~~/.config/emacs~, ~~/.emacs.d~ or for
 testing purposes to any other location.  Below we assume you used the
 former.  If you choose another location, you will have to substitute
-your choosen path for that in the examples below.
+your chosen path for that in the examples below.
 
 This repository contains a ~Makefile~ that imports ~lib/borg/borg.mk~, if
 available.  It also defines the target ~bootstrap-borg~, which clones
