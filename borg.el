@@ -106,7 +106,6 @@ set `use-package-verbose' to `debug'.  Reset these variables using
 (require 'comp nil t)
 (require 'info)
 (require 'pcase)
-(require 'subr-x)
 
 (eval-and-compile ; static-if
   (unless (fboundp 'static-if) ; since Emacs 30.1
