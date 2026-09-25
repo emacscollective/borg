@@ -37,7 +37,6 @@
 
 (require 'cl-lib)
 (require 'eieio)
-(require 'seq)
 
 (with-suppressed-warnings ((obsolete autoload))
   (require 'borg))
