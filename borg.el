@@ -701,7 +701,6 @@ and optional NATIVE are both non-nil, then also compile natively."
           (build-command
            (when (or (stringp build-command)
                      (setq build-command (funcall build-command clone cmd)))
-             (require 'format-spec)
              (shell-command
               (format-spec build-command
                            `((?s . ,cmd)
