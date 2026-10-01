@@ -19,3 +19,4 @@ Borg can be used by itself or alongside ~package~.
 #+html: <a href="https://github.com/emacscollective/borg/actions/workflows/manual.yml"><img alt="Manual" src="https://github.com/emacscollective/borg/actions/workflows/manual.yml/badge.svg"/></a>
 #+html: <a href="https://snapshots.melpa.org/#/borg"><img alt="MELPA Snapshots" src="https://snapshots.melpa.org/packages/borg-badge.svg"/></a>
 #+html: <a href="https://releases.melpa.org/#/borg"><img alt="MELPA Releases" src="https://releases.melpa.org/packages/borg-badge.svg"/></a>
+#+html: <a href="https://emacsair.me/human"><img alt="human made" src="https://emacsair.me/assets/badges/human.svg"/></a>
