@@ -1,4 +1,8 @@
 # -*- mode: org -*-
+* v4.6.1    2026-10-01
+
+- Thoughts and whitespace.
+
 * v4.6.0    2026-09-01
 
 - ~borg-batch-rebuild-init~ now reloads autoloads, preventing bogus
