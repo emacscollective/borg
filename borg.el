@@ -161,7 +161,7 @@ enclosed in a `progn' form.  ELSE-FORMS may be empty."
 
 (let* ((libdir (file-name-parent-directory
                 (file-name-directory
-                 (file-truename (or load-file-name buffer-file-name))))))
+                 (file-truename (or load-file-name buffer-file-name)))))
        (topdir (ignore-errors
                  (let ((default-directory libdir))
                    (file-name-as-directory
