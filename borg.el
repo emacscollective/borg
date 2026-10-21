@@ -159,10 +159,9 @@ enclosed in a `progn' form.  ELSE-FORMS may be empty."
 (defvar borg-user-emacs-directory)
 (defvar borg-top-level-directory)
 
-(let* ((libdir (file-name-directory
-                (directory-file-name
-                 (file-name-directory
-                  (file-truename (or load-file-name buffer-file-name))))))
+(let* ((libdir (file-name-parent-directory
+                (file-name-directory
+                 (file-truename (or load-file-name buffer-file-name))))))
        (topdir (ignore-errors
                  (let ((default-directory libdir))
                    (file-name-as-directory
@@ -195,8 +194,7 @@ The Git variable `borg.drones-directory' can be used to override the
 default value.")
 
   (defconst borg-user-emacs-directory
-    (or (and (equal topdir (file-name-directory
-                            (directory-file-name borg-drones-directory)))
+    (or (and (equal topdir (file-name-parent-directory borg-drones-directory))
              topdir)
         (locate-dominating-file borg-drones-directory "init.el")
         (and (or (file-in-directory-p libdir user-emacs-directory)
